@@ -75,7 +75,7 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.1"
+WALTer_version = "v1.17.2"
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -1555,9 +1555,11 @@ def Start(lstring):
   useGroup(1)
   current_PAR = 0
   
-  #var_register = ["expe_related", "crop_ccptn","sowing_date","year","location","latitude","nbj","rep","densite","nb_rangs","nb_plantes","area_targeted","geno_nb","CARIBU_state","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","dist_intra_rang","dx","dy","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl/Soissons","Phl/Maxwell","phyll_adjust/Soissons","phyll_adjust/Maxwell","Pls/Soissons","Pls/Maxwell","VAI/Soissons","VAI/Maxwell","VBEE/Soissons","VBEE/Maxwell","SLDL/Soissons","SLDL/Maxwell","Dse_mean/Soissons","Dse_mean/Maxwell","Dse_sd/Soissons","Dse_sd/Maxwell","N_I_el/Soissons","N_I_el/Maxwell","s_B_1/Soissons","s_B_1/Maxwell","N_B_r/Soissons","N_B_r/Maxwell","L_B_1/Soissons","L_B_1/Maxwell","L_B_max/Soissons","L_B_max/Maxwell","s_B_f/Soissons","s_B_f/Maxwell","a_B_w/Soissons","a_B_w/Maxwell","b_B_w/Soissons","b_B_w/Maxwell","a_S_L/Soissons","a_S_L/Maxwell","b_S_L/Soissons","b_S_L/Maxwell","inc_I/Soissons","inc_I/Maxwell","shp_I/Soissons","shp_I/Maxwell","b_I_L/Soissons","b_I_L/Maxwell","a_I_L/Soissons","a_I_L/MAxwell","d_I/Soissons","d_I/Maxwell","L_P/Soissons","L_P/Maxwell","d_P/Soissons","d_P/Maxwell","d_E/Soissons","d_E/Maxwell","L_E/Soissons","L_E/Maxwell","d_S/Soissons","d_S/Maxwell","n0_sen/Soissons","n0_sen/Maxwell","n1_sen/Soissons","n1_sen/Maxwell","n2_sen/Soissons","n2_sen/Maxwell","n3_sen/Soissons","n3_sen/Maxwell","t0_sen/Soissons","t0_sen/Maxwell","t1_sen/Soissons","t1_sen/Maxwell","t2_sen/Soissons","t2_sen/Maxwell","t3_sen/Soissons","t3_sen/Maxwell","DelayTipToHS/Soissons","DelayTipToHS/Maxwell","P_CT/Soissons","P_CT/Maxwell","GAI_c/Soissons","GAI_c/Maxwell","t_beg_reg/Soissons","t_beg_reg/Maxwell","Delta_prot/Soissons","Delta_prot/Maxwell","PAR_t/Soissons","PAR_t/Maxwell","P_T/Soissons","P_T/MAxwell"]
+  var_register = ["expe_related", "crop_ccptn","sowing_date","year","location","latitude","nbj","rep","densite","nb_rangs","nb_plantes","area_targeted","geno_nb","CARIBU_state","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","dist_intra_rang","dx","dy","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","phyll_adjust_Soissons","phyll_adjust_Maxwell","Pls_Soissons","Pls_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","Dse_mean_Soissons","Dse_mean_Maxwell","Dse_sd_Soissons","Dse_sd_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","shp_I_Soissons","shp_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","DelayTipToHS_Soissons","DelayTipToHS_Maxwell","P_CT_Soissons","P_CT_Maxwell","GAI_c_Soissons","GAI_c_Maxwell","t_beg_reg_Soissons","t_beg_reg_Maxwell","Delta_prot_Soissons","Delta_prot_Maxwell","PAR_t_Soissons","PAR_t_Maxwell","P_T_Soissons","P_T_MAxwell"]
   
-  #for key, value, in params.items(): #TODO 
+  for key, value, in params.iteritems(): 
+    if key in var_register:
+      print "key=value"
   
   
   # Create a unique ID to the simulation according to a specific combination of parameters value
@@ -1568,21 +1570,35 @@ def Start(lstring):
     
   else: 
     json_2_human = open("from_json_to_humanbeing.txt", "a")
-    ID_params = {}
     
     if os.path.isfile("index-table.json"):
       ID_params = json.load(open("index-table.json"))
+      for id in ID_params.keys():
+        if ID_params[id] != params:
+          ID = str(uuid.uuid4())
+          ID_params[ID] = params
+          
+          for key, val in params.iteritems():
+            json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
+          json_2_human.write("\n")
+          json_2_human.close()
+          json.dump(ID_params, open("index-table.json", "w"))
+        
+        else:
+          ID = id
     
-    id = str(uuid.uuid4())
-    ID_params[id] = params
-    
-    for key, val in params.iteritems():
-      json_2_human.write("%s" % id + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-    json_2_human.write("\n")
-    json_2_human.close()
-    json.dump(ID_params, open("index-table.json", "w"))
-    folder_name = id
-  
+    else:
+      ID = str(uuid.uuid4())
+      ID_params = {}
+      ID_params[ID] = params
+      
+      for key, val in params.iteritems():
+        json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
+      json_2_human.write("\n")
+      json_2_human.close()
+      json.dump(ID_params, open("index-table.json", "w"))
+      
+    folder_name = ID
   
   try:
     os.mkdir("output/"+folder_name)
