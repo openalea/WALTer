@@ -75,12 +75,12 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.2"
+WALTer_version = "v1.17.3"
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Mariem"
+expe_related         = "None"
 densite              = 217
 CARIBU_state         = "enabled"
 rep                  = 1
@@ -584,7 +584,7 @@ t_beg_reg_Maxwell = 6.8
 t_beg_reg_Soissons = 6.8
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell, "Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-#PAR_t_Maxwell = 280000
+PAR_t_Maxwell = 280000
 PAR_t_Soissons = 150000
 PAR_t = {"Maxwell" : PAR_t_Maxwell, "Soissons" : PAR_t_Soissons}  # PAR threshold below which a tiller don't survive | old name : PARseuil
 Delta_l = 100     #Duration of radiation integration to determine the survival of a tiller (degree-day) | old name : ray_integration
@@ -1559,7 +1559,7 @@ def Start(lstring):
   
   for key, value, in params.iteritems(): 
     if key in var_register:
-      print "key=value"
+      exec(key+"=value")
   
   
   # Create a unique ID to the simulation according to a specific combination of parameters value
