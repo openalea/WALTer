@@ -91,8 +91,13 @@ hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
 hazard_emerg = hazard_driver["emerg"]
 
-write_output_file = {"GAI":True, "Peraxes":True, "Proba":True, "Apex_Sirius":True, "Apex":False, "Apex_R":True, "Bud":False, "Blade":True, "Internode":True, "Sheath":True, "Bud_p":False, "Ear":True, "Peduncle":True}
+which_output_files = pd.read_csv("which_output_files.csv")
+write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Bud":which_output_files.Bud[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheat[0], "Bud_p":which_output_files.Bud_p[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0]}
+dico2 = {"Bla":True,"Bli":False}
 
+print "OOOOOOOOOOOOOOO"
+print write_output_file
+print dico2
 #########################
 
 #Phyllochron adjustment
@@ -1631,6 +1636,11 @@ def Start(lstring):
       
     folder_name = ID
   
+  #Extraire la valeur de l'ID dans un fichier
+  ID_simul = open("ID_simul.txt","w")
+  ID_simul.write(ID)
+  ID_simul.close()
+  
   try:
     os.mkdir("output/"+folder_name)
     
@@ -2395,7 +2405,7 @@ Seed:
     nproduce CutPointBud(StCPB)Apex(StA)
   
   print "border plants : ", border_plants
-  print "les positions : ",positions
+
   if border_plants != plant_census: #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
     for brd_plt in border_plants:
       plant_census.remove(brd_plt)
