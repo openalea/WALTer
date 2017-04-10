@@ -1,2 +1,8 @@
 crop_ccptn	rep	expe_related	densite	GAI_c_Maxwell	t_beg_reg_Maxwell	PAR_t_Maxwell	Delta_prot_Maxwell
-classical	1	Mariem	217	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	5	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	25	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	50	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	100	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	200	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	400	0.5	6.8	0	50
+Darwinkel_original	1	Darwinkel_mean	800	0.5	6.8	0	50

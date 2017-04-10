@@ -93,11 +93,7 @@ hazard_emerg = hazard_driver["emerg"]
 
 which_output_files = pd.read_csv("which_output_files.csv")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Bud":which_output_files.Bud[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheat[0], "Bud_p":which_output_files.Bud_p[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0]}
-dico2 = {"Bla":True,"Bli":False}
 
-print "OOOOOOOOOOOOOOO"
-print write_output_file
-print dico2
 #########################
 
 #Phyllochron adjustment
@@ -178,6 +174,32 @@ def design_crop_Darwinkel(area, density):
   print crop_scheme
   return crop_scheme
 
+def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_border_y):
+	nb_rang_utiles = floor(sqrt(nb_plt_utiles))
+	nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
+	d_intra = sqrt(1/density)
+	d_inter = d_intra
+	nb_rang = nb_rang_utiles + ceil((dist_border_x/100)/d_inter) + ceil((dist_border_x/100)/d_inter)
+	nb_plant_par_rang = nb_plant_par_rang_utiles + ceil((dist_border_y/100)/d_intra) + ceil((dist_border_y/100)/d_intra)
+	dx = nb_rang*d_inter
+	dy = nb_plant_par_rang*d_intra
+	nplant_peupl = nb_rang*nb_plant_par_rang
+	crop_scheme["area"] = dx*dy
+	crop_scheme["nb_rang"] = int(nb_rang)
+	crop_scheme["nb_plante_par_rang"] = int(nb_plant_par_rang)
+	crop_scheme["dist_inter_rang"] = d_intra
+	crop_scheme["dist_intra_rang"] = d_intra
+	crop_scheme["dx"] = dx
+	crop_scheme["dy"] = dy
+	crop_scheme["nplant_peupl"] = int(nplant_peupl)
+	crop_scheme["real_density"] = nplant_peupl/crop_scheme["area"]
+	crop_scheme["surface_sol"] = dx*dy
+	crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
+	crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
+	print crop_scheme
+	return crop_scheme
+
+
 # Setting experimental informations 
 experimental_conditions = {
 "Sreten":{"sowing_date" : date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11}, 
@@ -213,28 +235,25 @@ dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 
 
 # Moyennes sur 10/18ans disponibles sur Grignon : { "Grignon_mean10" "Grignon_mean18"}
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
-location           = experimental_conditions[expe_related]["location"]
-year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier météo moyenné, year = 1901
-sowing_date        = experimental_conditions[expe_related]["sowing_date"]
-latitude           = dico_latitudes[location]
-
-tab_top = date(int(year)-1,9,1)													      # On définit la date du début du fichier
-double_finger = date(int(year)-1,1,1)                               #Premier janvier
-sowing_DOY=(sowing_date-double_finger).days     # DOY du semis
-
-random.seed(rep)
 
 ########################################
 
 crop_ccptn = "classical"
 area_targeted = 1
 
+var_register0 = ["crop_ccptn"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_register0:
+    exec(key+"=value")
+
+
 if crop_ccptn == "classical":
-  nb_plt_temp = 2
+  nb_plt_temp = 1
   nb_rang = 1
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
-  crop_scheme = {"dist_inter_rang":dist_inter_rang, "densite":densite}
-  area = nb_plt_temp/crop_scheme["densite"]
+  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
+  area = nb_plt_temp/crop_scheme["density"]
   dy = nb_rang * dist_inter_rang
   dx = area/dy
   nb_plante_par_rang = int(nb_plt_temp/nb_rang)
@@ -258,22 +277,17 @@ elif crop_ccptn == "neo_Darwinkel":
   area_min, area_max = 1, 13
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
   opt_plt_nb = 10
-  crop_scheme = {"dist_inter_rang":dist_inter_rang, "densite":densite}
-  adapting_crop_area(crop_scheme["densite"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)  
+  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
+  adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)  
   dist_border_x = 0.2*100 #inside a rang
   dist_border_y = 0.15*100 #rang
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print crop_scheme
   
 elif crop_ccptn == "Darwinkel_original":
-  if densite == 5:
-    area = 1.8
-    dist_border_x = 0.50*100 #inside a rang
-    dist_border_y = 0.50*100 #rang 
-  else:
-    area = area_targeted
-    dist_border_x = 0.15*100 #inside a rang
-    dist_border_y = 0.15*100 #rang 
+  area = area_targeted
+  dist_border_x = 0.15*100 #inside a rang
+  dist_border_y = 0.15*100 #rang 
   crop_scheme = {"area" : area, "density" : densite}
   #border_prop = 0.8
   design_crop_Darwinkel(crop_scheme["area"], crop_scheme["density"])
@@ -281,6 +295,17 @@ elif crop_ccptn == "Darwinkel_original":
   #dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+
+elif crop_ccptn == "Mesh_for_nplants":
+	nb_plt_utiles = 50
+	dist_border_x = 0.15*100 #inside a rang
+	dist_border_y = 0.15*100 #rang 
+	crop_scheme = {"density" : densite}
+	design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
+	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+	print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+
+
 
 nb_rangs = crop_scheme["nb_rang"] 
 nb_plantes = crop_scheme["nplant_peupl"]
@@ -367,18 +392,10 @@ SLDL = {"Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Ren
 Phl_Maxwell = 99
 Phl_Soissons = 87
 Phl_Renan = 112
-Phl = {"Maxwell" : Phl_Maxwell, "Soissons" : Phl_Soissons, "Renan" : Phl_Renan}  # Différentes valeurs issues de recalibrations He : 104      #Ly : 113.5    #Lecarpentier : 
 
-Pls_Maxwell = phyll_adjust("Maxwell")/2
-Pls_Soissons = phyll_adjust("Soissons")/2
-Pls_Renan = phyll_adjust("Renan")/2
-Pls = {"Maxwell" : Pls_Maxwell, "Soissons" : Pls_Soissons, "Renan" : Pls_Renan}
 
 DelayHSToCol = 0.2                                     #temps phyllochronique
 
-DelayTipToHS_Maxwell = 0.4125 * phyll_adjust("Maxwell")
-DelayTipToHS_Soissons = 0.4125 * phyll_adjust("Soissons")
-DelayTipToHS = {"Maxwell" : DelayTipToHS_Maxwell, "Soissons" : DelayTipToHS_Soissons}
 
 ED_I = 1.66 # Duration for internode extension (value extracted directly from ADEL-wheat) (phyllochronic time) | old name : gr_duration_internode  
 ED_B = 1.6  # Duration for blade extension (phyllochronic time)                                                | old name : gr_duration_blade
@@ -431,8 +448,8 @@ shp_I_Maxwell = "squared"
 shp_I_Soissons = "squared"
 shp_I = {"Maxwell" : shp_I_Maxwell, "Soissons" : shp_I_Soissons} # Shape of the function to determine internode final length
 
-N_I_el_Maxwell = 4.2
-N_I_el_Soissons = 6
+N_I_el_Maxwell = 5
+N_I_el_Soissons = 5
 N_I_el = {"Maxwell" : N_I_el_Maxwell, "Soissons" : N_I_el_Soissons } # Number of elongated internodes                               | old name : NENL
 
 ### Linear formalism
@@ -456,13 +473,9 @@ b_S_L_Soissons = -2.16
 a_S_L = {"Maxwell" : a_S_L_Maxwell, "Soissons" : a_S_L_Soissons} # Coefficient for sheath final length                     | old name : a_sheath_length
 b_S_L = {"Maxwell" : b_S_L_Maxwell, "Soissons" : b_S_L_Soissons} # Coefficient for sheath final length (cm)                 | old name : b_sheath_length
 
-## Blade width
-a_B_w_Maxwell = 0.099
-a_B_w_Soissons = 0.097
-b_B_w_Maxwell = -0.3
-b_B_w_Soissons = -0.4
-a_B_w = {"Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
-b_B_w = {"Maxwell" : b_B_w_Maxwell, "Soissons" : b_B_w_Soissons} # Coefficient for blade width (cm)                          | old name : b_blade_width
+## Rapport largeur/longueur et surface de limbe
+R_wL_Maxwell = 0.081759
+S_B_Maxwell = 18.565
 
 ## Blade final length
 l_c = 0.5                                               #length of the coleoptil at the emergence                    | old name : coleoptil_length
@@ -474,9 +487,8 @@ s_B_1_Maxwell = 0.8
 s_B_1_Soissons = 0.5
 s_B_1 = {"Maxwell" : s_B_1_Maxwell, "Soissons" : s_B_1_Soissons} # Final length increment between two successive leaves (bef FT) | old name : incr_Bl
 
-L_B_max_Maxwell = 17.4
+#L_B_max_Maxwell = 17.4
 L_B_max_Soissons = 22.4
-L_B_max = {"Maxwell" : L_B_max_Maxwell, "Soissons" : L_B_max_Soissons} # Final length of the longest blade each the axis (cm)        | old name : length_penultimate_blade
 
 N_B_r_Maxwell = 2
 N_B_r_Soissons = 1 
@@ -485,6 +497,14 @@ N_B_r = {"Maxwell" : N_B_r_Maxwell, "Soissons" :N_B_r_Soissons} # Number of high
 s_B_f_Maxwell = 0.8
 s_B_f_Soissons = 0.92
 s_B_f = {"Maxwell" : s_B_f_Maxwell, "Soissons" : s_B_f_Soissons} # Reduction factor of blade final length w 2 succ leaves        | old name : ratio_flag_blade
+
+
+## Blade width
+b_B_w_Maxwell = -0.3
+b_B_w_Soissons = -0.4
+#a_B_w_Maxwell = 0.099
+a_B_w_Soissons = 0.097
+b_B_w = {"Maxwell" : b_B_w_Maxwell, "Soissons" : b_B_w_Soissons} # Coefficient for blade width (cm)                          | old name : b_blade_width
 
 ## Fixed dimensions (ear, peduncle, etc.)
 
@@ -589,8 +609,8 @@ t_beg_reg_Maxwell = 6.8
 t_beg_reg_Soissons = 6.8
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell, "Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-PAR_t_Maxwell = 280000
-PAR_t_Soissons = 150000
+PAR_t_Maxwell = 28
+PAR_t_Soissons = 15
 PAR_t = {"Maxwell" : PAR_t_Maxwell, "Soissons" : PAR_t_Soissons}  # PAR threshold below which a tiller don't survive | old name : PARseuil
 Delta_l = 100     #Duration of radiation integration to determine the survival of a tiller (degree-day) | old name : ray_integration
 
@@ -611,7 +631,7 @@ PAS               = 24
 
 ##
 
-nbj               = 25 + 300                             # Durée de la simulation
+nbj               = 25 + 30#0                             # Durée de la simulation
 time_step         = 1.                                   # Temps qui s'écoule   (jour)
 Tbase             = 0.                                 
 
@@ -1528,22 +1548,7 @@ class Peduncle(Organ_Base):
 
 
 #################################################################################################################
-
-### LE TEMPS QUI PASSE ###
-#delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le début du fichier
-#delta_date.days								                            # Retourne le nombre de jour en integer (c'est l'indice dans le tableau )
-date_current_day = sowing_date + timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
-DOY = int(date_current_day.strftime('%j'))
-
-#################################################################################################################
 mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
-
-
-##########################
-# LIRE UN FICHIER METEO  #
-##########################
-
-meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9, sep=";")
 
 
 ###################################
@@ -1561,93 +1566,210 @@ meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9
 #else:
 #  PAR_df = pd.read_csv(os.getcwd()+"/../input/PAR/"+ location + "/" + location + "_" + year + "_PAR.csv", sep='\t')
 
-#################
-# PLAN DE SEMIS #
-#################
+
 
 #### ENREGISTREMENT DES PARAMETRES
+
+var_register1 = ["expe_related"]
+
+for key, value, in params.iteritems(): 
+  if key in var_register1:
+    exec(key+"=value")
+
+location           = experimental_conditions[expe_related]["location"]
+year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier météo moyenné, year = 1901
+sowing_date        = experimental_conditions[expe_related]["sowing_date"]  
+
+dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
+
+var_register2 = ["location"]
+
+for key, value, in params.iteritems(): 
+  if key in var_register2:
+    exec(key+"=value")
+
+latitude           = dico_latitudes[location]
+
+##########################
+# LIRE UN FICHIER METEO  #
+##########################
+
+meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9, sep=";")
+
+var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","rep","densite","nb_rang","nb_plantes","area_targeted","geno_nb","CARIBU_state","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","Dse_mean_Soissons","Dse_mean_Maxwell","Dse_sd_Soissons","Dse_sd_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","shp_I_Soissons","shp_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","GAI_c_Soissons","GAI_c_Maxwell","t_beg_reg_Soissons","t_beg_reg_Maxwell","Delta_prot_Soissons","Delta_prot_Maxwell","PAR_t_Soissons","PAR_t_Maxwell","P_T_Soissons","P_T_MAxwell","R_wL_Maxwell","S_B_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+
+print params
+
+for key, value, in params.iteritems(): 
+  if key in var_register:
+    print key, value
+    exec(key+"=value")
+
+print nb_plt_utiles
+
+random.seed(rep)
+L_B_max_Maxwell = sqrt((4*S_B_Maxwell)/(3*R_wL_Maxwell))
+L_B_max = {"Maxwell" : L_B_max_Maxwell, "Soissons" : L_B_max_Soissons} # Final length of the longest blade each the axis (cm)        | old name : length_penultimate_blade
+
+a_B_w_Maxwell = (R_wL_Maxwell*L_B_max_Maxwell-R_wL_Maxwell)/L_B_max_Maxwell
+a_B_w = {"Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
+
+tab_top = date(int(year)-1,9,1)													      # On définit la date du début du fichier
+double_finger = date(int(year)-1,1,1)                               #Premier janvier
+sowing_DOY=(sowing_date-double_finger).days     # DOY du semis  
+
+#################################################################################################################
+### LE TEMPS QUI PASSE ###
+#delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le début du fichier
+#delta_date.days								                            # Retourne le nombre de jour en integer (c'est l'indice dans le tableau )
+date_current_day = sowing_date + timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+DOY = int(date_current_day.strftime('%j'))
+
+
+Phl = {"Maxwell" : Phl_Maxwell, "Soissons" : Phl_Soissons, "Renan" : Phl_Renan}  # Différentes valeurs issues de recalibrations He : 104      #Ly : 113.5    #Lecarpentier : 
+
+Pls_Maxwell = phyll_adjust("Maxwell")/2
+Pls_Soissons = phyll_adjust("Soissons")/2
+Pls_Renan = phyll_adjust("Renan")/2
+
+DelayTipToHS_Maxwell = 0.4125 * phyll_adjust("Maxwell")
+DelayTipToHS_Soissons = 0.4125 * phyll_adjust("Soissons")
+
+var_register3 = ["DelayTipToHS_Soissons","DelayTipToHS_Maxwell","Pls_Soissons","Pls_Maxwell"]
+
+for key, value, in params.iteritems(): 
+  if key in var_register3:
+    exec(key+"=value")
+
+Pls = {"Maxwell" : Pls_Maxwell, "Soissons" : Pls_Soissons, "Renan" : Pls_Renan}
+DelayTipToHS = {"Maxwell" : DelayTipToHS_Maxwell, "Soissons" : DelayTipToHS_Soissons}
+
+
+if crop_ccptn == "classical":
+	crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
+	area = nb_plt_temp/crop_scheme["density"]
+	dy = nb_rang * dist_inter_rang
+	dx = area/dy
+	nb_plante_par_rang = int(nb_plt_temp/nb_rang)
+	dist_intra = dx/nb_plante_par_rang
+	nplant_peupl = int(nb_rang*nb_plante_par_rang)
+	crop_scheme["nplant_peupl"] = nplant_peupl
+	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+	crop_scheme["dx"] = dx
+	crop_scheme["dy"] = dy
+	crop_scheme["surface_sol"] = dx*dy
+	crop_scheme["nb_rang"] = nb_rang
+	crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
+	crop_scheme["dist_intra_rang"] = dist_intra
+	crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
+	crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
+	crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
+	print crop_scheme
+elif crop_ccptn == "neo_Darwinkel":
+	crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
+	adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)  
+	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+	print crop_scheme
+
+elif crop_ccptn == "Darwinkel_original": 
+	area = area_targeted
+	crop_scheme = {"area" : area, "density" : densite}
+	#border_prop = 0.8
+	design_crop_Darwinkel(crop_scheme["area"], crop_scheme["density"])
+	#dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
+	#dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
+	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+	print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+
+elif crop_ccptn == "Mesh_for_nplants":
+	crop_scheme = {"density" : densite}
+	design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
+	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+	print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+
+
+
+nb_rangs = crop_scheme["nb_rang"] #RESTE !
+nb_plantes = crop_scheme["nplant_peupl"]
+dist_inter_rang = crop_scheme["dist_inter_rang"] 
+dist_intra_rang = crop_scheme["dist_intra_rang"]
+dx = crop_scheme["dx"] 
+dy = crop_scheme["dy"]
+
+# Create a unique ID to the simulation according to a specific combination of parameters value
+global folder_name
+
+if len(params) == 0:
+  folder_name = "output_debug"
+
+else: 
+
+	if os.path.isfile("index-table.json"):
+	  # The use of the byteify function kill encoding problems from json importation between unicode and strings 
+	  
+	  ID_params = byteify(json.load(open("index-table.json")))
+	  
+	  already_known_ID = False
+	  for id in ID_params.keys():
+		#TODO  From this point, the technic used to programm is hideous and need to be changed if time.
+		#str_val = []
+		#for val in ID_params[id].values():
+		  #str_val.append(val)
+		
+		# We check if the combination of parameters has already been encountered previously and stored in the json file
+		
+		if sorted(ID_params[id].values()) == sorted(params.values()):
+		  already_known_ID = True
+	  
+	  if already_known_ID:
+		ID = id
+		 
+	  else:
+		print "je passe dans le else1"
+		ID = str(uuid.uuid4())
+		ID_params[ID] = params
+		
+		json_2_human = open("from_json_to_humanbeing.txt", "a")
+		for key, val in params.iteritems():
+		  json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
+		json_2_human.write("\n")
+		json_2_human.close()
+		  
+		json.dump(ID_params, open("index-table.json", "w"))
+		  
+
+	else:
+	  ID = str(uuid.uuid4())
+	  ID_params = {}
+	  ID_params[ID] = params
+	  
+	  json_2_human = open("from_json_to_humanbeing.txt", "a")
+	  for key, val in params.iteritems():
+		json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
+	  json_2_human.write("\n")
+	  json_2_human.close()
+
+	  json.dump(ID_params, open("index-table.json", "w"))
+  
+folder_name = ID
+
+#Extraire la valeur de l'ID dans un fichier
+ID_simul = open("ID_simul.txt","w")
+ID_simul.write(ID)
+ID_simul.close()
+
+try:
+  os.mkdir("output/"+folder_name)
+except Exception, e:
+  print(e)
+  pass
 
 
 def Start(lstring):
   useGroup(1)
   current_PAR = 0
   
-  var_register = ["expe_related", "crop_ccptn","sowing_date","year","location","latitude","nbj","rep","densite","nb_rangs","nb_plantes","area_targeted","geno_nb","CARIBU_state","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","dist_intra_rang","dx","dy","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","phyll_adjust_Soissons","phyll_adjust_Maxwell","Pls_Soissons","Pls_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","Dse_mean_Soissons","Dse_mean_Maxwell","Dse_sd_Soissons","Dse_sd_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","shp_I_Soissons","shp_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","DelayTipToHS_Soissons","DelayTipToHS_Maxwell","P_CT_Soissons","P_CT_Maxwell","GAI_c_Soissons","GAI_c_Maxwell","t_beg_reg_Soissons","t_beg_reg_Maxwell","Delta_prot_Soissons","Delta_prot_Maxwell","PAR_t_Soissons","PAR_t_Maxwell","P_T_Soissons","P_T_MAxwell"]
   
-  for key, value, in params.iteritems(): 
-    if key in var_register:
-      exec(key+"=value")
-  
-  
-  # Create a unique ID to the simulation according to a specific combination of parameters value
-  global folder_name
-  
-  if len(params) == 0:
-    folder_name = "output_debug"
-    ID = "output_debug"
-    
-  else: 
-    
-    if os.path.isfile("index-table.json"):
-      # The use of the byteify function kill encoding problems from json importation between unicode and strings 
-      
-      ID_params = byteify(json.load(open("index-table.json")))
-      
-      already_known_ID = False
-      for id in ID_params.keys():
-        #TODO  From this point, the technic used to programm is hideous and need to be changed if time.
-        #str_val = []
-        #for val in ID_params[id].values():
-          #str_val.append(val)
-        
-        # We check if the combination of parameters has already been encountered previously and stored in the json file
-        
-        if sorted(ID_params[id].values()) == sorted(params.values()):
-          already_known_ID = True
-      
-      if already_known_ID:
-        ID = id
-         
-      else:
-        print "je passe dans le else1"
-        ID = str(uuid.uuid4())
-        ID_params[ID] = params
-        
-        json_2_human = open("from_json_to_humanbeing.txt", "a")
-        for key, val in params.iteritems():
-          json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-        json_2_human.write("\n")
-        json_2_human.close()
-          
-        json.dump(ID_params, open("index-table.json", "w"))
-          
-    
-    else:
-      ID = str(uuid.uuid4())
-      ID_params = {}
-      ID_params[ID] = params
-      
-      json_2_human = open("from_json_to_humanbeing.txt", "a")
-      for key, val in params.iteritems():
-        json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-      json_2_human.write("\n")
-      json_2_human.close()
-
-      json.dump(ID_params, open("index-table.json", "w"))
-      
-    folder_name = ID
-  
-  #Extraire la valeur de l'ID dans un fichier
-  ID_simul = open("ID_simul.txt","w")
-  ID_simul.write(ID)
-  ID_simul.close()
-  
-  try:
-    os.mkdir("output/"+folder_name)
-    
-  except Exception, e:
-    print(e)
-    pass
     
   
   
@@ -1847,7 +1969,8 @@ def EndEach(lstring, lscene):
         
         # Definition ciel
         #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
-        sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
+        #On selectionne uniquement la valeur de PAR pour le current day
+        sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
         sky = GetLight.GetLight(sky)
         sky = sky.split()
         sky_tup = []
@@ -1856,11 +1979,10 @@ def EndEach(lstring, lscene):
           sky_tup.append((float(sky[0]),(float(sky[1]), float(sky[2]), float(sky[3]))))
           del sky[0:4] 
         
-        c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
+        c_scene = CaribuScene(scene = lscene, scene_unit="cm", light = sky_tup)
         output = c_scene.run()
         
         res_sky = output[1]["default_band"]
-        
         # Ajout scene
         # Pour l'instant on va faire l'impasse sur le filtrage de scene
         #temp = Scene()
@@ -1880,12 +2002,12 @@ def EndEach(lstring, lscene):
           for id in mapping_table.keys():
             if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle": 
               if new_lstring[id][0].tiller in axis_census[new_lstring[id][0].num_plante].keys():
-                new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]] * current_PAR
+                new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
                 dico_PAR[new_lstring[id].name][new_lstring[id][0].num_plante][new_lstring[id][0].tiller][new_lstring[id][0].n] = new_lstring[id][0].PAR
                 dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
               if new_lstring[id].name == "Ear":
                 if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
-                  new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]] * current_PAR #On selectionne uniquement la valeur de PAR pour le current day
+                  new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
 
     
     
@@ -1977,7 +2099,7 @@ def End(lstring):
   #print "Axis census : ", axis_census
   #print "organ positions : ", hazard_dict_organ[1][(1,)]
   #print "axis position : ", hazard_dict_axis[1][(1,)]
-  
+
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################  
