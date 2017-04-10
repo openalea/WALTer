@@ -91,8 +91,8 @@ hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
 hazard_emerg = hazard_driver["emerg"]
 
-which_output_files = pd.read_csv("which_output_files.csv")
-write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Bud":which_output_files.Bud[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheat[0], "Bud_p":which_output_files.Bud_p[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0]}
+which_output_files = pd.read_csv("which_output_files.csv", sep="\t")
+write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Bud":which_output_files.Bud[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheat[0], "Bud_p":which_output_files.Bud_p[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0]}
 
 #########################
 
@@ -175,29 +175,29 @@ def design_crop_Darwinkel(area, density):
   return crop_scheme
 
 def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_border_y):
-	nb_rang_utiles = floor(sqrt(nb_plt_utiles))
-	nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
-	d_intra = sqrt(1/density)
-	d_inter = d_intra
-	nb_rang = nb_rang_utiles + ceil((dist_border_x/100)/d_inter) + ceil((dist_border_x/100)/d_inter)
-	nb_plant_par_rang = nb_plant_par_rang_utiles + ceil((dist_border_y/100)/d_intra) + ceil((dist_border_y/100)/d_intra)
-	dx = nb_rang*d_inter
-	dy = nb_plant_par_rang*d_intra
-	nplant_peupl = nb_rang*nb_plant_par_rang
-	crop_scheme["area"] = dx*dy
-	crop_scheme["nb_rang"] = int(nb_rang)
-	crop_scheme["nb_plante_par_rang"] = int(nb_plant_par_rang)
-	crop_scheme["dist_inter_rang"] = d_intra
-	crop_scheme["dist_intra_rang"] = d_intra
-	crop_scheme["dx"] = dx
-	crop_scheme["dy"] = dy
-	crop_scheme["nplant_peupl"] = int(nplant_peupl)
-	crop_scheme["real_density"] = nplant_peupl/crop_scheme["area"]
-	crop_scheme["surface_sol"] = dx*dy
-	crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-	crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-	print crop_scheme
-	return crop_scheme
+  nb_rang_utiles = floor(sqrt(nb_plt_utiles))
+  nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
+  d_intra = sqrt(1/density)
+  d_inter = d_intra
+  nb_rang = nb_rang_utiles + ceil((dist_border_x/100)/d_inter) + ceil((dist_border_x/100)/d_inter)
+  nb_plant_par_rang = nb_plant_par_rang_utiles + ceil((dist_border_y/100)/d_intra) + ceil((dist_border_y/100)/d_intra)
+  dx = nb_rang*d_inter
+  dy = nb_plant_par_rang*d_intra
+  nplant_peupl = nb_rang*nb_plant_par_rang
+  crop_scheme["area"] = dx*dy
+  crop_scheme["nb_rang"] = int(nb_rang)
+  crop_scheme["nb_plante_par_rang"] = int(nb_plant_par_rang)
+  crop_scheme["dist_inter_rang"] = d_intra
+  crop_scheme["dist_intra_rang"] = d_intra
+  crop_scheme["dx"] = dx
+  crop_scheme["dy"] = dy
+  crop_scheme["nplant_peupl"] = int(nplant_peupl)
+  crop_scheme["real_density"] = nplant_peupl/crop_scheme["area"]
+  crop_scheme["surface_sol"] = dx*dy
+  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
+  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
+  print crop_scheme
+  return crop_scheme
 
 
 # Setting experimental informations 
@@ -297,13 +297,13 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-	nb_plt_utiles = 50
-	dist_border_x = 0.15*100 #inside a rang
-	dist_border_y = 0.15*100 #rang 
-	crop_scheme = {"density" : densite}
-	design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
-	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-	print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+  nb_plt_utiles = 50
+  dist_border_x = 0.15*100 #inside a rang
+  dist_border_y = 0.15*100 #rang 
+  crop_scheme = {"density" : densite}
+  design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
+  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 
 
@@ -631,7 +631,7 @@ PAS               = 24
 
 ##
 
-nbj               = 25 + 30#0                             # Durée de la simulation
+nbj               = 25 + 300                             # Durée de la simulation
 time_step         = 1.                                   # Temps qui s'écoule   (jour)
 Tbase             = 0.                                 
 
@@ -744,7 +744,9 @@ Proba_dico_df = {"Elapsed_time":[], "Temperature":[], "Temp_cum":[], "Num_plante
 global Peraxes_dico_df
 Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Reg_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
 
-
+if write_output_file["PAR_per_axes"]:
+  global PAR_per_axes_dico
+  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[]}
 
 
 #######################
@@ -1605,7 +1607,7 @@ for key, value, in params.iteritems():
     print key, value
     exec(key+"=value")
 
-print nb_plt_utiles
+#print nb_plt_utiles
 
 random.seed(rep)
 L_B_max_Maxwell = sqrt((4*S_B_Maxwell)/(3*R_wL_Maxwell))
@@ -1646,46 +1648,46 @@ DelayTipToHS = {"Maxwell" : DelayTipToHS_Maxwell, "Soissons" : DelayTipToHS_Sois
 
 
 if crop_ccptn == "classical":
-	crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
-	area = nb_plt_temp/crop_scheme["density"]
-	dy = nb_rang * dist_inter_rang
-	dx = area/dy
-	nb_plante_par_rang = int(nb_plt_temp/nb_rang)
-	dist_intra = dx/nb_plante_par_rang
-	nplant_peupl = int(nb_rang*nb_plante_par_rang)
-	crop_scheme["nplant_peupl"] = nplant_peupl
-	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-	crop_scheme["dx"] = dx
-	crop_scheme["dy"] = dy
-	crop_scheme["surface_sol"] = dx*dy
-	crop_scheme["nb_rang"] = nb_rang
-	crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
-	crop_scheme["dist_intra_rang"] = dist_intra
-	crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
-	crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-	crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-	print crop_scheme
+  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
+  area = nb_plt_temp/crop_scheme["density"]
+  dy = nb_rang * dist_inter_rang
+  dx = area/dy
+  nb_plante_par_rang = int(nb_plt_temp/nb_rang)
+  dist_intra = dx/nb_plante_par_rang
+  nplant_peupl = int(nb_rang*nb_plante_par_rang)
+  crop_scheme["nplant_peupl"] = nplant_peupl
+  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  crop_scheme["dx"] = dx
+  crop_scheme["dy"] = dy
+  crop_scheme["surface_sol"] = dx*dy
+  crop_scheme["nb_rang"] = nb_rang
+  crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
+  crop_scheme["dist_intra_rang"] = dist_intra
+  crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
+  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
+  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
+  print crop_scheme
 elif crop_ccptn == "neo_Darwinkel":
-	crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
-	adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)  
-	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-	print crop_scheme
+  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
+  adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)  
+  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  print crop_scheme
 
 elif crop_ccptn == "Darwinkel_original": 
-	area = area_targeted
-	crop_scheme = {"area" : area, "density" : densite}
-	#border_prop = 0.8
-	design_crop_Darwinkel(crop_scheme["area"], crop_scheme["density"])
-	#dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
-	#dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
-	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-	print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+  area = area_targeted
+  crop_scheme = {"area" : area, "density" : densite}
+  #border_prop = 0.8
+  design_crop_Darwinkel(crop_scheme["area"], crop_scheme["density"])
+  #dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
+  #dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
+  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-	crop_scheme = {"density" : densite}
-	design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
-	plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-	print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+  crop_scheme = {"density" : densite}
+  design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
+  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 
 
@@ -1701,62 +1703,68 @@ global folder_name
 
 if len(params) == 0:
   folder_name = "output_debug"
+  print "bonjour"
 
 else: 
-
-	if os.path.isfile("index-table.json"):
-	  # The use of the byteify function kill encoding problems from json importation between unicode and strings 
-	  
-	  ID_params = byteify(json.load(open("index-table.json")))
-	  
-	  already_known_ID = False
-	  for id in ID_params.keys():
-		#TODO  From this point, the technic used to programm is hideous and need to be changed if time.
-		#str_val = []
-		#for val in ID_params[id].values():
-		  #str_val.append(val)
-		
-		# We check if the combination of parameters has already been encountered previously and stored in the json file
-		
-		if sorted(ID_params[id].values()) == sorted(params.values()):
-		  already_known_ID = True
-	  
-	  if already_known_ID:
-		ID = id
-		 
-	  else:
-		print "je passe dans le else1"
-		ID = str(uuid.uuid4())
-		ID_params[ID] = params
-		
-		json_2_human = open("from_json_to_humanbeing.txt", "a")
-		for key, val in params.iteritems():
-		  json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-		json_2_human.write("\n")
-		json_2_human.close()
-		  
-		json.dump(ID_params, open("index-table.json", "w"))
-		  
-
-	else:
-	  ID = str(uuid.uuid4())
-	  ID_params = {}
-	  ID_params[ID] = params
-	  
-	  json_2_human = open("from_json_to_humanbeing.txt", "a")
-	  for key, val in params.iteritems():
-		json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-	  json_2_human.write("\n")
-	  json_2_human.close()
-
-	  json.dump(ID_params, open("index-table.json", "w"))
   
-folder_name = ID
-
-#Extraire la valeur de l'ID dans un fichier
-ID_simul = open("ID_simul.txt","w")
-ID_simul.write(ID)
-ID_simul.close()
+  # If the json file already exists
+  if os.path.isfile("index-table.json"):
+    # The use of the byteify function kill encoding problems from json importation between unicode and strings 
+    
+    ID_params = byteify(json.load(open("index-table.json")))
+    already_known_ID = False
+    
+    for id in ID_params.keys():
+      
+      # If the combination of parameters has already been encountered previously and stored in the json file
+      if sorted(ID_params[id].values()) == sorted(params.values()):
+        already_known_ID = True
+      
+    #If the ID of the simulation is already known
+    if already_known_ID:
+      ID = id
+    
+    #If the ID of the simulation is not known
+    elif not already_known_ID:
+      # We choose a random ID 
+      ID = str(uuid.uuid4())
+      ID_params = {}
+      ID_params[ID] = params
+      
+      json_2_human = open("from_json_to_humanbeing.txt", "a")
+      
+      for key, val in params.iteritems():
+        json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
+      json_2_human.write("\n")
+      json_2_human.close()
+        
+      json.dump(ID_params, open("index-table.json", "w"))
+    
+    print "json file exists, ID : ", ID
+  
+  # If the json file doesnot exists
+  elif not os.path.isfile("index-table.json"):
+    # We choose a random ID 
+    ID = str(uuid.uuid4())
+    ID_params = {}
+    ID_params[ID] = params
+    
+    json_2_human = open("from_json_to_humanbeing.txt", "a")
+    
+    for key, val in params.iteritems():
+      json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
+    json_2_human.write("\n")
+    json_2_human.close()
+      
+    json.dump(ID_params, open("index-table.json", "w"))
+    
+    print "json file does not exists, ID : ",ID
+  folder_name = ID
+  
+  #Write the ID of the current simulation in an external file to catch it later un another script
+  ID_simul = open("ID_simul.txt","w")
+  ID_simul.write(ID)
+  ID_simul.close()
 
 try:
   os.mkdir("output/"+folder_name)
@@ -1768,10 +1776,6 @@ except Exception, e:
 def Start(lstring):
   useGroup(1)
   current_PAR = 0
-  
-  
-    
-  
   
   #TODO ici c'est sale, il faut mettre ça dans Seed
   # Initialisation of the dictionnary regrouping Ts0 dates for each tiller
@@ -1785,7 +1789,7 @@ def Start(lstring):
   #  cohort_2_ts0[cohort_number(axis)] = tiller_2_ts0[axis]
   
 
-res_sky = 0
+#res_sky = 0
 
 def StartEach(lstring):
   #if getIterationNb() % 2 == 0:
@@ -1937,8 +1941,6 @@ def EndEach(lstring, lscene):
   GAI_center = Surf_center/(len(plant_census) * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100)))
   
   
-
-
   ##################################
   ##Module de rayonnement : CARIBU #
   ##################################
@@ -1950,12 +1952,12 @@ def EndEach(lstring, lscene):
   #print(type(lscene))
   
   ## Pour l'instant on fait QUE du diffus
+  print elapsed_time
   
   if CARIBU_state != "disabled":    #Le module de rayonnement peut être activé ou désactivé {"enabled";"disabled"}
     if lscene:
-    #if lscene != None:
-    #  if len(lscene) != 0:
       if beginning_CARIBU < Tempcum < ending_CARIBU:
+        
         xmin = crop_scheme["dist_intra_rang"]/2
         ymin = crop_scheme["dist_inter_rang"]/2
         xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
@@ -1983,18 +1985,7 @@ def EndEach(lstring, lscene):
         output = c_scene.run()
         
         res_sky = output[1]["default_band"]
-        # Ajout scene
-        # Pour l'instant on va faire l'impasse sur le filtrage de scene
-        #temp = Scene()
         
-        #for shp in lscene:
-        #  if new_lstring[shp.id].name == "Blade" and new_lstring[shp.id][0].area > 0:
-        #    temp.add(shp)
-        #  if new_lstring[shp.id].name == "Internode" and new_lstring[shp.id][0].area > 0:
-        #    temp.add(shp)
-        #  else:
-        #    if new_lstring[shp.id].name not in mod_to_remove:
-        #      temp.add(shp)
         if Temperature > 0:
           for num_plt in axis_census.keys():
             for axis in axis_census[num_plt].keys():
@@ -2008,9 +1999,18 @@ def EndEach(lstring, lscene):
               if new_lstring[id].name == "Ear":
                 if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
                   new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
-
-    
-    
+          
+        if write_output_file["PAR_per_axes"] == True:
+          for num_plt in dico_PAR_per_axis.keys():
+            for axis in dico_PAR_per_axis[num_plt].keys():
+              PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
+              PAR_per_axes_dico["Temp_cum"].append(Tempcum)
+              PAR_per_axes_dico["Num_plante"].append(num_plt)
+              PAR_per_axes_dico["Num_talle"].append(axis)
+              PAR_per_axes_dico["Sum_PAR"].append(sum(dico_PAR_per_axis[num_plt][axis].values()))
+      if elapsed_time == 90:
+        print "Elapsed_time : ",PAR_per_axes_dico["Elapsed_time"]
+        print "PAR : ", PAR_per_axes_dico["Sum_PAR"]
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
       #Gestion du délai de protection d'une plante entre la mort successive de deux de ses talles
@@ -2064,12 +2064,12 @@ def EndEach(lstring, lscene):
             plant_shield_indicator[num_plt]["Shield"] = True
             axis_census[num_plt][PAR_per_youngest_tiller[0]]["Stop_growth_flag"] = True 
             axis_census[num_plt][PAR_per_youngest_tiller[0]]["emerg_date"] = 0        
+      
       #global GAI_df
       GAI_dico_df['Weakest_axis'].append(weakest_axis)
       GAI_dico_df['PAR_weakest_axis'].append(PAR/nb_timestep_fenetre)
   
   ###### Fin rayonnement
-  
   
   for num in range(1, crop_scheme["nplant_peupl"] + 1):
     GAI_dico_df["Init_flag"].append(initialization_Flag[num])
@@ -2094,6 +2094,13 @@ def EndEach(lstring, lscene):
       GAI_dico_df['Alive_at_emergence'].append("Dead")
     else:
       GAI_dico_df['Alive_at_emergence'].append("Alive")
+  
+  if elapsed_time == 90:
+    print dico_PAR_per_axis[1]  
+
+  
+  
+  
 
 def End(lstring):
   #print "Axis census : ", axis_census
@@ -2182,7 +2189,10 @@ def End(lstring):
   if write_output_file["Peraxes"] == True:
     Peraxes_df.to_csv("./output/"+folder_name+"/Peraxes_prop.txt", sep="\t", header=True, index=False)
   
-  
+  if write_output_file["PAR_per_axes"] == True:
+    print PAR_per_axes_dico
+    PAR_per_axes_df = pd.DataFrame(PAR_per_axes_dico)
+    PAR_per_axes_df.to_csv("./output/"+folder_name+"/PAR_per_axes.csv", sep = "\t", header = True, index = False)
   
   # FICHIER PARAMETRES
   
