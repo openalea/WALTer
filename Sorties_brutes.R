@@ -235,6 +235,18 @@ LectureIndHet <- function(id)
 }
 
 
+#Fonction pour lire le fichier PAR_per_axes
+Lecture_PAR_per_axes <- function(id)
+{
+  print("Lecture Apex_sirius...")
+  folder_name = paste(id)
+  setwd(paste(root,folder_name, sep=""))
+  system("sed -i 's/ //g' PAR_per_axes.txt") #Modification du fichier en #bash pour enlever tout espace
+  
+  read.table("PAR_per_axes.txt", header=TRUE, na.strings = "NA", sep="\t")
+}
+
+
 ##################################################################################################################################################
 ########################################## LECTURE DES FICHIERS #################################################
 #############################################################################################################################################
@@ -248,78 +260,83 @@ registered_time = proc.time()
 print("WAIT FILES ARE LOADING ...")
 
 if (output_scheme$Apex_sirius == 1){
-ListApex_Sirius <- lapply(1:nb_simul,function(x) Lecture_Apex_Sirius(combi_param$ID[x]))
-print("List_Apex_Sirius : OK")
+  ListApex_Sirius <- lapply(1:nb_simul,function(x) Lecture_Apex_Sirius(combi_param$ID[x]))
+  print("List_Apex_Sirius : OK")
 }
 
 if (output_scheme$Apex == 1){
-ListApex <- lapply(1:nb_simul,function(x) Lecture_Apex(combi_param$ID[x]))
-print("ListApex : OK")
+  ListApex <- lapply(1:nb_simul,function(x) Lecture_Apex(combi_param$ID[x]))
+  print("ListApex : OK")
 }
 
 if (output_scheme$Apex_R == 1){
-ListApexR <- lapply(1:nb_simul,function(x) Lecture_Apex_R(combi_param$ID[x]))
-print("ListApexR : OK")
+  ListApexR <- lapply(1:nb_simul,function(x) Lecture_Apex_R(combi_param$ID[x]))
+  print("ListApexR : OK")
 }
 
 if (output_scheme$Bud == 1){
-ListBud <- lapply(1:nb_simul,function(x) Lecture_Bud(combi_param$ID[x]))
-print("ListBud : OK")
+  ListBud <- lapply(1:nb_simul,function(x) Lecture_Bud(combi_param$ID[x]))
+  print("ListBud : OK")
 }
 
 if (output_scheme$Blade == 1){
-ListBlade <- lapply(1:nb_simul,function(x) Lecture_Blade(combi_param$ID[x]))
-print("ListBlade : OK")
+  ListBlade <- lapply(1:nb_simul,function(x) Lecture_Blade(combi_param$ID[x]))
+  print("ListBlade : OK")
 }
 
 if (output_scheme$Sheat == 1){
-ListSheath <- lapply(1:nb_simul,function(x) Lecture_Sheath(combi_param$ID[x]))
-print("ListSheat : OK")
+ ListSheath <- lapply(1:nb_simul,function(x) Lecture_Sheath(combi_param$ID[x]))
+ print("ListSheat : OK")
 }
 
 if (output_scheme$Internode == 1){
-ListInternode <- lapply(1:nb_simul,function(x) Lecture_Internode(combi_param$ID[x]))
-print("ListInternode : OK")
+ ListInternode <- lapply(1:nb_simul,function(x) Lecture_Internode(combi_param$ID[x]))
+ print("ListInternode : OK")
 }
 
 if (output_scheme$Ear== 1){
-ListEar <- lapply(1:nb_simul,function(x) Lecture_Ear(combi_param$ID[x]))
-print("ListEar : OK")
+ ListEar <- lapply(1:nb_simul,function(x) Lecture_Ear(combi_param$ID[x]))
+ print("ListEar : OK")
 }
 
 if (output_scheme$Peduncle == 1){
-ListPeduncle <- lapply(1:nb_simul,function(x) Lecture_Peduncle(combi_param$ID[x]))
-print("ListPeduncule : OK")
+ ListPeduncle <- lapply(1:nb_simul,function(x) Lecture_Peduncle(combi_param$ID[x]))
+ print("ListPeduncule : OK")
 }
 
 if (output_scheme$Peraxes == 1){
-ListPeraxes <- lapply(1:nb_simul,function(x) Lecture_Peraxes(combi_param$ID[x]))
-print("ListPeraxes : OK")
+ ListPeraxes <- lapply(1:nb_simul,function(x) Lecture_Peraxes(combi_param$ID[x]))
+ print("ListPeraxes : OK")
 }
 
 if (output_scheme$GAIp == 1){
-ListGAIp <- lapply(1:nb_simul,function(x) Lecture_GAIp(combi_param$ID[x]))
-print("ListGAIp : OK")
+ ListGAIp <- lapply(1:nb_simul,function(x) Lecture_GAIp(combi_param$ID[x]))
+ print("ListGAIp : OK")
 }
 
 if (output_scheme$Proba == 1){
-List_Proba <- lapply(1:nb_simul,function(x) Lecture_Proba(combi_param$ID[x]))
-print("ListProba : OK")
+ List_Proba <- lapply(1:nb_simul,function(x) Lecture_Proba(combi_param$ID[x]))
+ print("ListProba : OK")
 }
 
 if (output_scheme$Parcelle == 1){
-List_Parcelle <- lapply(1:nb_simul,function(x) LectureParcelle(combi_param$ID[x]))
-print("List_Parcelle : OK")
+ List_Parcelle <- lapply(1:nb_simul,function(x) LectureParcelle(combi_param$ID[x]))
+ print("List_Parcelle : OK")
 }
 
 if (output_scheme$Parameters == 1){
-List_Param <- lapply(1:nb_simul,function(x) LectureParam(combi_param$ID[x]))
-print("List_Param : OK")
+ List_Param <- lapply(1:nb_simul,function(x) LectureParam(combi_param$ID[x]))
+ print("List_Param : OK")
 }
 
 if (output_scheme$Indiv_hete == 1){
-List_Ind <- lapply(1:nb_simul,function(x) LectureIndHet(combi_param$ID[x]))
-print("List_Ind : OK")
+  List_Ind <- lapply(1:nb_simul,function(x) LectureIndHet(combi_param$ID[x]))
+  print("List_Ind : OK")
+}
+
+if (output_scheme$PAR_per_axes == 1){
+  List_PAR_peraxes <- lapply(1:nb_simul,function(x) Lecture_PAR_per_axes(combi_param$ID[x]))
+  print("List_PAR_peraxes : OK")
 }
 
 print("100% COMPLETED")
