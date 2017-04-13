@@ -80,12 +80,12 @@ WALTer_version = "v1.17.3"
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "None"
-densite              = 217
+expe_related         = "Darwinkel_mean"
+densite              = 200
 CARIBU_state         = "enabled"
-rep                  = 1
+rep                  = 2
 
-hazard_driver = {"plant" : True, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
+hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -297,7 +297,7 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 50
+  nb_plt_utiles = 20
   dist_border_x = 0.15*100 #inside a rang
   dist_border_y = 0.15*100 #rang 
   crop_scheme = {"density" : densite}
@@ -604,7 +604,7 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 ##################################
 
 # Cessation of tillering
-GAI_c_Maxwell = 0.58
+GAI_c_Maxwell = 0.5
 GAI_c_Soissons = 0.78
 GAI_c = {"Maxwell" : GAI_c_Maxwell, "Soissons" : GAI_c_Soissons} # Green Area Index threshold above which tillering of a plant stops
 
@@ -1705,7 +1705,6 @@ global folder_name
 
 if len(params) == 0:
   folder_name = "output_debug"
-  print "bonjour"
 
 else: 
   
@@ -1742,7 +1741,6 @@ else:
         
       json.dump(ID_params, open("index-table.json", "w"))
     
-    print "json file exists, ID : ", ID
   
   # If the json file doesnot exists
   elif not os.path.isfile("index-table.json"):
@@ -1760,7 +1758,6 @@ else:
       
     json.dump(ID_params, open("index-table.json", "w"))
     
-    print "json file does not exists, ID : ",ID
   folder_name = ID
   
   #Write the ID of the current simulation in an external file to catch it later un another script
@@ -1954,65 +1951,65 @@ def EndEach(lstring, lscene):
   #print(type(lscene))
   
   ## Pour l'instant on fait QUE du diffus
-  print elapsed_time
   
   if CARIBU_state != "disabled":    #Le module de rayonnement peut être activé ou désactivé {"enabled";"disabled"}
-    if lscene:
-      if beginning_CARIBU < Tempcum < ending_CARIBU:
-        
-        xmin = crop_scheme["dist_intra_rang"]/2
-        ymin = crop_scheme["dist_inter_rang"]/2
-        xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
-        ymax = crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] + crop_scheme["dist_inter_rang"]/2            
-        
-        # Creation of a mapping table to connect the id of each shape and the key of dict result of CARIBU
-        mapping_table = {}
-        if lscene:
-          for i in range(len(lscene)):
-            mapping_table[lscene[i].id] = i
-        
-        # Definition ciel
-        #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
-        #On selectionne uniquement la valeur de PAR pour le current day
-        sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
-        sky = GetLight.GetLight(sky)
-        sky = sky.split()
-        sky_tup = []
-        
-        for n in range(nb_azimuth*nb_zenith):
-          sky_tup.append((float(sky[0]),(float(sky[1]), float(sky[2]), float(sky[3]))))
-          del sky[0:4] 
-        
-        c_scene = CaribuScene(scene = lscene, scene_unit="cm", light = sky_tup)
-        output = c_scene.run()
-        
-        res_sky = output[1]["default_band"]
-        
-        if Temperature > 0:
-          for num_plt in axis_census.keys():
-            for axis in axis_census[num_plt].keys():
-              dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
-          for id in mapping_table.keys():
-            if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle": 
-              if new_lstring[id][0].tiller in axis_census[new_lstring[id][0].num_plante].keys():
-                new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
-                dico_PAR[new_lstring[id].name][new_lstring[id][0].num_plante][new_lstring[id][0].tiller][new_lstring[id][0].n] = new_lstring[id][0].PAR
-                dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
-              if new_lstring[id].name == "Ear":
-                if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
-                  new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+    if type(lscene) != None:
+      if len(lscene) > 0:
+        if beginning_CARIBU < Tempcum < ending_CARIBU:
           
-        if write_output_file["PAR_per_axes"] == True:
-          for num_plt in dico_PAR_per_axis.keys():
-            for axis in dico_PAR_per_axis[num_plt].keys():
-              PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
-              PAR_per_axes_dico["Temp_cum"].append(Tempcum)
-              PAR_per_axes_dico["Num_plante"].append(num_plt)
-              PAR_per_axes_dico["Num_talle"].append(axis)
-              PAR_per_axes_dico["Sum_PAR"].append(sum(dico_PAR_per_axis[num_plt][axis].values()))
-      if elapsed_time == 90:
-        print "Elapsed_time : ",PAR_per_axes_dico["Elapsed_time"]
-        print "PAR : ", PAR_per_axes_dico["Sum_PAR"]
+          xmin = crop_scheme["dist_intra_rang"]/2
+          ymin = crop_scheme["dist_inter_rang"]/2
+          xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
+          ymax = crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] + crop_scheme["dist_inter_rang"]/2            
+          
+          # Creation of a mapping table to connect the id of each shape and the key of dict result of CARIBU
+          mapping_table = {}
+          if lscene:
+            for i in range(len(lscene)):
+              mapping_table[lscene[i].id] = i
+          
+          # Definition ciel
+          #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
+          #On selectionne uniquement la valeur de PAR pour le current day
+          
+          sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
+          #sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
+          sky = GetLight.GetLight(sky)
+          sky = sky.split()
+          sky_tup = []
+          
+          for n in range(nb_azimuth*nb_zenith):
+            sky_tup.append((float(sky[0]),(float(sky[1]), float(sky[2]), float(sky[3]))))
+            del sky[0:4] 
+          
+          c_scene = CaribuScene(scene = lscene, scene_unit="cm", light = sky_tup)
+          output = c_scene.run()
+          
+          res_sky = output[1]["default_band"]
+          
+          if Temperature > 0:
+            for num_plt in axis_census.keys():
+              for axis in axis_census[num_plt].keys():
+                dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
+            for id in mapping_table.keys():
+              if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle": 
+                if new_lstring[id][0].tiller in axis_census[new_lstring[id][0].num_plante].keys():
+                  new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+                  dico_PAR[new_lstring[id].name][new_lstring[id][0].num_plante][new_lstring[id][0].tiller][new_lstring[id][0].n] = new_lstring[id][0].PAR
+                  dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
+                if new_lstring[id].name == "Ear":
+                  if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
+                    new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+            
+          if write_output_file["PAR_per_axes"] == True:
+            for num_plt in dico_PAR_per_axis.keys():
+              for axis in dico_PAR_per_axis[num_plt].keys():
+                PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
+                PAR_per_axes_dico["Temp_cum"].append(Tempcum)
+                PAR_per_axes_dico["Num_plante"].append(num_plt)
+                PAR_per_axes_dico["Num_talle"].append(axis)
+                PAR_per_axes_dico["Sum_PAR"].append(sum(dico_PAR_per_axis[num_plt][axis].values()))
+      
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
       #Gestion du délai de protection d'une plante entre la mort successive de deux de ses talles
@@ -2097,9 +2094,6 @@ def EndEach(lstring, lscene):
     else:
       GAI_dico_df['Alive_at_emergence'].append("Alive")
   
-  if elapsed_time == 90:
-    print dico_PAR_per_axis[1]  
-
   
   
   
@@ -2192,7 +2186,6 @@ def End(lstring):
     Peraxes_df.to_csv("./output/"+folder_name+"/Peraxes_prop.txt", sep="\t", header=True, index=False)
   
   if write_output_file["PAR_per_axes"] == True:
-    print PAR_per_axes_dico
     PAR_per_axes_df = pd.DataFrame(PAR_per_axes_dico)
     PAR_per_axes_df.to_csv("./output/"+folder_name+"/PAR_per_axes.csv", sep = "\t", header = True, index = False)
   
@@ -2487,7 +2480,6 @@ Seed:
   print "plant census 2 : ",plant_census
   crop_scheme["nb_useful_plt"] = len(plant_census)
   nb_plantes_utiles = crop_scheme["nb_useful_plt"] 
-  print "nbpu : ", nb_plantes_utiles
   print crop_scheme["nb_useful_plt"]," plantes utiles sur ",crop_scheme["nplant_peupl"]
   print "All plants in border : ",border_plants == plant_census
   set_neighbour(maillage, crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"], crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"], dGAIp, infinity_GAIp)
