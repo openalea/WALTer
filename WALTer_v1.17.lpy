@@ -314,6 +314,13 @@ dist_intra_rang = crop_scheme["dist_intra_rang"]
 dx = crop_scheme["dx"] 
 dy = crop_scheme["dy"]
 
+
+var_register1 = ["expe_related"]
+
+for key, value, in params.iteritems(): 
+  if key in var_register1:
+    exec(key+"=value")
+
 geno_nb              = len(experimental_conditions[expe_related]["genotype"][0])                              # Nombre de génotypes compris sur la parcelle
 
 crop_genotype = []
@@ -1572,11 +1579,6 @@ mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 
 #### ENREGISTREMENT DES PARAMETRES
 
-var_register1 = ["expe_related"]
-
-for key, value, in params.iteritems(): 
-  if key in var_register1:
-    exec(key+"=value")
 
 location           = experimental_conditions[expe_related]["location"]
 year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier météo moyenné, year = 1901
