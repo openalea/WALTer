@@ -57,7 +57,8 @@ do
 	
 	# lancement d'une simulation (script python avec tous ses parametres)
 	#echo "$script_py $script_params >>out.$suffixe 2>err.$suffixe"
-	$script_py $script_params #>>out.$suffixe 2>err.$suffixe
+	date
+	time $script_py $script_params >>out.$suffixe 2>err.$suffixe
 	
 	identifiant=`cat ID_simul.txt`
 	echo "${line[@]} $identifiant" >> fichier_sortie.txt
