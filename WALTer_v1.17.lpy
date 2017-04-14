@@ -80,10 +80,16 @@ WALTer_version = "v1.17.3"
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Darwinkel_mean"
+expe_related         = "None"
 densite              = 200
 CARIBU_state         = "enabled"
 rep                  = 2
+
+var_register1 = ["expe_related","densite","CARIBU_state","rep"]
+
+for key, value, in params.iteritems(): 
+  if key in var_register1:
+    exec(key+"=value")
 
 hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
 hazard_plant = hazard_driver["plant"]
@@ -315,13 +321,7 @@ dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
 
-var_register1 = ["expe_related"]
-
-for key, value, in params.iteritems(): 
-  if key in var_register1:
-    exec(key+"=value")
-
-geno_nb              = len(experimental_conditions[expe_related]["genotype"][0])                              # Nombre de génotypes compris sur la parcelle
+geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de génotypes compris sur la parcelle
 
 crop_genotype = []
 
@@ -434,6 +434,12 @@ Dse_Thesee_mean = 125
 Dse_Thesee_sd = int(hazard_driver["emerg"]) * 30
 Dse_Renan_mean = 125
 Dse_Renan_sd = int(hazard_driver["emerg"]) * 30
+
+var_registerDSE = ["Dse_Maxwell_mean","Dse_Soissons_mean","Dse_Thesee_mean","Dse_Renan_mean","Dse_Maxwell_sd","Dse_Soissons_sd","Dse_Thesee_sd","Dse_Renan_sd"]
+
+for key, value, in params.iteritems(): 
+  if key in var_registerDSE:
+    exec(key+"=value")
 
 Dse = {"Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Soissons" : {"mean" : Dse_Soissons_mean, "sd" : Dse_Soissons_sd}, "Thesee" : {"mean" : Dse_Thesee_mean, "sd" : Dse_Thesee_sd}, "Renan" : {"mean" :Dse_Renan_mean , "sd" : Dse_Renan_sd}}
 
@@ -606,6 +612,13 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 # Cessation of tillering
 GAI_c_Maxwell = 0.5
 GAI_c_Soissons = 0.78
+
+var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_registerGAI:
+    exec(key+"=value")
+
 GAI_c = {"Maxwell" : GAI_c_Maxwell, "Soissons" : GAI_c_Soissons} # Green Area Index threshold above which tillering of a plant stops
 
 dGAIp = 1			# Maximal range of plant detection (meter)
@@ -614,10 +627,24 @@ L_b_S = 2      # Buried length of the first sheath (in cm) | old name : L_burrie
 # Tiller death
 t_beg_reg_Maxwell = 6.8
 t_beg_reg_Soissons = 6.8
+
+var_registerT_beg = ["t_beg_reg_Soissons","t_beg_reg_Maxwell"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_registerT_beg:
+    exec(key+"=value")
+
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell, "Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
 PAR_t_Maxwell = 28
 PAR_t_Soissons = 15
+
+var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_registerPARt:
+    exec(key+"=value")
+
 PAR_t = {"Maxwell" : PAR_t_Maxwell, "Soissons" : PAR_t_Soissons}  # PAR threshold below which a tiller don't survive | old name : PARseuil
 Delta_l = 100     #Duration of radiation integration to determine the survival of a tiller (degree-day) | old name : ray_integration
 
@@ -625,8 +652,16 @@ Delta_l = 100     #Duration of radiation integration to determine the survival o
 Delta_SGtC = 600                   # Thermal time between the moment a tiller stops growing and its entire removal | old name : delta_stopgr_to_cut
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
+
 Delta_prot_Maxwell = 50
 Delta_prot_Soissons = 50
+
+var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_registerDelta_prot:
+    exec(key+"=value")
+
 Delta_prot = {"Maxwell" : Delta_prot_Maxwell ,"Soissons" : Delta_prot_Soissons}                    # Thermal time interval during which two tillers of the same plant cannot die | old name : duration_plant_protection
 
 
@@ -1600,7 +1635,7 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9, sep=";")
 
-var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","rep","densite","nb_rang","nb_plantes","area_targeted","geno_nb","CARIBU_state","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","Dse_mean_Soissons","Dse_mean_Maxwell","Dse_sd_Soissons","Dse_sd_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","shp_I_Soissons","shp_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","GAI_c_Soissons","GAI_c_Maxwell","t_beg_reg_Soissons","t_beg_reg_Maxwell","Delta_prot_Soissons","Delta_prot_Maxwell","PAR_t_Soissons","PAR_t_Maxwell","P_T_Soissons","P_T_MAxwell","R_wL_Maxwell","S_B_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","shp_I_Soissons","shp_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_MAxwell","R_wL_Maxwell","S_B_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print params
 
