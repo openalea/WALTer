@@ -1972,8 +1972,8 @@ def EndEach(lstring, lscene):
           #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
           #On selectionne uniquement la valeur de PAR pour le current day
           
-          sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
-          #sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
+          #sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
+          sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
           sky = GetLight.GetLight(sky)
           sky = sky.split()
           sky_tup = []
