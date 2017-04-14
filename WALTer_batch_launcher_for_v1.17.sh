@@ -54,9 +54,9 @@ do
 	suffixe="`echo ${line[@]} | tr ' ' '_'`.txt"
 	
 	# lancement d'une simulation (script python avec tous ses parametres)
-	#echo "$script_py $script_params >>out.$suffixe 2>err.$suffixe"
+	#echo "$script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe"
 	date
-	time $script_py $script_params >>out.$suffixe 2>err.$suffixe
+	time $script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe
 	
 	identifiant=`cat ID_simul.txt`
 	echo "${line[@]} $identifiant" >> combi_param.txt
