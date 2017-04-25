@@ -80,7 +80,7 @@ WALTer_version = "v1.17.3"
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "None"
+expe_related         = "Mariem"
 densite              = 200
 CARIBU_state         = "enabled"
 rep                  = 2
@@ -304,8 +304,8 @@ elif crop_ccptn == "Darwinkel_original":
 
 elif crop_ccptn == "Mesh_for_nplants":
   nb_plt_utiles = 20
-  dist_border_x = 0.15*100 #inside a rang
-  dist_border_y = 0.15*100 #rang 
+  dist_border_x = 0.30*100 #inside a rang
+  dist_border_y = 0.30*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -346,6 +346,13 @@ if SIRIUS_state == "disabled":
     param_Ln_final = experimental_conditions[expe_related]["Ln_final"]
   else:
     param_Ln_final = 11
+
+
+var_register_Ln_final = ["Ln_final"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_register_Ln_final:
+    exec(key+"=value")
 
 
 ####################
@@ -610,7 +617,7 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 ##################################
 
 # Cessation of tillering
-GAI_c_Maxwell = 0.5
+GAI_c_Maxwell = 0.59
 GAI_c_Soissons = 0.78
 
 var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell"]
@@ -653,7 +660,7 @@ Delta_SGtC = 600                   # Thermal time between the moment a tiller st
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
 
-Delta_prot_Maxwell = 50
+Delta_prot_Maxwell = 75
 Delta_prot_Soissons = 50
 
 var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell"]
