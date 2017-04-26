@@ -91,7 +91,7 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
+hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : False, "frozen_death" : False}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -255,8 +255,8 @@ for key, value, in params.iteritems():
 
 
 if crop_ccptn == "classical":
-  nb_plt_temp = 1
-  nb_rang = 1
+  nb_plt_temp = 200
+  nb_rang = 10
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
@@ -265,8 +265,8 @@ if crop_ccptn == "classical":
   nb_plante_par_rang = int(nb_plt_temp/nb_rang)
   dist_intra = dx/nb_plante_par_rang
   nplant_peupl = int(nb_rang*nb_plante_par_rang)
-  dist_border_x = 0.1*100 #inside a rang
-  dist_border_y = 0.2*100 #rang
+  dist_border_x = 0.2*100 #inside a rang
+  dist_border_y = 0.3*100 #rang
   crop_scheme["nplant_peupl"] = nplant_peupl
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   crop_scheme["dx"] = dx
@@ -303,9 +303,9 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 20
-  dist_border_x = 0.15*100 #inside a rang
-  dist_border_y = 0.15*100 #rang 
+  nb_plt_utiles = 100
+  dist_border_x = 0.*100 #inside a rang
+  dist_border_y = 0.*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -461,7 +461,7 @@ shp_I_Maxwell = "squared"
 shp_I_Soissons = "squared"
 shp_I = {"Maxwell" : shp_I_Maxwell, "Soissons" : shp_I_Soissons} # Shape of the function to determine internode final length
 
-N_I_el_Maxwell = 5
+N_I_el_Maxwell = 4.2
 N_I_el_Soissons = 5
 N_I_el = {"Maxwell" : N_I_el_Maxwell, "Soissons" : N_I_el_Soissons } # Number of elongated internodes                               | old name : NENL
 
@@ -610,7 +610,7 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 ##################################
 
 # Cessation of tillering
-GAI_c_Maxwell = 0.5
+GAI_c_Maxwell = 0.58
 GAI_c_Soissons = 0.78
 
 var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell"]
