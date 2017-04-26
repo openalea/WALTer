@@ -80,7 +80,7 @@ WALTer_version = "v1.17.3"
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "None"
+expe_related         = "Mariem"
 densite              = 200
 CARIBU_state         = "enabled"
 rep                  = 2
@@ -255,8 +255,8 @@ for key, value, in params.iteritems():
 
 
 if crop_ccptn == "classical":
-  nb_plt_temp = 200
-  nb_rang = 10
+  nb_plt_temp = 1
+  nb_rang = 1
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
@@ -303,7 +303,7 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 100
+  nb_plt_utiles = 110
   dist_border_x = 0.*100 #inside a rang
   dist_border_y = 0.*100 #rang 
   crop_scheme = {"density" : densite}
@@ -347,6 +347,11 @@ if SIRIUS_state == "disabled":
   else:
     param_Ln_final = 11
 
+var_register_Ln_final = ["param_Ln_final"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_register_Ln_final:
+    exec(key+"=value")
 
 ####################
 #### PARAMETERS ####
@@ -653,7 +658,7 @@ Delta_SGtC = 600                   # Thermal time between the moment a tiller st
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
 
-Delta_prot_Maxwell = 50
+Delta_prot_Maxwell = 75
 Delta_prot_Soissons = 50
 
 var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell"]
