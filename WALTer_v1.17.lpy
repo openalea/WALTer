@@ -347,13 +347,11 @@ if SIRIUS_state == "disabled":
   else:
     param_Ln_final = 11
 
-
-var_register_Ln_final = ["Ln_final"]
+var_register_Ln_final = ["param_Ln_final"]
   
 for key, value, in params.iteritems(): 
   if key in var_register_Ln_final:
     exec(key+"=value")
-
 
 ####################
 #### PARAMETERS ####
