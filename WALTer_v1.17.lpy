@@ -80,7 +80,7 @@ WALTer_version = "v1.17.3"
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Mariem"
+expe_related         = "Darwinkel_mean"
 densite              = 200
 CARIBU_state         = "enabled"
 rep                  = 2
@@ -91,7 +91,7 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : False, "frozen_death" : False}
+hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -223,7 +223,7 @@ experimental_conditions = {
 "None":{"sowing_date" : date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":11},
 "Mariem_mean":{"sowing_date" : date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
 "Darwinkel_Grignon_mean":{"sowing_date" : date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":11},
-"Darwinkel_mean":{"sowing_date" : date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11.3
+"Darwinkel_mean":{"sowing_date" : date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11.8
 },
 "Sparkes_2001":{"sowing_date" : date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
 "Sparkes_2002":{"sowing_date" : date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
@@ -255,8 +255,8 @@ for key, value, in params.iteritems():
 
 
 if crop_ccptn == "classical":
-  nb_plt_temp = 1
-  nb_rang = 1
+  nb_plt_temp = 600
+  nb_rang = 2
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
@@ -265,8 +265,8 @@ if crop_ccptn == "classical":
   nb_plante_par_rang = int(nb_plt_temp/nb_rang)
   dist_intra = dx/nb_plante_par_rang
   nplant_peupl = int(nb_rang*nb_plante_par_rang)
-  dist_border_x = 0.2*100 #inside a rang
-  dist_border_y = 0.3*100 #rang
+  dist_border_x = 0.*100 #inside a rang
+  dist_border_y = 0.*100 #rang
   crop_scheme["nplant_peupl"] = nplant_peupl
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   crop_scheme["dx"] = dx
@@ -658,7 +658,7 @@ Delta_SGtC = 600                   # Thermal time between the moment a tiller st
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
 
-Delta_prot_Maxwell = 75
+Delta_prot_Maxwell = 50
 Delta_prot_Soissons = 50
 
 var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell"]
@@ -678,7 +678,7 @@ PAS               = 24
 
 ##
 
-nbj               = 25 + 300                             # Durée de la simulation
+nbj               = 25 + 3#00                             # Durée de la simulation
 time_step         = 1.                                   # Temps qui s'écoule   (jour)
 Tbase             = 0.                                 
 
@@ -1768,7 +1768,7 @@ else:
     #If the ID of the simulation is not known
     elif not already_known_ID:
       # We choose a random ID 
-      ID = str(uuid.uuid4())
+      ID = "id-"+str(uuid.uuid4())
       ID_params = {}
       ID_params[ID] = params
       
@@ -1785,7 +1785,7 @@ else:
   # If the json file doesnot exists
   elif not os.path.isfile("index-table.json"):
     # We choose a random ID 
-    ID = str(uuid.uuid4())
+    ID = "id-"+str(uuid.uuid4())
     ID_params = {}
     ID_params[ID] = params
     
@@ -1801,6 +1801,7 @@ else:
   folder_name = ID
   
   #Write the ID of the current simulation in an external file to catch it later un another script
+  print 
   ID_simul = open("ID_simul.txt","w")
   ID_simul.write(ID)
   ID_simul.close()
@@ -2040,15 +2041,15 @@ def EndEach(lstring, lscene):
                 if new_lstring[id].name == "Ear":
                   if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
                     new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
-            
+          
           if write_output_file["PAR_per_axes"] == True:
-            for num_plt in dico_PAR_per_axis.keys():
-              for axis in dico_PAR_per_axis[num_plt].keys():
+            for num_plt in axis_census.keys():
+              for axis in axis_census[num_plt].keys():
                 PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
                 PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                 PAR_per_axes_dico["Num_plante"].append(num_plt)
                 PAR_per_axes_dico["Num_talle"].append(axis)
-                PAR_per_axes_dico["Sum_PAR"].append(sum(dico_PAR_per_axis[num_plt][axis].values()))
+                PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)])
       
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
@@ -2405,7 +2406,6 @@ Seed:
     #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
     x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
     y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
-    print "crop genotype :",  crop_genotype
     geno = random.choice(crop_genotype)    ## selection geno random
     genotype_map[num_plante] = geno
     
@@ -2544,16 +2544,11 @@ Seed:
 
 group 2:
 
+
 Apex(StA):
   if SIRIUS_state == "disabled":
-    StA.Ln_final = param_Ln_final
-    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(param_Ln_final)
-    if random.random() < param_Ln_final%floor(param_Ln_final):
-      StA.Ln_final= floor(param_Ln_final) + 1
-    else:
-      StA.Ln_final = floor(param_Ln_final)
-    StA.Ln_final = int(StA.Ln_final)
-    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(StA.Ln_final)
+    StA.Ln_final = int(param_Ln_final)+int(random.random() + param_Ln_final%1)
+    dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     useGroup(3)
   
   elif SIRIUS_state == "enabled":
@@ -2627,12 +2622,9 @@ Apex(StA):
                 StA.photop_flag = True
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
-                if random.random() < StA.Ln_app%floor(StA.Ln_app):
-                  StA.Ln_final = floor(StA.Ln_app) + 1
-                else:
-                  StA.Ln_final = floor(StA.Ln_app)
-                StA.Ln_final = int(StA.Ln_final)
-                dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(StA.Ln_final)
+                
+                StA.Ln_final = int(StA.Ln_app)+int(random.random()+StA.Ln_app%1)
+                dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     _Tempcum = 0
     date_current_day = sowing_date + timedelta(2) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
     DOY = int(date_current_day.strftime('%j'))
@@ -2645,7 +2637,7 @@ group 3:
 
 
 Apex(StA):
-  if StA.num_plante in dead_plants:
+  if StA.num_plante in dead_plants: #TODO enlever
     print "je coupe la plante : ", StA.num_plante
     produce % Apex(StA)  
   
@@ -2842,9 +2834,6 @@ Apex(StA):
           for axis in dico_stades[StA.num_plante].keys():
             if axis != (1,):
               dico_stades[StA.num_plante][axis]["Transiflo"][1] = dico_stades[StA.num_plante][(1,)]["Transiflo"][1] + round(transiflo_shift(axis, StA.geno), 2)
-            if axis in liste_talles:
-              print axis, "transiflo",dico_stades[StA.num_plante][axis]["Transiflo"], "n : ", StA.n,"time : ", StA.time, "sumtemp : ", StA.sumtemp
-              print "BM : ", dico_stades[StA.num_plante][(1,)]["Transiflo"]
           StA.date_de_flo = leaf_emerg_date((StA.Ln_final), StA.tiller, StA.geno, StA.num_plante) + (ED_FB + ED_S + Delta_lflf) * phyll_adjust(StA.geno)
           dico_stades[StA.num_plante][StA.tiller]["Flo"][1] = StA.date_de_flo
           StA.date_epi = StA.date_de_flo - Delta_hf * phyll_adjust(StA.geno)
@@ -3328,6 +3317,7 @@ CutPointBud(StCPB):
         elif StCPB.reg_count > Delta_SGtC:
           #print StCPB.num_plante, "i will cut this mozeurfockeur : ", StCPB.tiller
           del axis_census[StCPB.num_plante][StCPB.tiller]
+          print "plt : ", StCPB.num_plante, "axis : ",StCPB.tiller
           produce % CutPointBud(StCPB)
 
 Leaf(StL):
