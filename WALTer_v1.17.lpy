@@ -2248,6 +2248,8 @@ def End(lstring):
                        "Nb_plantes" + "\t" + "All" + "\t" + "%s" % nb_plantes + "\n" +
                        "Area_targeted" + "\t" + "All" + "\t" + "%s" % area_targeted + "\n" +
                        "Nb_plantes_utiles" + "\t" + "All" + "\t" + "%s" % crop_scheme["nb_useful_plt"] + "\n" +
+                       "dist_border_x" + "\t" + "All" + "\t" + "%s" % dist_border_x + "\n" +
+                       "dist_border_y" + "\t" + "All" + "\t" + "%s" % dist_border_y + "\n" +
                        "Genotypes_nb" + "\t" + "All" + "\t" + "%s" % geno_nb + "\n" +
                        "CARIBU_state" + "\t" + "All" + "\t" + "%s" % CARIBU_state + "\n" +
                        "SIRIUS_state" + "\t" + "All" + "\t" + "%s" % SIRIUS_state + "\n" +
