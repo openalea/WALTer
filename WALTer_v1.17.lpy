@@ -80,7 +80,7 @@ WALTer_version = "v1.17.3"
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Darwinkel_mean"
+expe_related         = "Mariem"
 densite              = 200
 CARIBU_state         = "enabled"
 rep                  = 2
@@ -91,7 +91,7 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
+hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : False, "frozen_death" : False}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -299,9 +299,9 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 110
-  dist_border_x = 0.3*100 #inside a rang
-  dist_border_y = 0.3*100 #rang 
+  nb_plt_utiles = 20
+  dist_border_x = 0.30*100 #inside a rang
+  dist_border_y = 0.30*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -415,7 +415,7 @@ ED_P = 2 # Duration for peduncle extension (phyllochronic time)                 
 # Tiller emergence
 Delta_b  = 1            #Delay between the initiation of a bud and the start of its activity (plastochronic unit) | old name : inactive_time_bud
 
-P_T_Maxwell = 1#0.88
+P_T_Maxwell = 0.88
 P_T_Soissons = 0.88
 P_T = {"Maxwell" : P_T_Maxwell, "Soissons" : P_T_Soissons}  # Probability of emergence of a tiller (except for coleoptil tiller) | old name : tillering_prob
 
@@ -462,7 +462,7 @@ shp_I_Maxwell = "squared"
 shp_I_Soissons = "squared"
 shp_I = {"Maxwell" : shp_I_Maxwell, "Soissons" : shp_I_Soissons} # Shape of the function to determine internode final length
 
-N_I_el_Maxwell = 4.2
+N_I_el_Maxwell = 5
 N_I_el_Soissons = 5
 N_I_el = {"Maxwell" : N_I_el_Maxwell, "Soissons" : N_I_el_Soissons } # Number of elongated internodes                               | old name : NENL
 
@@ -611,7 +611,7 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 ##################################
 
 # Cessation of tillering
-GAI_c_Maxwell = 0.58
+GAI_c_Maxwell = 0.59
 GAI_c_Soissons = 0.78
 
 var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell"]
@@ -654,7 +654,7 @@ Delta_SGtC = 600                   # Thermal time between the moment a tiller st
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
 
-Delta_prot_Maxwell = 50
+Delta_prot_Maxwell = 75
 Delta_prot_Soissons = 50
 
 var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell"]
