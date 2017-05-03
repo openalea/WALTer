@@ -1980,7 +1980,8 @@ def EndEach(lstring, lscene):
   ##Module de rayonnement : CARIBU #
   ##################################
   
-  
+  s_save = Scene(lscene)
+  s_save.save("./output/"+folder_name+"/lscene-day-"+"%s" % elapsed_time+".bgeom")
   #s = Scene(lscene)
   #s.add(lscene)
   #s.save("./lscene-debug.bgeom")
