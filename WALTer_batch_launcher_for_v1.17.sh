@@ -3,7 +3,7 @@
 # pas d'argument => on ecrit le message d'erreur sur la sortie d'erreur et on renvoie une valeur > 0 
 [[ -z $1 ]] && echo >&2 "Error: fucking argument missing !" && exit 1
 
-> combi_param.txt
+> combi_param.csv
 
 # chemin vers le script python
 script_py="./WALTer_launcher_for_v_1.17.py"
@@ -32,7 +32,7 @@ while read -a line
 do
 	# Si le tableau param_names est vide, on le remplit avec le contenu de la 1ere ligne
 	# continue => on passe a l'iteration suivante sans executer le reste du bloc
-	[[ -z $param_names ]] && param_names=(${line[@]}) && identifiant="ID" && echo "${line[@]} $identifiant" >> combi_param.txt && continue
+	[[ -z $param_names ]] && param_names=(${line[@]}) && identifiant="ID" && OLD_IFS="$IFS" && IFS="   " && echo -e "${line[*]}""\t"$identifiant >> combi_param.csv && IFS="$OLD_IFS" && continue
 
 	i=0 # indice des tableaux
 	
@@ -55,11 +55,15 @@ do
 	
 	# lancement d'une simulation (script python avec tous ses parametres)
 	#echo "$script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe"
-	date
-	time $script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe
+	date | tee Times/time.$suffixe
+	{ time $script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe ; } 2>&1 | tee -a Times/time.$suffixe
 	
 	identifiant=`cat ID_simul.txt`
-	echo "${line[@]} $identifiant" >> combi_param.txt
+
+	OLD_IFS="$IFS"
+	IFS="   "	
+	echo -e "${line[*]}""\t"$identifiant >> combi_param.csv
+	IFS="$OLD_IFS"
 	
 	#./WALTer_launcher-v1-17_dev.py densite=$a tillering_prob_Maxwell=$b LAIc_Maxwell=$c PARseuil=$d expe_related=$e rep=$r CARIBU_state=$CARIBU >>out.$a.$b.$c.$d.$e.$r.txt 2>err.$a.$b.$c.$d.$e.$r.txt
 
