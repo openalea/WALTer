@@ -91,7 +91,7 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : True, "frozen_death" : False}
+hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : False, "frozen_death" : False}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -2547,13 +2547,13 @@ group 2:
 Apex(StA):
   if SIRIUS_state == "disabled":
     StA.Ln_final = param_Ln_final
-    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(param_Ln_final)
+    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(param_Ln_final)  #TODO a jeter ?
     if random.random() < param_Ln_final%floor(param_Ln_final):
       StA.Ln_final= floor(param_Ln_final) + 1
     else:
       StA.Ln_final = floor(param_Ln_final)
     StA.Ln_final = int(StA.Ln_final)
-    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(StA.Ln_final)
+    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(StA.Ln_final) #TODO int superflu ?
     useGroup(3)
   
   elif SIRIUS_state == "enabled":
@@ -2627,6 +2627,7 @@ Apex(StA):
                 StA.photop_flag = True
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
+                
                 if random.random() < StA.Ln_app%floor(StA.Ln_app):
                   StA.Ln_final = floor(StA.Ln_app) + 1
                 else:
