@@ -24,8 +24,8 @@ from alinea.caribu.sky_tools import GenSky,  GetLight, Gensun, GetLightsSun
 from alinea.caribu.CaribuScene import CaribuScene
 
 # Date
-from datetime import date
-from datetime import timedelta
+
+import datetime
 
 # Liste des modules utilisés par la suite dans le modèle :
 
@@ -177,7 +177,6 @@ def design_crop_Darwinkel(area, density):
   crop_scheme["surface_sol"] = dx*dy
   crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  print crop_scheme
   return crop_scheme
 
 def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_border_y):
@@ -202,32 +201,31 @@ def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_bo
   crop_scheme["surface_sol"] = dx*dy
   crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  print crop_scheme
   return crop_scheme
 
 
 # Setting experimental informations 
 experimental_conditions = {
-"Sreten":{"sowing_date" : date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11}, 
-"Rim1-1":{"sowing_date" : date(2007,9,25), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim1-2":{"sowing_date" : date(2007,11,12), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim2-1":{"sowing_date" : date(2008,9,30), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim2-2":{"sowing_date" : date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Jillian":{"sowing_date" : date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Jessica":{"sowing_date" : date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11.3},
-"Mariem":{"sowing_date" : date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
-"Darwinkel":{"sowing_date" : date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":11},
-"Darwinkel_temp":{"sowing_date" : date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11},
-"Wheatamix-2014":{"sowing_date" : date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Ouitamics-2014":{"sowing_date" : date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":11},
-"None":{"sowing_date" : date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":11},
-"Mariem_mean":{"sowing_date" : date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
-"Darwinkel_Grignon_mean":{"sowing_date" : date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":11},
-"Darwinkel_mean":{"sowing_date" : date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11.3
+"Sreten":{"sowing_date" : datetime.date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11}, 
+"Rim1-1":{"sowing_date" : datetime.date(2007,9,25), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
+"Rim1-2":{"sowing_date" : datetime.date(2007,11,12), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
+"Rim2-1":{"sowing_date" : datetime.date(2008,9,30), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
+"Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
+"Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
+"Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11.3},
+"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
+"Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":11},
+"Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11},
+"Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
+"Ouitamics-2014":{"sowing_date" : datetime.date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":11},
+"None":{"sowing_date" : datetime.date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":11},
+"Mariem_mean":{"sowing_date" : datetime.date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
+"Darwinkel_Grignon_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":11},
+"Darwinkel_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11.3
 },
-"Sparkes_2001":{"sowing_date" : date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sparkes_2002":{"sowing_date" : date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sparkes_2003":{"sowing_date" : date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
+"Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
+"Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
+"Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
 }
 
 liste_expe = experimental_conditions.keys()
@@ -255,8 +253,8 @@ for key, value, in params.iteritems():
 
 
 if crop_ccptn == "classical":
-  nb_plt_temp = 1
-  nb_rang = 1
+  nb_plt_temp = 2
+  nb_rang = 2
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
@@ -265,8 +263,8 @@ if crop_ccptn == "classical":
   nb_plante_par_rang = int(nb_plt_temp/nb_rang)
   dist_intra = dx/nb_plante_par_rang
   nplant_peupl = int(nb_rang*nb_plante_par_rang)
-  dist_border_x = 0.1*100 #inside a rang
-  dist_border_y = 0.2*100 #rang
+  dist_border_x = 0.*100 #inside a rang
+  dist_border_y = 0.*100 #rang
   crop_scheme["nplant_peupl"] = nplant_peupl
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   crop_scheme["dx"] = dx
@@ -278,7 +276,6 @@ if crop_ccptn == "classical":
   crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
   crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  print crop_scheme
 elif crop_ccptn == "neo_Darwinkel":
   area_min, area_max = 1, 13
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
@@ -288,7 +285,6 @@ elif crop_ccptn == "neo_Darwinkel":
   dist_border_x = 0.2*100 #inside a rang
   dist_border_y = 0.15*100 #rang
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  print crop_scheme
   
 elif crop_ccptn == "Darwinkel_original":
   area = area_targeted
@@ -1658,15 +1654,15 @@ L_B_max = {"Maxwell" : L_B_max_Maxwell, "Soissons" : L_B_max_Soissons} # Final l
 a_B_w_Maxwell = (R_wL_Maxwell*L_B_max_Maxwell-R_wL_Maxwell)/L_B_max_Maxwell
 a_B_w = {"Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
 
-tab_top = date(int(year)-1,9,1)													      # On définit la date du début du fichier
-double_finger = date(int(year)-1,1,1)                               #Premier janvier
+tab_top = datetime.date(int(year)-1,9,1)													      # On définit la date du début du fichier
+double_finger = datetime.date(int(year)-1,1,1)                               #Premier janvier
 sowing_DOY=(sowing_date-double_finger).days     # DOY du semis  
 
 #################################################################################################################
 ### LE TEMPS QUI PASSE ###
 #delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le début du fichier
 #delta_date.days								                            # Retourne le nombre de jour en integer (c'est l'indice dans le tableau )
-date_current_day = sowing_date + timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
 DOY = int(date_current_day.strftime('%j'))
 
 
@@ -1768,7 +1764,7 @@ else:
     #If the ID of the simulation is not known
     elif not already_known_ID:
       # We choose a random ID 
-      ID = str(uuid.uuid4())
+      ID = "id-"+str(uuid.uuid4())
       ID_params = {}
       ID_params[ID] = params
       
@@ -1785,7 +1781,7 @@ else:
   # If the json file doesnot exists
   elif not os.path.isfile("index-table.json"):
     # We choose a random ID 
-    ID = str(uuid.uuid4())
+    ID = "id-"+str(uuid.uuid4())
     ID_params = {}
     ID_params[ID] = params
     
@@ -1840,7 +1836,7 @@ def StartEach(lstring):
   global date_current_day
   global DOY
   elapsed_time += time_step                    #dj = incrément de temps en jours
-  date_current_day = sowing_date + timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+  date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
   #mean_temperatures[current_day - tab_top).days]                   # Température moyenne du jour après elapsed time jours passés
   if DOY == 365:
     DOY = 1
@@ -1996,7 +1992,7 @@ def EndEach(lstring, lscene):
     if type(lscene) != None:
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
-          
+          print "The date : ", str(datetime.datetime.now())
           xmin = crop_scheme["dist_intra_rang"]/2
           ymin = crop_scheme["dist_inter_rang"]/2
           xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
@@ -2018,9 +2014,10 @@ def EndEach(lstring, lscene):
           sky = sky.split()
           sky_tup = []
           
-          for n in range(nb_azimuth*nb_zenith):
-            sky_tup.append((float(sky[0]),(float(sky[1]), float(sky[2]), float(sky[3]))))
-            del sky[0:4] 
+          
+          for i in range(nb_azimuth*nb_zenith):
+            sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
+            i+=4 
           
           c_scene = CaribuScene(scene = lscene, scene_unit="cm", light = sky_tup)
           output = c_scene.run()
@@ -2040,15 +2037,15 @@ def EndEach(lstring, lscene):
                 if new_lstring[id].name == "Ear":
                   if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
                     new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
-            
+          
           if write_output_file["PAR_per_axes"] == True:
-            for num_plt in dico_PAR_per_axis.keys():
-              for axis in dico_PAR_per_axis[num_plt].keys():
+            for num_plt in axis_census.keys():
+              for axis in axis_census[num_plt].keys():
                 PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
                 PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                 PAR_per_axes_dico["Num_plante"].append(num_plt)
                 PAR_per_axes_dico["Num_talle"].append(axis)
-                PAR_per_axes_dico["Sum_PAR"].append(sum(dico_PAR_per_axis[num_plt][axis].values()))
+                PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)])
       
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
@@ -2247,6 +2244,8 @@ def End(lstring):
                        "Nb_plantes" + "\t" + "All" + "\t" + "%s" % nb_plantes + "\n" +
                        "Area_targeted" + "\t" + "All" + "\t" + "%s" % area_targeted + "\n" +
                        "Nb_plantes_utiles" + "\t" + "All" + "\t" + "%s" % crop_scheme["nb_useful_plt"] + "\n" +
+                       "dist_border_x" + "\t" + "All" + "\t" + "%s" % dist_border_x + "\n" +
+                       "dist_border_y" + "\t" + "All" + "\t" + "%s" % dist_border_y + "\n" +
                        "Genotypes_nb" + "\t" + "All" + "\t" + "%s" % geno_nb + "\n" +
                        "CARIBU_state" + "\t" + "All" + "\t" + "%s" % CARIBU_state + "\n" +
                        "SIRIUS_state" + "\t" + "All" + "\t" + "%s" % SIRIUS_state + "\n" +
@@ -2405,7 +2404,6 @@ Seed:
     #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
     x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
     y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
-    print "crop genotype :",  crop_genotype
     geno = random.choice(crop_genotype)    ## selection geno random
     genotype_map[num_plante] = geno
     
@@ -2544,16 +2542,11 @@ Seed:
 
 group 2:
 
+
 Apex(StA):
   if SIRIUS_state == "disabled":
-    StA.Ln_final = param_Ln_final
-    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(param_Ln_final)  #TODO a jeter ?
-    if random.random() < param_Ln_final%floor(param_Ln_final):
-      StA.Ln_final= floor(param_Ln_final) + 1
-    else:
-      StA.Ln_final = floor(param_Ln_final)
-    StA.Ln_final = int(StA.Ln_final)
-    dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(StA.Ln_final) #TODO int superflu ?
+    StA.Ln_final = int(param_Ln_final)+int(random.random() + param_Ln_final%1)
+    dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     useGroup(3)
   
   elif SIRIUS_state == "enabled":
@@ -2562,7 +2555,7 @@ Apex(StA):
     global DOY
     
     for day in range(1,300):
-      date_current_day = sowing_date + timedelta(day) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
       _current_temperature = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['TM']
       current_temperature = _current_temperature[_current_temperature.last_valid_index()]
       _Tempcum += max(Tbase,current_temperature)
@@ -2628,14 +2621,10 @@ Apex(StA):
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
                 
-                if random.random() < StA.Ln_app%floor(StA.Ln_app):
-                  StA.Ln_final = floor(StA.Ln_app) + 1
-                else:
-                  StA.Ln_final = floor(StA.Ln_app)
-                StA.Ln_final = int(StA.Ln_final)
-                dico_stades[StA.num_plante][(1,)]["Ln_final"] = int(StA.Ln_final)
+                StA.Ln_final = int(StA.Ln_app)+int(random.random()+StA.Ln_app%1)
+                dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     _Tempcum = 0
-    date_current_day = sowing_date + timedelta(2) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
     DOY = int(date_current_day.strftime('%j'))
     useGroup(3)
 
@@ -2646,7 +2635,7 @@ group 3:
 
 
 Apex(StA):
-  if StA.num_plante in dead_plants:
+  if StA.num_plante in dead_plants: #TODO enlever
     print "je coupe la plante : ", StA.num_plante
     produce % Apex(StA)  
   
@@ -2695,7 +2684,7 @@ Apex(StA):
     StA.sumtemp = 0
     elapsed_time = 0
     Tempcum = 0
-    date_current_day = sowing_date + timedelta(elapsed_time)
+    date_current_day = sowing_date + datetime.timedelta(elapsed_time)
     DOY = int(date_current_day.strftime('%j'))
     initialization_Flag[StA.num_plante] = False
     #lstring_gp3 = open("./WALTer_Lstring_group3.txt", "w")
@@ -2843,9 +2832,6 @@ Apex(StA):
           for axis in dico_stades[StA.num_plante].keys():
             if axis != (1,):
               dico_stades[StA.num_plante][axis]["Transiflo"][1] = dico_stades[StA.num_plante][(1,)]["Transiflo"][1] + round(transiflo_shift(axis, StA.geno), 2)
-            if axis in liste_talles:
-              print axis, "transiflo",dico_stades[StA.num_plante][axis]["Transiflo"], "n : ", StA.n,"time : ", StA.time, "sumtemp : ", StA.sumtemp
-              print "BM : ", dico_stades[StA.num_plante][(1,)]["Transiflo"]
           StA.date_de_flo = leaf_emerg_date((StA.Ln_final), StA.tiller, StA.geno, StA.num_plante) + (ED_FB + ED_S + Delta_lflf) * phyll_adjust(StA.geno)
           dico_stades[StA.num_plante][StA.tiller]["Flo"][1] = StA.date_de_flo
           StA.date_epi = StA.date_de_flo - Delta_hf * phyll_adjust(StA.geno)
