@@ -2030,14 +2030,11 @@ def EndEach(lstring, lscene):
               for axis in axis_census[num_plt].keys():
                 dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
             for id in mapping_table.keys():
-              if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle": 
+              if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle" or new_lstring[id].name == "Ear" and new_lstring[id][0].emerged == True:  
                 if new_lstring[id][0].tiller in axis_census[new_lstring[id][0].num_plante].keys():
                   new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
                   dico_PAR[new_lstring[id].name][new_lstring[id][0].num_plante][new_lstring[id][0].tiller][new_lstring[id][0].n] = new_lstring[id][0].PAR
                   dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
-                if new_lstring[id].name == "Ear":
-                  if new_lstring[id][0].PAR_flag_1 == True and new_lstring[id][0].PAR_flag_2 == True :
-                    new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
           
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
