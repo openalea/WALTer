@@ -213,7 +213,7 @@ experimental_conditions = {
 "Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
 "Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
 "Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11.3},
-"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
+"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
 "Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":11},
 "Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11},
 "Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
@@ -300,8 +300,8 @@ elif crop_ccptn == "Darwinkel_original":
 
 elif crop_ccptn == "Mesh_for_nplants":
   nb_plt_utiles = 20
-  dist_border_x = 0.30*100 #inside a rang
-  dist_border_y = 0.30*100 #rang 
+  dist_border_x = 0.20*100 #inside a rang
+  dist_border_y = 0.20*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
