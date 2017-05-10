@@ -2432,7 +2432,7 @@ Seed:
     axis_census[num_plante][tiller_init] = {"emerg_date" : Dse_heterogeneous[num_plante], "Stop_growth_flag" : False, "Regression_flag" : False}
     
     dico_stades[num_plante] = {}
-    dico_stades[num_plante][tiller_init] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
+    dico_stades[num_plante][tiller_init] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
     
     dico_PAR["Blade"][num_plante] = {}
     dico_PAR["Sheath"][num_plante] = {}
@@ -2696,7 +2696,7 @@ Bud_primord(StBu_p):
     hazard_dict_axis[StBu.num_plante][new_tiller_name] = {}
     hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_azimuth"] = Phi_azi_T + random.uniform(-till_azi_hazard, till_azi_hazard)
     hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_zenith"] = Phi_zen_T + random.uniform(-till_zen_hazard, till_zen_hazard)
-    dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
+    dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
     
     ## Phytomer scaled dictionnaries
     current_internode_length[StBu.num_plante][StBu.tiller] = {}
@@ -3015,7 +3015,7 @@ Bud_primord(StBu_p):
         
         dico_cut_dead_blades[StBu.num_plante][new_tiller_name] = []
         
-        dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
+        dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
         
         ## Phytomer scaled dictionnaries
         current_internode_length[StBu.num_plante][StBu.tiller] = {}
@@ -3271,8 +3271,8 @@ Bud_R(StBuR):
         
         ### End of dictionnaries formatting ###
         
-        StE = Ear(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
-        StE.emerged = True
+        # The previously produced ear emerges
+        dico_stades[StBuR.num_plante][StBuR.tiller]["Ear_emergence"] = True
         StP = Peduncle(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
         StAR = Apex_R(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
         StAR.Ln_final = StBuR.Ln_final
@@ -3280,8 +3280,6 @@ Bud_R(StBuR):
         StAR.date_epi = dico_stades[StBuR.num_plante][StBuR.tiller]["Epiaison"][1]
         StAR.date_de_flo = dico_stades[StBuR.num_plante][StBuR.tiller]["Flo"][1]
         StAR.date_mat = dico_stades[StBuR.num_plante][StBuR.tiller]["Maturite"][1]
-        if StBuR.tiller == (1,4):
-          print StBuR.tiller, StE.emerged
         produce Apex_R(StAR)
       else:
         dico_cut_fantom_axes[StBuR.num_plante][StBuR.tiller] = True
@@ -3657,6 +3655,8 @@ Ear(StE):
   if StE.tiller in axis_census[StE.num_plante] and axis_census[StE.num_plante][StE.tiller]["Stop_growth_flag"] == True:
     pass
   else:
+    if dico_stades[StE.num_plante][StE.tiller]["Ear_emergence"] == True and StE.emerged == False:
+      StE.emerged = True
     StE.sumtemp += max(Tbase,Temperature)
     StE.age += time_step
     StE.diameter = d_E[StE.geno]
@@ -3666,6 +3666,9 @@ Ear(StE):
   
   if Tempcum >= dico_stades[StE.num_plante][StE.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StE.photosynthetic == True:
     StE.photosynthetic = False
+  
+  if StE.tiller == (1,4):
+    print "EAR : ",StE.tiller, StE.emerged
   
   if write_output_file["Ear"]:
     Ear_dico_df["Elapsed_time"].append(elapsed_time) 
