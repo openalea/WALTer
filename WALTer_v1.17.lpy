@@ -761,7 +761,7 @@ global Apex_R_dico_df
 Apex_R_dico_df = {"Elapsed_time" :[], "DOY" : [], "Temperature" :[], "Temp_cum" :[], "Sum_temp" :[], "Num_plante":[], "Genotype" :[], "Num_cohorte":[], "Ln_final":[], "Num_talle" :[], "Date_epiaison" :[], "Epi_DOY" :[], "Date_de_flo" :[], "Mont_flag" :[], "Mont_DOY":[], "Flo_flag" :[], "Flo_DOY" :[], "Death_flag" :[], "Date_de_maturite" : [], "Mat_DOY" : []}
 
 global Blade_df
-Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
+Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
 
 global Internode_dico_df
 Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[],  "Internode_PAR" : [], "Photosynthetic" :[]}
@@ -773,7 +773,7 @@ global Sheath_dico_df
 Sheath_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[] ,"Num_cohorte":[], "Num_rang" :[],"Sheath_sumtemp" :[] ,"Sheath_diameter" :[], "Sheath_length" :[],  "Sheath_final_length" :[], "Sheath_surface" :[], "Sheath_PAR" : [], "Photosynthetic" :[]}
 
 global Ear_dico_df
-Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Sumtemp"  :[], "Ear_length" :[], "PAR":[], "Photosynthetic" :[], "Emerged" : []}
+Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
 
 global Proba_dico_df
 Proba_dico_df = {"Elapsed_time":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Genotype":[], "Num_talle":[], "Num_rang":[], "Sumtemp":[], "GAI_prox":[], "P_debourr":[]}
@@ -3462,7 +3462,7 @@ Blade(StBl):
       Blade_dico_df['Blade_final_length'].append(StBl.final_length)
       Blade_dico_df['Blade_visible_surface'].append(StBl.visible_area)
       Blade_dico_df['Blade_surface'].append((StBl.width*StBl.length*0.75))
-      Blade_dico_df['PAR'].append(StBl.PAR)
+      Blade_dico_df['Blade_PAR'].append(StBl.PAR)
       Blade_dico_df['Senesc_flag'].append(StBl.senesc_flag)
       Blade_dico_df['Photosynthetic'].append(StBl.photosynthetic)
     
@@ -3666,10 +3666,10 @@ Ear(StE):
     Ear_dico_df["Num_plante"].append(StE.num_plante) 
     Ear_dico_df["Genotype"].append(StE.geno) 
     Ear_dico_df["Num_talle"].append(str(StE.tiller)) 
-    Ear_dico_df["Sumtemp"].append(StE.sumtemp) 
+    Ear_dico_df["Ear_sumtemp"].append(StE.sumtemp) 
     Ear_dico_df["Ear_length"].append(StE.length) 
     Ear_dico_df["Emerged"].append(StE.emerged)
-    Ear_dico_df["PAR"].append(StE.PAR) 
+    Ear_dico_df["Ear_PAR"].append(StE.PAR) 
     Ear_dico_df["Photosynthetic"].append(StE.photosynthetic)
   
   produce Ear(StE)
