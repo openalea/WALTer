@@ -2807,6 +2807,8 @@ Apex(StA):
           StAR = Apex_R(StA.num_plante, StA.geno, StA.tiller, StA.n)
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
+          if StA.tiller == (1,4):
+            print "Apex",StA.tiller, StE.emerged
           produce Peduncle(StP)Ear(StE)Apex_R(StAR) 
           
       # Transition florale des talles
@@ -2832,6 +2834,9 @@ Apex(StA):
           StAR = Apex_R(StA.num_plante, StA.geno, StA.tiller, StA.n)
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
+          if StA.tiller == (1,4):
+            print "Apex1",StA.tiller, StE.emerged
+
           produce Peduncle(StP)Ear(StE)Apex_R(StAR)
       
       # Production de primordia
@@ -3275,6 +3280,8 @@ Bud_R(StBuR):
         StAR.date_epi = dico_stades[StBuR.num_plante][StBuR.tiller]["Epiaison"][1]
         StAR.date_de_flo = dico_stades[StBuR.num_plante][StBuR.tiller]["Flo"][1]
         StAR.date_mat = dico_stades[StBuR.num_plante][StBuR.tiller]["Maturite"][1]
+        if StBuR.tiller == (1,4):
+          print StBuR.tiller, StE.emerged
         produce Apex_R(StAR)
       else:
         dico_cut_fantom_axes[StBuR.num_plante][StBuR.tiller] = True
