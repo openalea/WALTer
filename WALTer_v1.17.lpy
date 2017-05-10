@@ -75,7 +75,7 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.3"
+WALTer_version = "v1.17.5"
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -302,9 +302,9 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 20
-  dist_border_x = 0.30*100 #inside a rang
-  dist_border_y = 0.30*100 #rang 
+  nb_plt_utiles = 50
+  dist_border_x = 0.20*100 #inside a rang
+  dist_border_y = 0.20*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -2212,7 +2212,7 @@ def End(lstring):
 
   # FICHIER PARAMETRES
   
-  fichier_params = open("./output/"+folder_name+"/parameters.txt", "w")
+  fichier_params = open("./output/"+folder_name+"/Parameters.csv", "w")
   fichier_params.write("Parameter" + "\t" + "Genotype" + "\t" + "Value" + "\n" + 
                        "WALTer_version" + "\t" + "All" + "\t" + "%s" % WALTer_version + "\n" +
                        "Related_experiment" + "\t" + "All" + "\t" + "%s" % expe_related + "\n" +
@@ -2338,7 +2338,7 @@ def End(lstring):
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
-  fichier_individual= open("./output/"+folder_name+"/individual_heterogeneity.txt", "w")
+  fichier_individual= open("./output/"+folder_name+"/Individual_heterogeneity.csv", "w")
   fichier_individual.write("Parameter" + "\t" + "Num_plante" + "\t" + "Dse" + "\n" )
   for numplt in range(1,crop_scheme["nplant_peupl"] + 1):
     fichier_individual.write("Dse_ind" + "\t" + "%s" % numplt + "\t" + "%s" % Dse_heterogeneous[numplt] + "\n" )
@@ -2359,7 +2359,7 @@ Seed:
   global beginning_CARIBU
   global ending_CARIBU
   
-  fichier_parcelle = open("./output/"+folder_name+"/parcelle.txt", "w")
+  fichier_parcelle = open("./output/"+folder_name+"/Parcelle.csv", "w")
   
   fichier_parcelle.write("X" + "\t" + "Y" + "\t" + "Num_plante" + "\t" + "Genotype" + "\n")
   
