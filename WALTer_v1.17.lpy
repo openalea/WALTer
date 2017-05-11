@@ -75,7 +75,7 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.3"
+WALTer_version = "v1.17.5"
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -302,7 +302,7 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 20
+  nb_plt_utiles = 50
   dist_border_x = 0.20*100 #inside a rang
   dist_border_y = 0.20*100 #rang 
   crop_scheme = {"density" : densite}
@@ -761,7 +761,7 @@ global Apex_R_dico_df
 Apex_R_dico_df = {"Elapsed_time" :[], "DOY" : [], "Temperature" :[], "Temp_cum" :[], "Sum_temp" :[], "Num_plante":[], "Genotype" :[], "Num_cohorte":[], "Ln_final":[], "Num_talle" :[], "Date_epiaison" :[], "Epi_DOY" :[], "Date_de_flo" :[], "Mont_flag" :[], "Mont_DOY":[], "Flo_flag" :[], "Flo_DOY" :[], "Death_flag" :[], "Date_de_maturite" : [], "Mat_DOY" : []}
 
 global Blade_df
-Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
+Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
 
 global Internode_dico_df
 Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[],  "Internode_PAR" : [], "Photosynthetic" :[]}
@@ -773,7 +773,7 @@ global Sheath_dico_df
 Sheath_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[] ,"Num_cohorte":[], "Num_rang" :[],"Sheath_sumtemp" :[] ,"Sheath_diameter" :[], "Sheath_length" :[],  "Sheath_final_length" :[], "Sheath_surface" :[], "Sheath_PAR" : [], "Photosynthetic" :[]}
 
 global Ear_dico_df
-Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Sumtemp"  :[], "Ear_length" :[], "PAR":[], "Photosynthetic" :[], "Emerged" : []}
+Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
 
 global Proba_dico_df
 Proba_dico_df = {"Elapsed_time":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Genotype":[], "Num_talle":[], "Num_rang":[], "Sumtemp":[], "GAI_prox":[], "P_debourr":[]}
@@ -2212,7 +2212,7 @@ def End(lstring):
 
   # FICHIER PARAMETRES
   
-  fichier_params = open("./output/"+folder_name+"/parameters.txt", "w")
+  fichier_params = open("./output/"+folder_name+"/Parameters.csv", "w")
   fichier_params.write("Parameter" + "\t" + "Genotype" + "\t" + "Value" + "\n" + 
                        "WALTer_version" + "\t" + "All" + "\t" + "%s" % WALTer_version + "\n" +
                        "Related_experiment" + "\t" + "All" + "\t" + "%s" % expe_related + "\n" +
@@ -2338,7 +2338,7 @@ def End(lstring):
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
-  fichier_individual= open("./output/"+folder_name+"/individual_heterogeneity.txt", "w")
+  fichier_individual= open("./output/"+folder_name+"/Individual_heterogeneity.csv", "w")
   fichier_individual.write("Parameter" + "\t" + "Num_plante" + "\t" + "Dse" + "\n" )
   for numplt in range(1,crop_scheme["nplant_peupl"] + 1):
     fichier_individual.write("Dse_ind" + "\t" + "%s" % numplt + "\t" + "%s" % Dse_heterogeneous[numplt] + "\n" )
@@ -2359,7 +2359,7 @@ Seed:
   global beginning_CARIBU
   global ending_CARIBU
   
-  fichier_parcelle = open("./output/"+folder_name+"/parcelle.txt", "w")
+  fichier_parcelle = open("./output/"+folder_name+"/Parcelle.csv", "w")
   
   fichier_parcelle.write("X" + "\t" + "Y" + "\t" + "Num_plante" + "\t" + "Genotype" + "\n")
   
@@ -2432,7 +2432,7 @@ Seed:
     axis_census[num_plante][tiller_init] = {"emerg_date" : Dse_heterogeneous[num_plante], "Stop_growth_flag" : False, "Regression_flag" : False}
     
     dico_stades[num_plante] = {}
-    dico_stades[num_plante][tiller_init] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
+    dico_stades[num_plante][tiller_init] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
     
     dico_PAR["Blade"][num_plante] = {}
     dico_PAR["Sheath"][num_plante] = {}
@@ -2696,7 +2696,7 @@ Bud_primord(StBu_p):
     hazard_dict_axis[StBu.num_plante][new_tiller_name] = {}
     hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_azimuth"] = Phi_azi_T + random.uniform(-till_azi_hazard, till_azi_hazard)
     hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_zenith"] = Phi_zen_T + random.uniform(-till_zen_hazard, till_zen_hazard)
-    dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
+    dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
     
     ## Phytomer scaled dictionnaries
     current_internode_length[StBu.num_plante][StBu.tiller] = {}
@@ -2807,6 +2807,8 @@ Apex(StA):
           StAR = Apex_R(StA.num_plante, StA.geno, StA.tiller, StA.n)
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
+          if StA.tiller == (1,4):
+            print "Apex",StA.tiller, StE.emerged
           produce Peduncle(StP)Ear(StE)Apex_R(StAR) 
           
       # Transition florale des talles
@@ -2832,6 +2834,9 @@ Apex(StA):
           StAR = Apex_R(StA.num_plante, StA.geno, StA.tiller, StA.n)
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
+          if StA.tiller == (1,4):
+            print "Apex1",StA.tiller, StE.emerged
+
           produce Peduncle(StP)Ear(StE)Apex_R(StAR)
       
       # Production de primordia
@@ -3010,7 +3015,7 @@ Bud_primord(StBu_p):
         
         dico_cut_dead_blades[StBu.num_plante][new_tiller_name] = []
         
-        dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
+        dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
         
         ## Phytomer scaled dictionnaries
         current_internode_length[StBu.num_plante][StBu.tiller] = {}
@@ -3266,8 +3271,8 @@ Bud_R(StBuR):
         
         ### End of dictionnaries formatting ###
         
-        StE = Ear(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
-        StE.emerged = True
+        # The previously produced ear emerges
+        dico_stades[StBuR.num_plante][StBuR.tiller]["Ear_emergence"] = True
         StP = Peduncle(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
         StAR = Apex_R(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
         StAR.Ln_final = StBuR.Ln_final
@@ -3462,7 +3467,7 @@ Blade(StBl):
       Blade_dico_df['Blade_final_length'].append(StBl.final_length)
       Blade_dico_df['Blade_visible_surface'].append(StBl.visible_area)
       Blade_dico_df['Blade_surface'].append((StBl.width*StBl.length*0.75))
-      Blade_dico_df['PAR'].append(StBl.PAR)
+      Blade_dico_df['Blade_PAR'].append(StBl.PAR)
       Blade_dico_df['Senesc_flag'].append(StBl.senesc_flag)
       Blade_dico_df['Photosynthetic'].append(StBl.photosynthetic)
     
@@ -3650,6 +3655,8 @@ Ear(StE):
   if StE.tiller in axis_census[StE.num_plante] and axis_census[StE.num_plante][StE.tiller]["Stop_growth_flag"] == True:
     pass
   else:
+    if dico_stades[StE.num_plante][StE.tiller]["Ear_emergence"] == True and StE.emerged == False:
+      StE.emerged = True
     StE.sumtemp += max(Tbase,Temperature)
     StE.age += time_step
     StE.diameter = d_E[StE.geno]
@@ -3660,16 +3667,19 @@ Ear(StE):
   if Tempcum >= dico_stades[StE.num_plante][StE.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StE.photosynthetic == True:
     StE.photosynthetic = False
   
+  if StE.tiller == (1,4):
+    print "EAR : ",StE.tiller, StE.emerged
+  
   if write_output_file["Ear"]:
     Ear_dico_df["Elapsed_time"].append(elapsed_time) 
     Ear_dico_df["Temp_cum"].append(Tempcum) 
     Ear_dico_df["Num_plante"].append(StE.num_plante) 
     Ear_dico_df["Genotype"].append(StE.geno) 
     Ear_dico_df["Num_talle"].append(str(StE.tiller)) 
-    Ear_dico_df["Sumtemp"].append(StE.sumtemp) 
+    Ear_dico_df["Ear_sumtemp"].append(StE.sumtemp) 
     Ear_dico_df["Ear_length"].append(StE.length) 
     Ear_dico_df["Emerged"].append(StE.emerged)
-    Ear_dico_df["PAR"].append(StE.PAR) 
+    Ear_dico_df["Ear_PAR"].append(StE.PAR) 
     Ear_dico_df["Photosynthetic"].append(StE.photosynthetic)
   
   produce Ear(StE)
