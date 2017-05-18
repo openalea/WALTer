@@ -76,7 +76,7 @@ Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
 WALTer_version = "v1.17.5"
-WALTer_build = 117502
+WALTer_build = 117503
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -770,13 +770,13 @@ global Internode_dico_df
 Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[], "Internode_surface" :[], "Internode_PAR" : [], "Photosynthetic" :[]}
 
 global Peduncle_dico_df
-Peduncle_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[],"Sum_temp" :[], "Peduncle_length" : [], "Peduncle_final_length" : [], "Peduncle_PAR" : [], "Photosynthetic" :[]}
+Peduncle_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[],"Sum_temp" :[], "Peduncle_length" : [], "Peduncle_final_length" : [], "Peduncle_surface" : [], "Peduncle_PAR" : [], "Photosynthetic" :[]}
 
 global Sheath_dico_df
 Sheath_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[] ,"Num_cohorte":[], "Num_rang" :[],"Sheath_sumtemp" :[] ,"Sheath_diameter" :[], "Sheath_length" :[],  "Sheath_final_length" :[], "Sheath_surface" :[], "Sheath_PAR" : [], "Photosynthetic" :[]}
 
 global Ear_dico_df
-Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
+Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_surface":[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
 
 global Proba_dico_df
 Proba_dico_df = {"Elapsed_time":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Genotype":[], "Num_talle":[], "Num_rang":[], "Sumtemp":[], "GAI_prox":[], "P_debourr":[]}
@@ -2194,7 +2194,7 @@ def End(lstring):
 
   if write_output_file["Peduncle"] == True:
     _Peduncle_df = pd.DataFrame(Peduncle_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_PAR", "Photosynthetic"]
+    dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_surface", "Peduncle_PAR", "Photosynthetic"]
     Peduncle_df = _Peduncle_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Peduncle_df.to_csv("./output/"+folder_name+"/Peduncle.csv", sep = "\t", header=True, index=False)
 
@@ -2206,7 +2206,7 @@ def End(lstring):
 
   if write_output_file["Ear"] == True:
     _Ear_df = pd.DataFrame(Ear_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" , "Ear_PAR", "Photosynthetic", "Emerged"]
+    dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" ,"Ear_surface", "Ear_PAR", "Photosynthetic", "Emerged"]
     Ear_df = _Ear_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Ear_df.to_csv("./output/"+folder_name+"/Ear.csv", sep="\t", header=True, index=False)
 
@@ -3669,6 +3669,7 @@ Peduncle(StP):
     Peduncle_dico_df['Sum_temp'].append(StP.sumtemp) 
     Peduncle_dico_df['Peduncle_length'].append(StP.length) 
     Peduncle_dico_df['Peduncle_final_length'].append(StP.final_length) 
+    Peduncle_dico_df['Peduncle_surface'].append(StP.area) 
     Peduncle_dico_df['Peduncle_PAR'].append(StP.PAR) 
     Peduncle_dico_df['Photosynthetic'].append(StP.photosynthetic)
     
@@ -3688,6 +3689,8 @@ Ear(StE):
     if Tempcum >= 1300:#dico_stades[StE.num_plante][StE.tiller]["Epiaison"][1]:
       StE.length = StE.final_length
   
+  StE.area = StE.length * pi * StE.diameter
+  
   if Tempcum >= dico_stades[StE.num_plante][StE.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StE.photosynthetic == True:
     StE.photosynthetic = False
   
@@ -3699,6 +3702,7 @@ Ear(StE):
     Ear_dico_df["Num_talle"].append(str(StE.tiller)) 
     Ear_dico_df["Ear_sumtemp"].append(StE.sumtemp) 
     Ear_dico_df["Ear_length"].append(StE.length) 
+    Ear_dico_df["Ear_surface"].append(StE.area) 
     Ear_dico_df["Emerged"].append(StE.emerged)
     Ear_dico_df["Ear_PAR"].append(StE.PAR) 
     Ear_dico_df["Photosynthetic"].append(StE.photosynthetic)
