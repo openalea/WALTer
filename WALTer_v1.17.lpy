@@ -76,7 +76,7 @@ Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
 WALTer_version = "v1.17.5"
-WALTer_build = 117501
+WALTer_build = 117502
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -643,8 +643,8 @@ for key, value, in params.iteritems():
 
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell, "Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-PAR_t_Maxwell = 28
-PAR_t_Soissons = 15
+PAR_t_Maxwell = 280000
+PAR_t_Soissons = 150000
 
 var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell"]
   
@@ -767,7 +767,7 @@ global Blade_df
 Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
 
 global Internode_dico_df
-Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[],  "Internode_PAR" : [], "Photosynthetic" :[]}
+Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[], "Internode_surface" :[], "Internode_PAR" : [], "Photosynthetic" :[]}
 
 global Peduncle_dico_df
 Peduncle_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[],"Sum_temp" :[], "Peduncle_length" : [], "Peduncle_final_length" : [], "Peduncle_PAR" : [], "Photosynthetic" :[]}
@@ -2032,7 +2032,7 @@ def EndEach(lstring, lscene):
             sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
             i+=4 
           
-          c_scene = CaribuScene(scene = lscene, scene_unit="cm", light = sky_tup)
+          c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
           output = c_scene.run()
           
           res_sky = output[1]["default_band"]
@@ -2188,7 +2188,7 @@ def End(lstring):
 
   if write_output_file["Internode"] == True:
     _Internode_df = pd.DataFrame(Internode_dico_df)
-    dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_PAR", "Photosynthetic"]
+    dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_surface", "Internode_PAR", "Photosynthetic"]
     Internode_df = _Internode_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Internode_df.to_csv("./output/"+folder_name+"/Internode.csv", sep="\t", header=True, index=False)
 
@@ -3590,6 +3590,7 @@ Internode(StI):
         Internode_dico_df['Num_rang'].append(StI.n)
         Internode_dico_df['Internode_length'].append(StI.length)
         Internode_dico_df['Internode_final_length'].append(StI.final_length)
+        Internode_dico_df['Internode_surface'].append(StI.area)
         Internode_dico_df['Internode_PAR'].append(StI.PAR)
         Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
       
@@ -3631,6 +3632,7 @@ Internode(StI):
         Internode_dico_df['Num_rang'].append(StI.n)
         Internode_dico_df['Internode_length'].append(StI.length)
         Internode_dico_df['Internode_final_length'].append(StI.final_length)
+        Internode_dico_df['Internode_surface'].append(StI.area)
         Internode_dico_df['Internode_PAR'].append(StI.PAR)
         Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
         
