@@ -75,8 +75,8 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.5"
-WALTer_build = 117504
+WALTer_version = "v1.17.6"
+WALTer_build = 117505
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -785,7 +785,7 @@ global Peraxes_dico_df
 Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
 
 global Debug_PAR_dico_df
-Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organe_surface":[]}
+Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[]}
 
 
 if write_output_file["PAR_per_axes"]:
@@ -2044,7 +2044,13 @@ def EndEach(lstring, lscene):
             for id in mapping_table.keys():
               if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle" or new_lstring[id].name == "Ear" and new_lstring[id][0].emerged == True:  
                 if new_lstring[id][0].tiller in axis_census[new_lstring[id][0].num_plante].keys():
-                  new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+                  Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][mapping_table[id]])
+                  
+                  if res_sky["Ei"][mapping_table[id]] < 0:
+                    new_lstring[id][0].PAR = 0
+                  else:
+                    new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+                  
                   new_lstring[id][0].organ_surface = res_sky["area"][mapping_table[id]]
                   dico_PAR[new_lstring[id].name][new_lstring[id][0].num_plante][new_lstring[id][0].tiller][new_lstring[id][0].n] = new_lstring[id][0].PAR
                   
@@ -2059,8 +2065,9 @@ def EndEach(lstring, lscene):
                     Debug_PAR_dico_df["Num_talle"].append(new_lstring[id][0].tiller)
                     Debug_PAR_dico_df["Num_plante"].append(new_lstring[id][0].num_plante)
                     Debug_PAR_dico_df["Num_organe"].append(new_lstring[id][0].n)
-                    Debug_PAR_dico_df["Organe_surface"].append(new_lstring[id][0].organ_surface)
+                    Debug_PAR_dico_df["Organ_surface"].append(new_lstring[id][0].organ_surface)
                     Debug_PAR_dico_df["Organ_PAR"].append(new_lstring[id][0].PAR)
+                    
                     
           
           if write_output_file["PAR_per_axes"] == True:
@@ -2230,7 +2237,7 @@ def End(lstring):
 
   if write_debug_PAR == True:
     Debug_PAR_df = pd.DataFrame(Debug_PAR_dico_df)
-    Debug_PAR_df.to_csv("./output/"+folder_name+"/Debuf_PAR.csv", sep="\t", header=True, index=False)
+    Debug_PAR_df.to_csv("./output/"+folder_name+"/Debug_PAR.csv", sep="\t", header=True, index=False)
 
   if write_output_file["PAR_per_axes"] == True:
     PAR_per_axes_df = pd.DataFrame(PAR_per_axes_dico)
