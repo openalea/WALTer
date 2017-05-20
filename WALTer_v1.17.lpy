@@ -75,16 +75,16 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.6"
-WALTer_build = 117505
+WALTer_version = "v1.18"
+WALTer_build = 20052017
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Mariem"
+expe_related         = "Darwinkel_mean"
 densite              = 200
 CARIBU_state         = "enabled"
-rep                  = 2
+rep                  = 1
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep"]
 
@@ -92,7 +92,7 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : False}
+hazard_driver = {"plant" : True, "axis" : True, "organ" : True, "emerg" : True}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -104,7 +104,7 @@ write_lstring = False
 which_output_files = pd.read_csv("which_output_files.csv", sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 
-write_debug_PAR = True
+write_debug_PAR = False
 
 #########################
 
