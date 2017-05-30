@@ -75,15 +75,16 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.17.5"
+WALTer_version = "v1.18"
+WALTer_build = 20052017
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Mariem"
+expe_related         = "Darwinkel_mean"
 densite              = 200
 CARIBU_state         = "enabled"
-rep                  = 2
+rep                  = 1
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep"]
 
@@ -91,7 +92,7 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : False, "axis" : True, "organ" : True, "emerg" : False}
+hazard_driver = {"plant" : True, "axis" : True, "organ" : True, "emerg" : True}
 hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
@@ -102,6 +103,8 @@ write_lstring = False
 
 which_output_files = pd.read_csv("which_output_files.csv", sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
+
+write_debug_PAR = False
 
 #########################
 
@@ -256,8 +259,8 @@ for key, value, in params.iteritems():
 
 
 if crop_ccptn == "classical":
-  nb_plt_temp = 2
-  nb_rang = 2
+  nb_plt_temp = 1
+  nb_rang = 1
   dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
@@ -640,8 +643,8 @@ for key, value, in params.iteritems():
 
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell, "Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-PAR_t_Maxwell = 28
-PAR_t_Soissons = 15
+PAR_t_Maxwell = 280000
+PAR_t_Soissons = 150000
 
 var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell"]
   
@@ -764,22 +767,26 @@ global Blade_df
 Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
 
 global Internode_dico_df
-Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[],  "Internode_PAR" : [], "Photosynthetic" :[]}
+Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[], "Internode_surface" :[], "Internode_PAR" : [], "Photosynthetic" :[]}
 
 global Peduncle_dico_df
-Peduncle_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[],"Sum_temp" :[], "Peduncle_length" : [], "Peduncle_final_length" : [], "Peduncle_PAR" : [], "Photosynthetic" :[]}
+Peduncle_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[],"Sum_temp" :[], "Peduncle_length" : [], "Peduncle_final_length" : [], "Peduncle_surface" : [], "Peduncle_PAR" : [], "Photosynthetic" :[]}
 
 global Sheath_dico_df
 Sheath_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[] ,"Num_cohorte":[], "Num_rang" :[],"Sheath_sumtemp" :[] ,"Sheath_diameter" :[], "Sheath_length" :[],  "Sheath_final_length" :[], "Sheath_surface" :[], "Sheath_PAR" : [], "Photosynthetic" :[]}
 
 global Ear_dico_df
-Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
+Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_surface":[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
 
 global Proba_dico_df
 Proba_dico_df = {"Elapsed_time":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Genotype":[], "Num_talle":[], "Num_rang":[], "Sumtemp":[], "GAI_prox":[], "P_debourr":[]}
 
 global Peraxes_dico_df
 Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
+
+global Debug_PAR_dico_df
+Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[]}
+
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
@@ -2025,7 +2032,7 @@ def EndEach(lstring, lscene):
             sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
             i+=4 
           
-          c_scene = CaribuScene(scene = lscene, scene_unit="cm", light = sky_tup)
+          c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
           output = c_scene.run()
           
           res_sky = output[1]["default_band"]
@@ -2037,9 +2044,31 @@ def EndEach(lstring, lscene):
             for id in mapping_table.keys():
               if new_lstring[id].name == "Blade" and new_lstring[id][0].photosynthetic == True or new_lstring[id].name == "Sheath" or new_lstring[id].name == "Internode" or new_lstring[id].name == "Peduncle" or new_lstring[id].name == "Ear" and new_lstring[id][0].emerged == True:  
                 if new_lstring[id][0].tiller in axis_census[new_lstring[id][0].num_plante].keys():
-                  new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+                  Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][mapping_table[id]])
+                  
+                  if res_sky["Ei"][mapping_table[id]] < 0:
+                    new_lstring[id][0].PAR = 0
+                  else:
+                    new_lstring[id][0].PAR = res_sky["Ei"][mapping_table[id]] * res_sky["area"][mapping_table[id]]
+                  
+                  new_lstring[id][0].organ_surface = res_sky["area"][mapping_table[id]]
                   dico_PAR[new_lstring[id].name][new_lstring[id][0].num_plante][new_lstring[id][0].tiller][new_lstring[id][0].n] = new_lstring[id][0].PAR
-                  dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
+                  
+                  if tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, améliorer cette rustine
+                    dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += 0
+                  else:
+                    dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
+                  if write_debug_PAR == True :
+                    Debug_PAR_dico_df["Elapsed_time"].append(elapsed_time)
+                    Debug_PAR_dico_df["Temp_cum"].append(Temperature)
+                    Debug_PAR_dico_df["Organ_type"].append(new_lstring[id].name)
+                    Debug_PAR_dico_df["Num_talle"].append(new_lstring[id][0].tiller)
+                    Debug_PAR_dico_df["Num_plante"].append(new_lstring[id][0].num_plante)
+                    Debug_PAR_dico_df["Num_organe"].append(new_lstring[id][0].n)
+                    Debug_PAR_dico_df["Organ_surface"].append(new_lstring[id][0].organ_surface)
+                    Debug_PAR_dico_df["Organ_PAR"].append(new_lstring[id][0].PAR)
+                    
+                    
           
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
@@ -2166,13 +2195,13 @@ def End(lstring):
 
   if write_output_file["Internode"] == True:
     _Internode_df = pd.DataFrame(Internode_dico_df)
-    dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_PAR", "Photosynthetic"]
+    dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_surface", "Internode_PAR", "Photosynthetic"]
     Internode_df = _Internode_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Internode_df.to_csv("./output/"+folder_name+"/Internode.csv", sep="\t", header=True, index=False)
 
   if write_output_file["Peduncle"] == True:
     _Peduncle_df = pd.DataFrame(Peduncle_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_PAR", "Photosynthetic"]
+    dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_surface", "Peduncle_PAR", "Photosynthetic"]
     Peduncle_df = _Peduncle_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Peduncle_df.to_csv("./output/"+folder_name+"/Peduncle.csv", sep = "\t", header=True, index=False)
 
@@ -2184,7 +2213,7 @@ def End(lstring):
 
   if write_output_file["Ear"] == True:
     _Ear_df = pd.DataFrame(Ear_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" , "Ear_PAR", "Photosynthetic", "Emerged"]
+    dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" ,"Ear_surface", "Ear_PAR", "Photosynthetic", "Emerged"]
     Ear_df = _Ear_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Ear_df.to_csv("./output/"+folder_name+"/Ear.csv", sep="\t", header=True, index=False)
 
@@ -2206,6 +2235,10 @@ def End(lstring):
     GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
     GAI_df.to_csv("./output/"+folder_name+"/GAI.csv", sep="\t", header=True, index=False)
 
+  if write_debug_PAR == True:
+    Debug_PAR_df = pd.DataFrame(Debug_PAR_dico_df)
+    Debug_PAR_df.to_csv("./output/"+folder_name+"/Debug_PAR.csv", sep="\t", header=True, index=False)
+
   if write_output_file["PAR_per_axes"] == True:
     PAR_per_axes_df = pd.DataFrame(PAR_per_axes_dico)
     PAR_per_axes_df.to_csv("./output/"+folder_name+"/PAR_per_axes.csv", sep = "\t", header = True, index = False)
@@ -2215,6 +2248,7 @@ def End(lstring):
   fichier_params = open("./output/"+folder_name+"/Parameters.csv", "w")
   fichier_params.write("Parameter" + "\t" + "Genotype" + "\t" + "Value" + "\n" + 
                        "WALTer_version" + "\t" + "All" + "\t" + "%s" % WALTer_version + "\n" +
+                       "WALTer_build" + "\t" + "All" + "\t" + "%s" % WALTer_build + "\n" +
                        "Related_experiment" + "\t" + "All" + "\t" + "%s" % expe_related + "\n" +
                        "Crop_conception" + "\t" + "All" + "\t" + "%s" % crop_ccptn + "\n" +
                        "Sowing_date" + "\t" + "All" + "\t" + "%s" % sowing_date + "\n" +
@@ -2807,8 +2841,6 @@ Apex(StA):
           StAR = Apex_R(StA.num_plante, StA.geno, StA.tiller, StA.n)
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
-          if StA.tiller == (1,4):
-            print "Apex",StA.tiller, StE.emerged
           produce Peduncle(StP)Ear(StE)Apex_R(StAR) 
           
       # Transition florale des talles
@@ -2834,9 +2866,6 @@ Apex(StA):
           StAR = Apex_R(StA.num_plante, StA.geno, StA.tiller, StA.n)
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
-          if StA.tiller == (1,4):
-            print "Apex1",StA.tiller, StE.emerged
-
           produce Peduncle(StP)Ear(StE)Apex_R(StAR)
       
       # Production de primordia
@@ -3568,6 +3597,7 @@ Internode(StI):
         Internode_dico_df['Num_rang'].append(StI.n)
         Internode_dico_df['Internode_length'].append(StI.length)
         Internode_dico_df['Internode_final_length'].append(StI.final_length)
+        Internode_dico_df['Internode_surface'].append(StI.area)
         Internode_dico_df['Internode_PAR'].append(StI.PAR)
         Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
       
@@ -3609,6 +3639,7 @@ Internode(StI):
         Internode_dico_df['Num_rang'].append(StI.n)
         Internode_dico_df['Internode_length'].append(StI.length)
         Internode_dico_df['Internode_final_length'].append(StI.final_length)
+        Internode_dico_df['Internode_surface'].append(StI.area)
         Internode_dico_df['Internode_PAR'].append(StI.PAR)
         Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
         
@@ -3645,6 +3676,7 @@ Peduncle(StP):
     Peduncle_dico_df['Sum_temp'].append(StP.sumtemp) 
     Peduncle_dico_df['Peduncle_length'].append(StP.length) 
     Peduncle_dico_df['Peduncle_final_length'].append(StP.final_length) 
+    Peduncle_dico_df['Peduncle_surface'].append(StP.area) 
     Peduncle_dico_df['Peduncle_PAR'].append(StP.PAR) 
     Peduncle_dico_df['Photosynthetic'].append(StP.photosynthetic)
     
@@ -3664,11 +3696,10 @@ Ear(StE):
     if Tempcum >= 1300:#dico_stades[StE.num_plante][StE.tiller]["Epiaison"][1]:
       StE.length = StE.final_length
   
+  StE.area = StE.length * pi * StE.diameter
+  
   if Tempcum >= dico_stades[StE.num_plante][StE.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StE.photosynthetic == True:
     StE.photosynthetic = False
-  
-  if StE.tiller == (1,4):
-    print "EAR : ",StE.tiller, StE.emerged
   
   if write_output_file["Ear"]:
     Ear_dico_df["Elapsed_time"].append(elapsed_time) 
@@ -3678,6 +3709,7 @@ Ear(StE):
     Ear_dico_df["Num_talle"].append(str(StE.tiller)) 
     Ear_dico_df["Ear_sumtemp"].append(StE.sumtemp) 
     Ear_dico_df["Ear_length"].append(StE.length) 
+    Ear_dico_df["Ear_surface"].append(StE.area) 
     Ear_dico_df["Emerged"].append(StE.emerged)
     Ear_dico_df["Ear_PAR"].append(StE.PAR) 
     Ear_dico_df["Photosynthetic"].append(StE.photosynthetic)
