@@ -75,16 +75,16 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.18"
+WALTer_version = "v1.18.1"
 WALTer_build = 20052017
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Darwinkel_mean"
-densite              = 200
+expe_related         = "None"
+densite              = 150
 CARIBU_state         = "enabled"
-rep                  = 1
+rep                  = 2
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep"]
 
@@ -249,7 +249,7 @@ dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 
 
 ########################################
 
-crop_ccptn = "classical"
+crop_ccptn = "Mesh_for_nplants"
 area_targeted = 1
 
 var_register0 = ["crop_ccptn"]
@@ -307,8 +307,8 @@ elif crop_ccptn == "Darwinkel_original":
 
 elif crop_ccptn == "Mesh_for_nplants":
   nb_plt_utiles = 50
-  dist_border_x = 0.20*100 #inside a rang
-  dist_border_y = 0.20*100 #rang 
+  dist_border_x = 0.2*100 #inside a rang
+  dist_border_y = 0.2*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -480,7 +480,7 @@ inc_I = {"Maxwell" :inc_I_Maxwell , "Soissons" : inc_I_Soissons}
 
 ### Power formalism
 a_I_L_Maxwell = -0.93
-a_I_L_Soissons = 0.79 
+a_I_L_Soissons = 1.5#0.79
 b_I_L_Maxwell = -0.04
 b_I_L_Soissons = -0.29
 a_I_L = {"Maxwell" : a_I_L_Maxwell , "Soissons" :a_I_L_Soissons} #Coefficient for internode final length                | old name : a_internode_squ
@@ -618,7 +618,7 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 ##################################
 
 # Cessation of tillering
-GAI_c_Maxwell = 0.59
+GAI_c_Maxwell = 0.35#0.59
 GAI_c_Soissons = 0.78
 
 var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell"]
@@ -642,7 +642,7 @@ for key, value, in params.iteritems():
 
 
 # Tiller death
-t_beg_reg_Maxwell = 6.8
+t_beg_reg_Maxwell = 7.8#6.8
 t_beg_reg_Soissons = 6.8
 
 var_registerT_beg = ["t_beg_reg_Soissons","t_beg_reg_Maxwell"]
@@ -653,7 +653,7 @@ for key, value, in params.iteritems():
 
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell, "Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-PAR_t_Maxwell = 280000
+PAR_t_Maxwell = 100000#280000
 PAR_t_Soissons = 150000
 
 var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell"]
@@ -2563,6 +2563,10 @@ Seed:
       earliest_plant = key
     if value == maximal_emergence:
       latest_plant = key
+    
+  #smallest_phyllo = 
+  #longest_phyllo = 
+  print "geno map : ", genotype_map
   beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), genotype_map[earliest_plant], earliest_plant) + 1.6*phyll_adjust(genotype_map[earliest_plant])) - 100
   ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), genotype_map[latest_plant], latest_plant) +  2.98*phyll_adjust(genotype_map[earliest_plant])) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
@@ -2669,7 +2673,8 @@ Apex(StA):
   global DOY
   global date_current_day
   
-  if StA.n < N_p_s:
+  
+  if StA.n < N_p_s and initialization_Flag[StA.num_plante] == True:
     StA.sumtemp += max(Tbase,Temperature)
     StA.time += max(Tbase,Temperature)
     
@@ -2705,15 +2710,18 @@ Apex(StA):
     else:
       produce Apex(StA)
       
-  else:
+  elif StA.n >= N_p_s :
+    #print "Moi, numero",StA.num_plante,"J'ai fini l'initialisation"
     StA.sumtemp = 0
-    elapsed_time = 0
-    Tempcum = 0
-    date_current_day = sowing_date + datetime.timedelta(elapsed_time)
-    DOY = int(date_current_day.strftime('%j'))
+    StA.time = 0
     initialization_Flag[StA.num_plante] = False
     #lstring_gp3 = open("./WALTer_Lstring_group3.txt", "w")
     #lstring_gp3.close()
+  if not np.any(initialization_Flag.values()):
+    Tempcum = 0
+    date_current_day = sowing_date + datetime.timedelta(elapsed_time)
+    DOY = int(date_current_day.strftime('%j'))
+    elapsed_time = 0
     useGroup(4)
 
 Bud_primord(StBu_p):
