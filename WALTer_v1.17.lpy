@@ -75,7 +75,7 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.18.1"
+WALTer_version = "v1.18.2"
 WALTer_build = 20052017
 
 ##########################################
@@ -660,7 +660,7 @@ Delta_SGtC = 600                   # Thermal time between the moment a tiller st
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
 
-Delta_prot_Maxwell = 75
+Delta_prot_Maxwell = 25#75
 Delta_prot_Soissons = 50
 
 var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell"]
@@ -2553,12 +2553,20 @@ Seed:
       earliest_plant = key
     if value == maximal_emergence:
       latest_plant = key
-    
-  #smallest_phyllo = 
-  #longest_phyllo = 
-  print "geno map : ", genotype_map
-  beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), genotype_map[earliest_plant], earliest_plant) + 1.6*phyll_adjust(genotype_map[earliest_plant])) - 100
-  ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), genotype_map[latest_plant], latest_plant) +  2.98*phyll_adjust(genotype_map[earliest_plant])) +100
+  
+  #List phyllochrones of all the genotypes presents within the crop
+  all_phyllo = {}
+  for g in crop_genotype:
+    all_phyllo[phyll_adjust(g)] = g
+  
+  longest_phyllo = max(all_phyllo.keys())
+  shortest_phyllo = min(all_phyllo.keys())
+  
+  earliest_geno = all_phyllo[shortest_phyllo]
+  latest_geno = all_phyllo[longest_phyllo]
+  
+  beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
+  ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
 
