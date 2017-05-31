@@ -480,7 +480,7 @@ inc_I = {"Maxwell" :inc_I_Maxwell , "Soissons" : inc_I_Soissons}
 
 ### Power formalism
 a_I_L_Maxwell = -0.93
-a_I_L_Soissons = 1.5#0.79
+a_I_L_Soissons = 0.79 
 b_I_L_Maxwell = -0.04
 b_I_L_Soissons = -0.29
 a_I_L = {"Maxwell" : a_I_L_Maxwell , "Soissons" :a_I_L_Soissons} #Coefficient for internode final length                | old name : a_internode_squ
