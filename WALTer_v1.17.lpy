@@ -232,6 +232,7 @@ experimental_conditions = {
 "Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
 "Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
 "Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
+"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,26),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
 }
 
 liste_expe = experimental_conditions.keys()
@@ -241,7 +242,7 @@ infinity_CARIBU      = bool(0)              # En booleen 0 : False 1: True
 nb_azimuth = 5
 nb_zenith = 4
 
-dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9}
+dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9, "Climat_max_AS" : 48.8, "Climat_min_AS" :48.8 ,"Climat_moy_AS" : 48.8}
 
 # Moyennes sur 10/18ans disponibles sur Grignon : { "Grignon_mean10" "Grignon_mean18"}
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
@@ -630,6 +631,15 @@ GAI_c = {"Maxwell" : GAI_c_Maxwell, "Soissons" : GAI_c_Soissons} # Green Area In
 
 dGAIp = 1			# Maximal range of plant detection (meter)
 L_b_S = 2      # Buried length of the first sheath (in cm) | old name : L_burried
+
+
+var_registerdGAIp = ["dGAIp"]
+  
+for key, value, in params.iteritems(): 
+  if key in var_registerdGAIp:
+    exec(key+"=value")
+
+
 
 # Tiller death
 t_beg_reg_Maxwell = 6.8
