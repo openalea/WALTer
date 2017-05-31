@@ -75,7 +75,7 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.18.2"
+WALTer_version = "v1.18.3"
 WALTer_build = 20052017
 
 ##########################################
