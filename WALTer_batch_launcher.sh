@@ -6,7 +6,7 @@
 > combi_param.csv
 
 # chemin vers le script python
-script_py="./WALTer_launcher_for_v_1.17.py"
+script_py="./WALTer_launcher.py"
 
 # Si le 1er argument est total_diallel (A FAIRE)
 if [[ $1 == "total_diallel" ]]
