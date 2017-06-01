@@ -17,7 +17,7 @@ for key, item in params.items():
         pass
 
 
-lsys = Lsystem('WALTer_v1.17.lpy',params)
+lsys = Lsystem('WALTer.lpy',params)
 
 #lsys.nbj = 10
 #lsys.derivationLength = lsys.nbj
