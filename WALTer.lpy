@@ -75,8 +75,8 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.18.4"
-WALTer_build = 20052017
+WALTer_version = "v1.19.1"
+WALTer_build = 01062017
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -308,9 +308,9 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 10
-  dist_border_x = 0.*100 #inside a rang
-  dist_border_y = 0.*100 #rang 
+  nb_plt_utiles = 50
+  dist_border_x = 0.20*100 #inside a rang
+  dist_border_y = 0.20*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -400,6 +400,21 @@ SLDL_Soissons = 1.34
 SLDL_Renan = 1.12 
 SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Différentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier : 
 
+# Final plant height (internodes+peduncle+ear of mainstem)
+Param_PlHeight_Maxwell = 55.6155
+Param_PlHeight_Soissons = 87.6579
+Param_PlHeight_Gigant_Maxwell = 110
+Param_PlHeight_Darwinkel_Maxwell = 55.6155
+
+var_registerHeight = ["Param_PlHeight_Maxwell","Param_PlHeight_Soissons","Param_PlHeight_Gigant_Maxwell","Param_PlHeight_Darwinkel_Maxwell"]
+  
+for key, value, in params.iteritems():
+  if key in var_registerHeight:
+    exec(key+"=value")
+
+Param_PlHeight = {"Maxwell" : Param_PlHeight_Maxwell, "Gigant_Maxwell" : Param_PlHeight_Gigant_Maxwell, "Darwinkel_Maxwell" : Param_PlHeight_Darwinkel_Maxwell, "Soissons" : Param_PlHeight_Soissons}
+
+
 
 ## DEVELOPMENT OF VEGETATIVE ORGANS
 ######################################
@@ -467,9 +482,20 @@ Delta_lflf = 1.39     # Delay between the ligulation of the flag leaf and flower
 ## Internode final length
 
 NENC = 98
-shp_I_Maxwell = "squared"
+shp_I_Maxwell = "squared" # Possibilities are: "linear","squared","Homogenous", "Linear", "ExpIncrease", "ExpDecrease"
+shp_I_Gigant_Maxwell = "ExpIncrease"
+shp_I_Darwinkel_Maxwell = "ExpIncrease"
 shp_I_Soissons = "squared"
-shp_I = {"Maxwell" : shp_I_Maxwell, "Gigant_Maxwell" : shp_I_Maxwell, "Darwinkel_Maxwell" : shp_I_Maxwell, "Soissons" : shp_I_Soissons} # Shape of the function to determine internode final length
+
+var_registerShape = ["shp_I_Soissons","shp_I_Maxwell","shp_I_Gigant_Maxwell","shp_I_Darwinkel_Maxwell"]
+  
+for key, value, in params.iteritems():
+  if key in var_registerShape:
+    exec(key+"=value")
+
+shp_I = {"Maxwell" : shp_I_Maxwell, "Gigant_Maxwell" : shp_I_Gigant_Maxwell, "Darwinkel_Maxwell" : shp_I_Darwinkel_Maxwell, "Soissons" : shp_I_Soissons} # Shape of the function to determine internode final length
+
+
 
 N_I_el_Maxwell = 5
 N_I_el_Soissons = 5
@@ -1361,10 +1387,95 @@ def visible_area(length_from_the_top, width_max, total_length):
 
 ### INTERNODE FINAL LENGTH ###
 
+# Finding the possible range of a and b values, for a given height and NENL
+# these a and b values are used when shape = 'ExpIncrease' or shape = 'ExpDecrease'
+
+def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):        
+    l_ear = L_E[rangeno]
+    l_short = 0            
+    #DETERMINING A'S RANGE, setting a < 0
+    alpha_a = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) # négatif si NENL=5
+    beta_a = -4 * (ranNENL+1) * ( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) # est positif quand h > l_ear
+    if alpha_a >= 0:
+        print 'NENL =  ' + str(ranNENL) + '    unextected NENL?'
+        if alpha_a == 0:
+            print 'a range problem : division by 0'
+            posrange_a = [np.nan, np.nan]
+        elif beta_a*alpha_a > 0:
+            print 'a range problem : square root of negative number'
+            posrange_a = [np.nan, np.nan]
+        elif beta_a*alpha_a < 0:
+            val_a = -sqrt(-beta_a / alpha_a )            
+            posrange_a = [-100, val_a] # would actually be -infinity
+    elif alpha_a < 0:
+        if beta_a*alpha_a > 0:
+            print 'a range problem : square root of negative number'
+            posrange_a = [np.nan, np.nan]
+        elif beta_a*alpha_a < 0:
+            val_a = -sqrt(-beta_a / alpha_a ) # val_a is the value for which delta = 0, a < 0            
+            posrange_a = [val_a,0]    
+    # DETERMINIG B'S RANGE, setting b > 0    
+    alpha_b = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) 
+    beta_b = (-2/3)*(ranNENL+1)*(ranNENL+2)*(2*ranNENL+3)*( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) 
+    if alpha_b >= 0: 
+        print 'NENL =  ' + str(ranNENL) + '    unextected NENL?'
+        if alpha_b == 0:
+            print 'b range problem : division by 0'
+            posrange_b = [np.nan, np.nan]
+        elif beta_b*alpha_b > 0:
+            print 'b range problem : square root of negative number'
+            posrange_b = [np.nan, np.nan]
+        elif beta_b*alpha_b < 0:
+            val_b = -sqrt(-beta_b / alpha_b )            
+            posrange_b = [val_b, 100] # would actually be +infinity         
+    elif alpha_b < 0: # is what we have for NENL = 5    
+        if beta_b*alpha_b > 0:
+            print 'b range problem : square root of negative number'
+            posrange_b = [np.nan, np.nan]
+        elif beta_b*alpha_b < 0:
+            val_b = sqrt(-beta_b / alpha_b ) # val_b is the value for which delta = 0, b > 0       
+            posrange_b = [0, val_b]        
+    return [posrange_a, posrange_b]
+
+# provides a, b or NENL, knowing all of the other parameters and the height (the parameter we want is ppar_of_interest, and we set it as nan)
+# used when when shape = 'ExpIncrease' or shape = 'ExpDecrease'
+
+def getHeightPar(ph, pgeno, pa, pb, pNENL, leaf_nf, ppar_of_interest):
+    l_ear = L_E[pgeno] 
+    l_short = 0    
+    if ppar_of_interest == 'a': # knowing h, b and NENL
+        p_0 = (pNENL+1)*(pNENL+2)*(2*pNENL+3)*(1/6)
+        p_1 = (pNENL+1)*(pNENL+2)*pb
+        p_2 = l_ear + (leaf_nf - pNENL)*l_short + (pNENL+1)*pb**2 - ph
+        p = [p_0, p_1, p_2]
+        roots = np.roots(p)
+        return ['a', roots]        
+    if ppar_of_interest == 'b': # knowing h, a and NENL
+        p_0 = (pNENL+1)
+        p_1 = (pNENL+1)*(pNENL+2)*pa
+        p_2 = l_ear + (leaf_nf - pNENL)*l_short + (pNENL+1)*(pNENL+2)*(pa**2)*(2*pNENL + 3)*(1/6 ) - ph
+        p = [p_0, p_1, p_2]
+        roots = np.roots(p)
+        return ['b', roots]    
+    if ppar_of_interest == 'NENL': # knowing h, a and b 
+        p_0 = (pa**2)/3
+        p_1 = pa*pb + (pa**2)*(3/2)
+        p_2 = pb**2 - l_short + 3*pa*pb + (pa**2)*(13/6)
+        p_3 = l_ear + leaf_nf*l_short + pb**2 + 2*pa*pb + pa**2 - ph
+        p = [p_0, p_1, p_2, p_3]
+        roots = np.roots(p)[np.isreal(np.roots(p))]
+        return ['NENL', abs(roots)]
+
+
 # Calculating internode final length fixing the number of elongated internodes
-def EN_fin_length(n, Ln_final, geno, shape):
+
+def EN_fin_length(n, Ln_final, geno, shape, PlHeight):
   n0 = Ln_final - N_I_el[geno]
   rel_rank = n - n0
+  l_ear = L_E[geno]
+  l_ped = L_P[geno]
+  l_short = 0
+  
   if n <= n0:
     return 0.00
   else:
@@ -1373,10 +1484,39 @@ def EN_fin_length(n, Ln_final, geno, shape):
         return L_P[geno]
       else:
         return inc_I[geno] * n - (inc_I[geno] * n0)
+
     elif shape == "squared":
       a_squ = a_I_L[geno]
       b_squ = b_I_L[geno]
       return (a_squ * rel_rank + b_squ)**2
+      
+    elif shape == "Homogenous":
+      intH = ( PlHeight - l_ear - l_short*(Ln_final - N_I_el[geno]) ) / (N_I_el[geno] + 1)
+      return intH
+
+    elif shape == "Linear":
+      if geno == 'Maxwell':
+        l_ped = l_ped*(1-(90-PlHeight)*1.3/100)
+      if geno == 'Soissons':
+        l_ped = l_ped*(1-(110-PlHeight)/100)
+      aL = ( l_ped - ( PlHeight - l_ear - l_short*(Ln_final - N_I_el[geno]) )/(N_I_el[geno] + 1) ) * (2/N_I_el[geno])
+      bL = l_ped - aL*(N_I_el[geno]+1)
+      intL = aL*rel_rank + bL
+      return intL
+    
+    elif shape == "ExpIncrease":
+      aEi = getRangeHeightPar(ranh=PlHeight, ranNENL=N_I_el[geno] ,rangeno=geno, leaf_nf=Ln_final)[0][0]*(3/6)        
+      bEi = min(getHeightPar(ph=PlHeight, pgeno=geno, pa=aEi, pb=np.nan, pNENL=N_I_el[geno], leaf_nf=Ln_final, ppar_of_interest='b')[1])  
+      intEi = ( aEi*rel_rank + bEi)**2
+      return intEi
+
+    elif shape == "ExpDecrease":
+      aEd = getRangeHeightPar(ranh=PlHeight, ranNENL=N_I_el[geno] ,rangeno=geno, leaf_nf=Ln_final)[0][0]*(3/6)        
+      bEd = max(getHeightPar(ph=PlHeight, pgeno=geno, pa=aEd, pb=np.nan, pNENL=N_I_el[geno], leaf_nf=Ln_final, ppar_of_interest='b')[1])        
+      intEd = (aEd*rel_rank + bEd)**2        
+      return intEd
+
+
 
 
 #### PHYLLOTAXY #####
@@ -1660,7 +1800,7 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9, sep=";")
 
-var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","shp_I_Soissons","shp_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_MAxwell","R_wL_Maxwell","S_B_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_MAxwell","R_wL_Maxwell","S_B_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print params
 
@@ -2177,7 +2317,7 @@ def EndEach(lstring, lscene):
     GAI_dico_df['GAI_center'].append(GAI_center)
     GAI_dico_df['GAI_ind'].append(GAI_ind[num])
     GAI_dico_df['GAI_prox'].append(GAI_prox[num])
-    
+
     if num in plant_census:
       GAI_dico_df['Position'].append("center")
     else:
@@ -2252,12 +2392,6 @@ def End(lstring):
     dF_labels = ["Init_flag","Elapsed_time", "DOY","Temperature", "Temp_cum", "Num_plante", "Num_talle", "Sheath_max", "Collar_height", "Dead_collar_height", "Delta_H", "Visible_leaves_surface", "Visible_surface", "Leaf_contrib_to_GAI","Stem_contrib_to_GAI","Ear_contrib_to_GAI","Peduncle_contrib_to_GAI", "Stop_growth_flag"]
     Peraxes_df = _Peraxes_df.reindex_axis(dF_labels, axis="columns", copy=False)
     Peraxes_df.to_csv("./output/"+folder_name+"/Peraxes.csv", sep="\t", header=True, index=False)
-
-  if write_output_file["GAI"] == True:
-    _GAI_df = pd.DataFrame(GAI_dico_df)
-    dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
-    GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
-    GAI_df.to_csv("./output/"+folder_name+"/GAI.csv", sep="\t", header=True, index=False)
 
   if write_debug_PAR == True:
     Debug_PAR_df = pd.DataFrame(Debug_PAR_dico_df)
@@ -2393,7 +2527,8 @@ def End(lstring):
                          "t_beg_reg"  + "\t" + geno + "\t" + "%s" % t_beg_reg[geno] + "\n" +
                          "Delta_prot" + "\t" + geno + "\t" + "%s" %  Delta_prot[geno] + "\n" +
                          "PAR_t" + "\t" + geno + "\t" + "%s" % PAR_t[geno] + "\n" +
-                         "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n")
+                         "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n" +
+                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
   fichier_individual= open("./output/"+folder_name+"/Individual_heterogeneity.csv", "w")
@@ -2402,6 +2537,12 @@ def End(lstring):
     fichier_individual.write("Dse_ind" + "\t" + "%s" % numplt + "\t" + "%s" % Dse_heterogeneous[numplt] + "\n" )
   fichier_individual.close()
 
+  if write_output_file["GAI"] == True:
+    _GAI_df = pd.DataFrame(GAI_dico_df)
+    dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
+    GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
+    GAI_df.to_csv("./output/"+folder_name+"/GAI.csv", sep="\t", header=True, index=False)
+  
 
 Axiom:Seed 
 
@@ -3647,7 +3788,7 @@ Internode(StI):
       
       if dico_stades[StI.num_plante][StI.tiller]["Transiflo"][0] == True:
         StI.Ln_final = dico_stades[StI.num_plante][StI.tiller]["Ln_final"]
-        StI.final_length = EN_fin_length(StI.n, StI.Ln_final, StI.geno, shp_I[StI.geno])
+        StI.final_length = EN_fin_length(n=StI.n, Ln_final=StI.Ln_final, geno=StI.geno, shape=shp_I[StI.geno], PlHeight=Param_PlHeight[StI.geno])
         
         if Tempcum >= dico_stades[StI.num_plante][StI.tiller]["Montaison"][1]:
           if leaf_emerg_date(StI.n, StI.tiller, StI.geno, StI.num_plante) + (ED_B + ED_S) * phyll_adjust(StI.geno) <= Tempcum <= leaf_emerg_date(StI.n, StI.tiller, StI.geno, StI.num_plante) + (ED_B + ED_S + ED_I) * phyll_adjust(StI.geno):
@@ -3692,7 +3833,7 @@ Peduncle(StP):
     pass
   else:
     StP.sumtemp += max(Tbase,Temperature)
-    StP.final_length = EN_fin_length(dico_stades[StP.num_plante][StP.tiller]["Ln_final"]+1, dico_stades[StP.num_plante][StP.tiller]["Ln_final"], StP.geno, shp_I[StP.geno])
+    StP.final_length = EN_fin_length(n=dico_stades[StP.num_plante][StP.tiller]["Ln_final"]+1, Ln_final=dico_stades[StP.num_plante][StP.tiller]["Ln_final"], geno=StP.geno, shape=shp_I[StP.geno], PlHeight=Param_PlHeight[StP.geno])
     StP.gr = StP.final_length/(ED_P * phyll_adjust(StP.geno))
     if dico_stades[StP.num_plante][StP.tiller]["End_internode_elongation"] == True : #TODO ce n'est pas sur que ce soit tres vrai, mais ce n'est probablement pas catastrophique
       if StP.length < StP.final_length:
