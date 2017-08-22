@@ -51,18 +51,20 @@ do
 	echo -e "\033[31m$script_params\033[0m"
 		
 	# suffixe pour des noms de fichiers de sortie standard et d'erreur
-	suffixe="`echo ${line[@]} | tr ' ' '_'`.txt"
-	
+	#suffixe="`echo ${line[@]} | tr ' ' '_'`.txt"
+
+	identifiant=`cat ID_simul.txt`
+	suffixe=$identifiant
+
 	# lancement d'une simulation (script python avec tous ses parametres)
 	#echo "$script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe"
 	date | tee Times/time.$suffixe
 	{ time $script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe ; } 2>&1 | tee -a Times/time.$suffixe
-	
-	identifiant=`cat ID_simul.txt`
 
 	OLD_IFS="$IFS"
 	IFS="   "	
-	echo -e "${line[*]}""\t"$identifiant >> combi_param.csv
+	echo -e "${line[*]}""\t"$identifiant #>> combi_param.csv
+	echo $identifiant
 	IFS="$OLD_IFS"
 	
 	#./WALTer_launcher-v1-17_dev.py densite=$a tillering_prob_Maxwell=$b LAIc_Maxwell=$c PARseuil=$d expe_related=$e rep=$r CARIBU_state=$CARIBU >>out.$a.$b.$c.$d.$e.$r.txt 2>err.$a.$b.$c.$d.$e.$r.txt
