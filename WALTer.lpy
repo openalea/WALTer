@@ -78,8 +78,8 @@ scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v1.19.3"
-WALTer_build = 01062017
+WALTer_version = "v2.0"
+WALTer_build = 22082017
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -2165,7 +2165,7 @@ def EndEach(lstring, lscene):
           if lscene:
             for i in range(len(lscene)):
               mapping_table[lscene[i].id] = i
-          
+          print "map =",mapping_table.keys()
           # Definition ciel
           #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
           #On selectionne uniquement la valeur de PAR pour le current day
@@ -2185,7 +2185,7 @@ def EndEach(lstring, lscene):
           try:
             output = c_scene.run()
             res_sky = output[1]["default_band"]
-
+          
           except Exception:
             print '#'*80
             print '*'*80
@@ -2195,20 +2195,22 @@ def EndEach(lstring, lscene):
             s_save = Scene(lscene)
             s_save.save("./debug/lscene-day-"+"%s" % elapsed_time+".geom")
             res_sky = None
-
+          
           if Temperature > 0 and res_sky:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
                 dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
             for id in mapping_table.keys():
+              print id
               #if id not in new_lstring: continue
               new_ = new_lstring[id]
               if ((new_.name == "Blade" and new_[0].photosynthetic == True) or
                  (new_.name in ("Sheath", "Internode", "Peduncle")) or
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
+                  print "id", id, mapping_table[id]
                   Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][mapping_table[id]])
-
+                  
                   if res_sky["Ei"][mapping_table[id]] < 0:
                     new_[0].PAR = 0
                   else:
@@ -2259,10 +2261,8 @@ def EndEach(lstring, lscene):
       
       #Date effective du debut de regression des talles qui dépend du nombre de feuilles final
       if t_beg_reg_ind_Tht.keys(): #This is a simple and ugly test set to avoid performing the real test (on an empty dict) the first round of simulation before the dict t_beg_reg_ind_Tht fills itself
-        print "premier test"
         #print elapsed_time, "tht beg reg : ",min(t_beg_reg_ind_Tht.values())
         if t_beg_reg_ind_Tht[num_plt] < Tempcum < dico_stades[num_plt][(1,)]["Flo"][1]: 
-          print "deuxième test"
           #Determining the maximal cohort of the day
           PAR_per_youngest_tiller = (0, float('inf'))
           if len(axis_census[num_plt].values()) > 0: #If at least one axis is composing the plant
