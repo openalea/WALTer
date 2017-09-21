@@ -32,7 +32,8 @@ while read -a line
 do
 	# Si le tableau param_names est vide, on le remplit avec le contenu de la 1ere ligne
 	# continue => on passe a l'iteration suivante sans executer le reste du bloc
-	[[ -z $param_names ]] && param_names=(${line[@]}) && identifiant="ID" && OLD_IFS="$IFS" && IFS="   " && echo -e "${line[*]}""\t"$identifiant >> combi_param.csv && IFS="$OLD_IFS" && continue
+#	[[ -z $param_names ]] && param_names=(${line[@]}) && identifiant="ID" && OLD_IFS="$IFS" && IFS=$'\t' && echo -e "${line[*]}""\t"$identifiant >> combi_param.csv && IFS="$OLD_IFS" && continue
+	[[ -z $param_names ]] && param_names=(${line[@]}) && identifiant="ID" && OLD_IFS="$IFS" && IFS=$'\t' && echo -ne "${line[*]}\t$identifiant\n" >> combi_param.csv && IFS="$OLD_IFS" && continue
 
 	i=0 # indice des tableaux
 	
@@ -62,9 +63,9 @@ do
 	{ time $script_py $script_params >>Outs/out.$suffixe 2>Errors/err.$suffixe ; } 2>&1 | tee -a Times/time.$suffixe
 
 	OLD_IFS="$IFS"
-	IFS="   "	
-	echo -e "${line[*]}""\t"$identifiant #>> combi_param.csv
-	echo $identifiant
+	IFS=$'\t'
+	#echo -e "${line[*]}""\t"$identifiant >> combi_param.csv
+	echo -ne "${line[*]}\t$identifiant\n" >> combi_param.csv
 	IFS="$OLD_IFS"
 	
 	#./WALTer_launcher-v1-17_dev.py densite=$a tillering_prob_Maxwell=$b LAIc_Maxwell=$c PARseuil=$d expe_related=$e rep=$r CARIBU_state=$CARIBU >>out.$a.$b.$c.$d.$e.$r.txt 2>err.$a.$b.$c.$d.$e.$r.txt

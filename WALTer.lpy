@@ -103,6 +103,7 @@ hazard_emerg = hazard_driver["emerg"]
 
 which_output_files = pd.read_csv("which_output_files.csv", sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
+print "ce qu'on ecrit:", write_output_file["Lscene"]
 
 write_debug_PAR = False
 
@@ -1939,7 +1940,7 @@ else:
     json.dump(ID_params, open("index-table.json", "w"))
     
   folder_name = ID
-  
+  print "ID : ",ID
   #Write the ID of the current simulation in an external file to catch it later un another script
   ID_simul = open("ID_simul.txt","w")
   ID_simul.write(ID)
@@ -2136,8 +2137,9 @@ def EndEach(lstring, lscene):
   ##################################
   
   if write_output_file["Lscene"]:
-    s_save = Scene(lscene)
-    s_save.save("./output/"+folder_name+"/Lscenes/lscene-day-"+"%s" % elapsed_time+".bgeom")
+    if elapsed_time > 40:
+      s_save = Scene(lscene)
+      s_save.save("./output/"+folder_name+"/Lscenes/lscene-day-"+"%s" % elapsed_time+".bgeom")
   
   if write_output_file["Lstring"]:
     out_lstring = open("./output/"+folder_name+"/Lstrings/lstring-day-"+"%s" % round(elapsed_time) +".txt", "w")
@@ -2165,7 +2167,6 @@ def EndEach(lstring, lscene):
           if lscene:
             for i in range(len(lscene)):
               mapping_table[lscene[i].id] = i
-          print "map =",mapping_table.keys()
           # Definition ciel
           #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
           #On selectionne uniquement la valeur de PAR pour le current day
@@ -2201,14 +2202,12 @@ def EndEach(lstring, lscene):
               for axis in axis_census[num_plt].keys():
                 dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
             for id in mapping_table.keys():
-              print id
               #if id not in new_lstring: continue
               new_ = new_lstring[id]
               if ((new_.name == "Blade" and new_[0].photosynthetic == True) or
                  (new_.name in ("Sheath", "Internode", "Peduncle")) or
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
-                  print "id", id, mapping_table[id]
                   Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][mapping_table[id]])
                   
                   if res_sky["Ei"][mapping_table[id]] < 0:
