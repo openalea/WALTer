@@ -2185,17 +2185,27 @@ def EndEach(lstring, lscene):
           c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
           try:
             output = c_scene.run()
-            res_sky = output[1]["default_band"]
+          except Exception as exception :
+            #~ if exception.__class__.__name__ == "CaribuRunError"
+            if type(exception).__name__ == "CaribuRunError":
+              error_caribu_file = open("./output/"+folder_name+"/error_caribu.txt", "w")
+            else:
+              error_default_file = open("./output/"+folder_name+"/error_default.txt", "w")
+            
+            sys.stderr.write(str(exception))
+            exit(1)
           
-          except Exception:
-            print '#'*80
-            print '*'*80
-            print 'ERROR in the run of caribu'
-            print lscene
-            print '*'*80
-            s_save = Scene(lscene)
-            s_save.save("./debug/lscene-day-"+"%s" % elapsed_time+".geom")
-            res_sky = None
+          res_sky = output[1]["default_band"]
+          
+#          except Exception:
+#            print '#'*80
+#            print '*'*80
+#            print 'ERROR in the run of caribu'
+#            print lscene
+#            print '*'*80
+#            s_save = Scene(lscene)
+#            s_save.save("./debug/lscene-day-"+"%s" % elapsed_time+".geom")
+#            res_sky = None
           
           if Temperature > 0 and res_sky:
             for num_plt in axis_census.keys():
