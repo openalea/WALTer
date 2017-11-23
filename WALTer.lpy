@@ -79,7 +79,7 @@ Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
 WALTer_version = "v2.0"
-WALTer_build = 22082017
+WALTer_build = 23112017
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -100,6 +100,9 @@ hazard_plant = hazard_driver["plant"]
 hazard_axis = hazard_driver["axis"]
 hazard_organ = hazard_driver["organ"]
 hazard_emerg = hazard_driver["emerg"]
+
+write_lscene = False
+write_lstring = False
 
 which_output_files = pd.read_csv("which_output_files.csv", sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
@@ -515,7 +518,7 @@ b_I_L_Maxwell = -0.04
 b_I_L_Gigant_Maxwell = -0.04
 b_I_L_Soissons = -0.29
 a_I_L = {"Maxwell" : a_I_L_Maxwell , "Gigant_Maxwell" : a_I_L_Gigant_Maxwell, "Darwinkel_Maxwell" :a_I_L_Maxwell , "Soissons" :a_I_L_Soissons} #Coefficient for internode final length                | old name : a_internode_squ
-b_I_L = {"Maxwell" : b_I_L_Maxwell, "Gigant_Maxwell" :b_I_L_Gigant_Maxwell , "Darwinkel_Maxwell" : a_I_L_Maxwell, "Soissons" : b_I_L_Soissons} #Coefficient for internode final length                | old name : b_internode_squ
+b_I_L = {"Maxwell" : b_I_L_Maxwell, "Gigant_Maxwell" :b_I_L_Gigant_Maxwell , "Darwinkel_Maxwell" : b_I_L_Maxwell, "Soissons" : b_I_L_Soissons} #Coefficient for internode final length                | old name : b_internode_squ
 
 ## Sheath final length
 a_S_L_Maxwell = 0.6919
@@ -527,10 +530,6 @@ b_S_L_Soissons = -2.16
 a_S_L = {"Maxwell" : a_S_L_Maxwell, "Darwinkel_Maxwell" : a_S_L_Maxwell, "Gigant_Maxwell" : a_S_L_Gigant_Maxwell, "Soissons" : a_S_L_Soissons} # Coefficient for sheath final length                     | old name : a_sheath_length
 b_S_L = {"Maxwell" : b_S_L_Maxwell,  "Darwinkel_Maxwell" : b_S_L_Maxwell, "Gigant_Maxwell" : b_S_L_Gigant_Maxwell,"Soissons" : b_S_L_Soissons} # Coefficient for sheath final length (cm)                 | old name : b_sheath_length
 
-## Rapport largeur/longueur et surface de limbe
-R_wL_Maxwell = 0.06#0.081759
-S_B_Maxwell = 15#18.565
-
 ## Blade final length
 l_c = 0.5                                               #length of the coleoptil at the emergence                    | old name : coleoptil_length
 L_B_1_Maxwell = 7
@@ -541,7 +540,7 @@ s_B_1_Maxwell = 0.8
 s_B_1_Soissons = 0.5
 s_B_1 = {"Maxwell" : s_B_1_Maxwell,  "Darwinkel_Maxwell" :s_B_1_Maxwell , "Gigant_Maxwell" : s_B_1_Maxwell,"Soissons" : s_B_1_Soissons} # Final length increment between two successive leaves (bef FT) | old name : incr_Bl
 
-#L_B_max_Maxwell = 17.4
+L_B_max_Maxwell = 17.4
 L_B_max_Soissons = 22.4
 
 N_B_r_Maxwell = 2
@@ -556,7 +555,7 @@ s_B_f = {"Maxwell" : s_B_f_Maxwell, "Darwinkel_Maxwell" :s_B_f_Maxwell , "Gigant
 ## Blade width
 b_B_w_Maxwell = -0.3
 b_B_w_Soissons = -0.4
-#a_B_w_Maxwell = 0.099
+a_B_w_Maxwell = 0.099
 a_B_w_Soissons = 0.097
 b_B_w = {"Maxwell" : b_B_w_Maxwell, "Darwinkel_Maxwell" : b_B_w_Maxwell, "Gigant_Maxwell" : b_B_w_Maxwell, "Soissons" : b_B_w_Soissons} # Coefficient for blade width (cm)                          | old name : b_blade_width
 
@@ -664,7 +663,7 @@ for key, value, in params.iteritems():
 
 GAI_c = {"Maxwell" : GAI_c_Maxwell,  "Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell, "Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Soissons" : GAI_c_Soissons} # Green Area Index threshold above which tillering of a plant stops
 
-dGAIp = 0.2#1			# Maximal range of plant detection (meter)
+dGAIp = 1			# Maximal range of plant detection (meter)
 L_b_S = 2      # Buried length of the first sheath (in cm) | old name : L_burried
 
 
@@ -677,7 +676,7 @@ for key, value, in params.iteritems():
 
 
 # Tiller death
-t_beg_reg_Maxwell = 5#6.8
+t_beg_reg_Maxwell = 6.8
 t_beg_reg_Darwinkel_Maxwell = 7.8
 t_beg_reg_Gigant_Maxwell = 7.8
 t_beg_reg_Soissons = 6.8
@@ -690,7 +689,7 @@ for key, value, in params.iteritems():
 
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell,  "Darwinkel_Maxwell" : t_beg_reg_Darwinkel_Maxwell, "Gigant_Maxwell" : t_beg_reg_Gigant_Maxwell,"Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-PAR_t_Maxwell = 5000#280000
+PAR_t_Maxwell = 280000
 PAR_t_Darwinkel_Maxwell = 100000
 PAR_t_Gigant_Maxwell = 100000
 PAR_t_Soissons = 150000
@@ -709,7 +708,7 @@ Delta_SGtC = 600                   # Thermal time between the moment a tiller st
 Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
 Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
 
-Delta_prot_Maxwell = 10#75
+Delta_prot_Maxwell = 75
 Delta_prot_Darwinkel_Maxwell = 25
 Delta_prot_Gigant_Maxwell = 25
 Delta_prot_Soissons = 50
@@ -1782,7 +1781,7 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9, sep=";")
 
-var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_MAxwell","R_wL_Maxwell","S_B_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print params
 
@@ -1794,10 +1793,10 @@ for key, value, in params.iteritems():
 #print nb_plt_utiles
 
 random.seed(rep)
-L_B_max_Maxwell = sqrt((4*S_B_Maxwell)/(3*R_wL_Maxwell))
+
 L_B_max = {"Maxwell" : L_B_max_Maxwell, "Darwinkel_Maxwell" : L_B_max_Maxwell, "Gigant_Maxwell" : L_B_max_Maxwell, "Soissons" : L_B_max_Soissons} # Final length of the longest blade each the axis (cm)        | old name : length_penultimate_blade
 
-a_B_w_Maxwell = (R_wL_Maxwell*L_B_max_Maxwell-R_wL_Maxwell)/L_B_max_Maxwell
+
 a_B_w = {"Maxwell" : a_B_w_Maxwell, "Darwinkel_Maxwell" : a_B_w_Maxwell, "Gigant_Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
 
 tab_top = datetime.date(int(year)-1,9,1)													      # On définit la date du début du fichier
@@ -2558,7 +2557,7 @@ def End(lstring):
 
 Axiom:Seed
 
-derivation length: nbj
+derivation length: int(nbj)
 # nbj jours
 
 ###########PRODUCTION##########
@@ -2741,8 +2740,8 @@ Seed:
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
   
-  beginning_CARIBU = 100
-  #beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
+  #beginning_CARIBU = 100
+  beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
   ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
@@ -3737,7 +3736,7 @@ Sheath(StS):
     if StS.tiller == (1,):
       Sh_max[StS.num_plante][StS.tiller][StS.n] = max(map(current_sheath_length[StS.num_plante][StS.tiller].get, range(0, StS.n+1)))
     else:
-      if current_sheath_length[StS.num_plante][StS.tiller][2] > 0:
+      if 2 in current_sheath_length[StS.num_plante][StS.tiller].keys() and current_sheath_length[StS.num_plante][StS.tiller][2] > 0: #WARNING : To avoid key error when axis with less than 2 sheaths
         Sh_max[StS.num_plante][StS.tiller][StS.n] = max(map(current_sheath_length[StS.num_plante][StS.tiller].get, range(0, StS.n+1)))
       else:
         Sh_max[StS.num_plante][StS.tiller][StS.n] = 0
