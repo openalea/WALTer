@@ -1790,7 +1790,7 @@ for key, value, in params.iteritems():
     print key, value
     exec(key+"=value")
 
-#print nb_plt_utiles
+nb_rang = int(nb_rang)
 
 random.seed(rep)
 
