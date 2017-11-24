@@ -257,6 +257,7 @@ dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 
 
 crop_ccptn = "Mesh_for_nplants"
 area_targeted = 1
+nb_rang = 1
 
 var_register0 = ["crop_ccptn"]
 
