@@ -2705,7 +2705,7 @@ Seed:
     nproduce CutPointBud(StCPB)Apex(StA)
   
   print "border plants : ", border_plants
-
+  
   if border_plants != plant_census: #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
     for brd_plt in border_plants:
       plant_census.remove(brd_plt)
@@ -3004,7 +3004,7 @@ group 4:
 
 Apex(StA):
   
-
+  
   #Il ne se passe rien avant emergence
   if Tempcum >= Dse_heterogeneous[StA.num_plante]:
     # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
