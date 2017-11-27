@@ -8,13 +8,6 @@
 # chemin vers le script python
 script_py="./WALTer_launcher.py"
 
-# Si le 1er argument est total_diallel (A FAIRE)
-if [[ $1 == "total_diallel" ]]
-then
-	# TODO
-	exit 0 # on quitte en retournant zero => pas d'erreur
-fi
-
 # sinon, les combinaisons sont indiquees dans un fichier tabulé 
 filename=$1
 
