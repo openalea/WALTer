@@ -1,0 +1,55 @@
+{
+  "_pkglts": {
+    "auto_install": true,
+    "install_front_end": "stdout",
+    "use_prompts": false,
+    "version": 8
+  },
+  "base": {
+    "authors": [
+      [
+        "Christophe Lecarpentier",
+        "christophe.lecarpentier@inra.fr"
+      ],
+      [
+        "Emmanuelle Blanc",
+        "emmanuelle.blanc@u-psud.fr"
+      ]
+    ],
+    "namespace": null,
+    "namespace_method": "pkg_util",
+    "pkgname": "walter",
+    "url": "https://github.com/openalea-incubator/WALTer"
+  },
+  "data": {},
+  "doc": {
+    "description": "WALTer : a 3D FSPM Wheat model that simulates the tillering plasticity based on light competition",
+    "fmt": "rst",
+    "keywords": [
+      "wheat",
+      "FSPM",
+      "tillering",
+      "light competition"
+    ]
+  },
+  "license": {
+    "name": "cecill-c",
+    "organization": "INRA",
+    "project": "{{ base.pkgname }}",
+    "year": 2017
+  },
+  "pysetup": {
+    "intended_versions": [
+      "36"
+    ],
+    "require": []
+  },
+  "test": {
+    "suite_name": "pytest"
+  },
+  "version": {
+    "major": 2,
+    "minor": 0,
+    "post": 0
+  }
+}
