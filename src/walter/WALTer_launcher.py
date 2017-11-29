@@ -19,7 +19,7 @@ for key, item in params.items():
         pass
 
 lsystem_file = pj(data_access.get_data_dir(), 'WALTer.lpy')
-lsys = Lsystem(lsystem_file,params)
+lsys = Lsystem(lsystem_file,{'params': params})
 
 #lsys.nbj = 10
 #lsys.derivationLength = lsys.nbj

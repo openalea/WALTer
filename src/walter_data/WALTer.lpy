@@ -14,6 +14,10 @@ import os, os.path
 import uuid
 import json
 
+from walter import data_access
+from os.path import join as pj
+data_dir = pj(data_access.get_data_dir())
+inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
 ### Importations de fichiers annexes ###
@@ -30,12 +34,12 @@ from collections import defaultdict
 
 import datetime
 
-# Liste des modules utilisés par la suite dans le modèle :
+# Liste des modules utilisï¿½s par la suite dans le modï¿½le :
 
-# Plan de semis dans lequel on spécifie le nombre de plantes et espacement entre les plantes
+# Plan de semis dans lequel on spï¿½cifie le nombre de plantes et espacement entre les plantes
 module Seed
 
-# Différents organes qui vont suivre des lois de production "propres"
+# Diffï¿½rents organes qui vont suivre des lois de production "propres"
 module Apex
 module Bud_primord
 module Bud
@@ -52,28 +56,28 @@ module Blade
 module Peduncle
 module Ear
 
-# Module "d'insertion de branche" dans lequel on va faire évoluer les règles de régression de talles
+# Module "d'insertion de branche" dans lequel on va faire ï¿½voluer les rï¿½gles de rï¿½gression de talles
 module CutPointBud
 module CutPointBlade
 
 ### REPRESENTATION DES ORGANES
-params = dict(map(lambda x: x.split('='), sys.argv[1:]))
-for key, item in params.items():
-    try :
-        params[key] = float(item)
-    except:
-        pass
+# params = dict(map(lambda x: x.split('='), sys.argv[1:]))
+# for key, item in params.items():
+#     try :
+#         params[key] = float(item)
+#     except:
+#         pass
 
-#Paramètres de mise à l'échelle pour que 1=1 dans chacune des directions
+#Paramï¿½tres de mise ï¿½ l'ï¿½chelle pour que 1=1 dans chacune des directions
 scalex = 0.5              
 scaley = 1                
 scalez = 0.5              
 
 #########################
 
-#Importation des figures créées dans des scenes
-scene_house  =  Scene(os.getcwd()+"/input/organ_shapes/Pentagon_up.bgeom")
-scene_square =  Scene(os.getcwd()+"/input/organ_shapes/Square_up_volume.bgeom")
+#Importation des figures crï¿½ï¿½es dans des scenes
+scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
+scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
 
 Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
@@ -104,7 +108,7 @@ hazard_emerg = hazard_driver["emerg"]
 write_lscene = False
 write_lstring = False
 
-which_output_files = pd.read_csv("which_output_files.csv", sep="\t")
+which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 print "ce qu'on ecrit:", write_output_file["Lscene"]
 
@@ -331,7 +335,7 @@ dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
 
-geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de génotypes compris sur la parcelle
+geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de gï¿½notypes compris sur la parcelle
 
 crop_genotype = []
 
@@ -341,12 +345,12 @@ for geno in experimental_conditions[expe_related]["genotype"]:
 ################################
 
 SIRIUS_state         = "disabled"
-infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximité
+infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximitï¿½
 cohorte_max          = 9
 
 
 
-# Si SIRIUS n'est pas activé, le nombre final de feuilles est fixé à la donnée expérimentale. S'il n'y a pas de donnée expérimental il est à 11 par défaut.
+# Si SIRIUS n'est pas activï¿½, le nombre final de feuilles est fixï¿½ ï¿½ la donnï¿½e expï¿½rimentale. S'il n'y a pas de donnï¿½e expï¿½rimental il est ï¿½ 11 par dï¿½faut.
 
 #Initialisation
 global param_Ln_final
@@ -393,17 +397,17 @@ Rp = 0.003                                      # decroissement du phyllo
 VAI_Maxwell = 0.00906
 VAI_Soissons = 0.00906
 VAI_Renan =  0.00456
-VAI = {"Maxwell" : VAI_Maxwell, "Gigant_Maxwell" : VAI_Maxwell, "Darwinkel_Maxwell" : VAI_Maxwell, "Soissons" : VAI_Soissons, "Renan" :VAI_Renan}    # Différentes valeurs issues de recalibrations (pour Soissons) He : 0.00906  #Ly : 0.00405  #Lecarpentier :
+VAI = {"Maxwell" : VAI_Maxwell, "Gigant_Maxwell" : VAI_Maxwell, "Darwinkel_Maxwell" : VAI_Maxwell, "Soissons" : VAI_Soissons, "Renan" :VAI_Renan}    # Diffï¿½rentes valeurs issues de recalibrations (pour Soissons) He : 0.00906  #Ly : 0.00405  #Lecarpentier :
 
 VBEE_Maxwell =  0.012
 VBEE_Soissons = 0.012
 VBEE_Renan = 0.012
-VBEE = {"Maxwell" :VBEE_Maxwell, "Gigant_Maxwell" :VBEE_Maxwell , "Darwinkel_Maxwell" : VBEE_Maxwell, "Soissons" : VBEE_Soissons, "Renan" : VBEE_Renan}         # Différentes valeurs issues de recalibrations (pour Soissons)  #He : 0.012    #Ly : 0.012    #Lecarpentier : 0.012
+VBEE = {"Maxwell" :VBEE_Maxwell, "Gigant_Maxwell" :VBEE_Maxwell , "Darwinkel_Maxwell" : VBEE_Maxwell, "Soissons" : VBEE_Soissons, "Renan" : VBEE_Renan}         # Diffï¿½rentes valeurs issues de recalibrations (pour Soissons)  #He : 0.012    #Ly : 0.012    #Lecarpentier : 0.012
 
 SLDL_Maxwell = 1.34
 SLDL_Soissons = 1.34
 SLDL_Renan = 1.12 
-SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Différentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier : 
+SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Diffï¿½rentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier : 
 
 # Final plant height (internodes+peduncle+ear of mainstem)
 Param_PlHeight_Maxwell = 55.6155
@@ -723,7 +727,7 @@ for key, value, in params.iteritems():
 Delta_prot = {"Maxwell" : Delta_prot_Maxwell,  "Darwinkel_Maxwell" : Delta_prot_Darwinkel_Maxwell, "Gigant_Maxwell" : Delta_prot_Gigant_Maxwell,"Soissons" : Delta_prot_Soissons}                    # Thermal time interval during which two tillers of the same plant cannot die | old name : duration_plant_protection
 
 
-# Paramètres communs
+# Paramï¿½tres communs
 #######################
 
 radiation_type    = "diffuse" #or {"diffuse"; "complete"}
@@ -731,8 +735,8 @@ PAS               = 24
 
 ##
 
-nbj               = 25 + 300                             # Durée de la simulation
-time_step         = 1.                                   # Temps qui s'écoule   (jour)
+nbj               = 25 + 300                             # Durï¿½e de la simulation
+time_step         = 1.                                   # Temps qui s'ï¿½coule   (jour)
 Tbase             = 0.                                 
 
 
@@ -749,9 +753,9 @@ liste_talles = [(1,2),(1,3)]#,(1,4),(1,5),(1,6),(1,7)]
 
 Initialization_count       = 0
 nb_voisins_glob            = {}
-elapsed_time               = 0                      # Temps écoulé depuis le début de la simulation (en jours)
+elapsed_time               = 0                      # Temps ï¿½coulï¿½ depuis le dï¿½but de la simulation (en jours)
 num_j                      = 0                      # Jour actuel
-Tempcum                    = 0                      # Températures cumulées depuis le début de la simulation (degrés jour)
+Tempcum                    = 0                      # Tempï¿½ratures cumulï¿½es depuis le dï¿½but de la simulation (degrï¿½s jour)
 _Tempcum                   = 0
 DOY                        = 0
 date_current_day           = 0
@@ -765,26 +769,26 @@ latest_plant               = 0
 ###############
 
 ##### Identification #####
-n_init                     = 0                       # Numéro du phytomère
-tiller_init                = (1,)                    # Numéro de la talle
-num_plante                 = 1                       # Numéro de la plante cible
+n_init                     = 0                       # Numï¿½ro du phytomï¿½re
+tiller_init                = (1,)                    # Numï¿½ro de la talle
+num_plante                 = 1                       # Numï¿½ro de la plante cible
 
 ##### Variables communes #####
 age_init                   = 0                       # Age de l'organe (j)
-time_init                  = 0                       # Temps écoulé depuis l'initiation du dernier phytomère  (j)
+time_init                  = 0                       # Temps ï¿½coulï¿½ depuis l'initiation du dernier phytomï¿½re  (j)
 nb_j_init                  = 0
-sumtemp_init               = 0                       # Somme des températures accumulées par l'organe depuis son initiation
+sumtemp_init               = 0                       # Somme des tempï¿½ratures accumulï¿½es par l'organe depuis son initiation
 
 ##### Dimensions d'organes #####
 length_init                = 0.0                    # Taille de l'organe (cm)
 width_init                 = 0.0                 # Largeur du limbe (en cm)
-diameter_init              = 0.5                      # Diamètre de l'organe (en cm)
+diameter_init              = 0.5                      # Diamï¿½tre de l'organe (en cm)
 final_length_init          = 0.0                    # Taille finale de l'organe
-PAR_init                   = 0                       # Quantité de Par reçu par l'organe
+PAR_init                   = 0                       # Quantitï¿½ de Par reï¿½u par l'organe
 
 
-##### Cinétique de croissance #####
-date_emerg                 = 10000                   # Date d'émergence de l'organe en temps "global"
+##### Cinï¿½tique de croissance #####
+date_emerg                 = 10000                   # Date d'ï¿½mergence de l'organe en temps "global"
 gr_init                    = 0
 
 ##### Vernalisation #####
@@ -795,7 +799,7 @@ Ln_app_init                = Lmax
 Ln_final_init              = 100
 Lmin_pot_init              = 0
 
-##### Stades de développement #####
+##### Stades de dï¿½veloppement #####
 test_res= [True]
 real_ts0 = [float("inf")]
 
@@ -849,19 +853,19 @@ if write_output_file["PAR_per_axes"]:
 #######################
 
 initialization_Flag           = {}
-final_blade_length            = {}              # Dico regroupant les tailles finales de tous les limbes par individu, par talle, par phytomère
-current_sheath_length         = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomère
+final_blade_length            = {}              # Dico regroupant les tailles finales de tous les limbes par individu, par talle, par phytomï¿½re
+current_sheath_length         = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomï¿½re
 dead_sheath_length            = {}
-current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomère
-dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "portée" du voisinage
-maillage                      = []              # Tableau représentant la disposition des individus en nombre de plante
+current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomï¿½re
+dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "portï¿½e" du voisinage
+maillage                      = []              # Tableau reprï¿½sentant la disposition des individus en nombre de plante
 border_plants                 = []
-surface_sol                   = {}              # Dico regroupant la surface de sol inhérente à chaque individu
-GAI_prox                      = {}              # Dico regroupant le GAI d'un sous-peuplement constitué d'une plante cible ainsi que de ses voisins
+surface_sol                   = {}              # Dico regroupant la surface de sol inhï¿½rente ï¿½ chaque individu
+GAI_prox                      = {}              # Dico regroupant le GAI d'un sous-peuplement constituï¿½ d'une plante cible ainsi que de ses voisins
 GAI_ind                       = {}
-LNfinal                       = {}              #TODO Attention ce dico est obsolete il faudra le virer pour épurer un peu ce beau code
-tiller_death                  = {}              # Dico reçensant toutes les talles qui doivent mourir (testé à Montaison)
-tiller_death_now              = {}              # Dico listant toutes les talles qui sont sensées mourir à CE PAS DE TEMPS PRECIS
+LNfinal                       = {}              #TODO Attention ce dico est obsolete il faudra le virer pour ï¿½purer un peu ce beau code
+tiller_death                  = {}              # Dico reï¿½ensant toutes les talles qui doivent mourir (testï¿½ ï¿½ Montaison)
+tiller_death_now              = {}              # Dico listant toutes les talles qui sont sensï¿½es mourir ï¿½ CE PAS DE TEMPS PRECIS
 date_emission                 = {}
 dico_stades                   = {}
 photoperiode                  = []
@@ -882,7 +886,7 @@ plant_map                     = {}
 tiller_2_ts0                  = {(1,1):0,(1,2):0,(1,3):0,(1,4):0,(1,5):0,(1,6):0,(1,7):0}
 cohort_2_ts0                  = {1: 633, 2: 693, 3: 761, 4: 709, 5: 847, 6: 855, 7: 864, 8: 693, 9: 693, 10: 633, 11: 573}
 
-dico_PAR                      = {}              # Dico dans lequel on stocke les informations de PAR capté par organe
+dico_PAR                      = {}              # Dico dans lequel on stocke les informations de PAR captï¿½ par organe
 dico_PAR["Blade"]             = {}                          # On formatte le dico pour qu'il capte des infos concernant les blades
 dico_PAR["Sheath"]            = {}
 dico_PAR["Internode"]         = {}
@@ -907,7 +911,7 @@ dico_cut_dead_blades          = {}
 young_tiller                  = {}
 youngest_axis                 = {}
 
-# Pour la régression des talles
+# Pour la rï¿½gression des talles
 liste_tal                     = {}
 axis_order                    = {}
 weaker_order                  = {}
@@ -917,14 +921,14 @@ youngest_axes                 = {}
 weakest_axis                  = {}
 plant_shield_indicator        = {}
 
-# Aléatoire :
+# Alï¿½atoire :
 positions                     = {}
 hazard_dict_organ             = {}
 hazard_dict_axis              = {}
 hazard_dict_plant             = {}
 
 
-color=[0,4,5,7,8,6,9,10,11]                     # Couleur pour bien différencier les différents génotypes
+color=[0,4,5,7,8,6,9,10,11]                     # Couleur pour bien diffï¿½rencier les diffï¿½rents gï¿½notypes
 organ_type = ["Blade", "Internode", "Sheath","Peduncle", "Ear"]
 #organ_type = ["Blade","Sheath","Internode","Peduncle"]
 
@@ -970,7 +974,7 @@ def crop_conception(densite, nb_rang, dist_inter_rang, nb_plante_min, nb_plante_
         virtual_density = nplant_peupl / surface_sol
         ecart_de_densite = abs(densite - virtual_density)/densite
         resultats[ecart_de_densite] = (round(dx,2),round(dy,2))
-    # On récupère la combinaison de dx et dy pour lesquels il y'a le plus faible écart de densité !
+    # On rï¿½cupï¿½re la combinaison de dx et dy pour lesquels il y'a le plus faible ï¿½cart de densitï¿½ !
       dy = round(resultats[min(resultats.keys())][1],2)
       nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
       nplant_peupl = nb_rang * nb_plante_par_rang
@@ -1004,7 +1008,7 @@ def plant_disposition(nb_rang, nb_plante_par_rang, dist_inter_rang, dist_intra_r
 
 
 
-# fonction qui permet de centrer les plantes sur le repère orthonormé
+# fonction qui permet de centrer les plantes sur le repï¿½re orthonormï¿½
 def plant_translation(x_plant, y_plant, x_middle, y_middle):
   new_coordinates = {}
   new_coordinates["x"] = x_plant - x_middle
@@ -1108,12 +1112,12 @@ def SSI_MS(Tht, Ln_final, phyllo, n0, n1, n3, ts1, ts3, Dse, DelayTipToHS):
     a = 0
     b = 0
   elif tHS0 <= Tht < real_ts1:
-    s0 = 0 #Nombre de feuilles mortes à t0
+    s0 = 0 #Nombre de feuilles mortes ï¿½ t0
     a = (s1 - s0)/(real_ts1 - real_ts0)
     b = s1 - a*real_ts1
   #Deuxieme phase de senescence
   elif real_ts1 <= Tht <= real_ts3:
-    s3 = Ln_final                #Nombre de feuilles mortes à t2
+    s3 = Ln_final                #Nombre de feuilles mortes ï¿½ t2
     a = (s3 - s1)/(real_ts3 - real_ts1)
     b = s3 - a*real_ts3
   elif Tht > real_ts3:
@@ -1153,12 +1157,12 @@ def SSI_tiller(Tht, tiller, Ln_final, phyllo, n1, n3, ts1, ts3, Dse, DelayTipToH
     a = 0
     b = 0
   elif tHS0 <= Tht < real_ts1:
-    s0 = 0 #Nombre de feuilles mortes à t0
+    s0 = 0 #Nombre de feuilles mortes ï¿½ t0
     a = (s1 - s0)/(real_ts1 - real_ts0[0])
     b = s1 - a*real_ts1
   #Deuxieme phase de senescence
   elif real_ts1 <= Tht <= real_ts3:
-    s3 = Ln_final                #Nombre de feuilles mortes à t2
+    s3 = Ln_final                #Nombre de feuilles mortes ï¿½ t2
     a = (s3 - s1)/(real_ts3 - real_ts1)
     b = s3 - a*real_ts3
   elif Tht > real_ts3:
@@ -1191,12 +1195,12 @@ def leaves_senesc_date_main_stem(n, Ln_final, phyllo, n0, n1, n3, ts1, ts3, Dse,
   s1 = npot1 - n1
   #Premiere phase de senescence
   if 0 <= n < s1:
-    s0 = 0 #Nombre de feuilles mortes à t0
+    s0 = 0 #Nombre de feuilles mortes ï¿½ t0
     a = (real_ts1 - real_ts0)/(s1 - s0)
     b = real_ts1 - a*s1
     return (a * n) + b
   elif s1 <= n <= Ln_final:
-    s3 = Ln_final                #Nombre de feuilles mortes à t2
+    s3 = Ln_final                #Nombre de feuilles mortes ï¿½ t2
     a = (real_ts3 - real_ts1)/(s3 - s1)
     b = real_ts3 - a*s3
     return (a * n) + b
@@ -1210,12 +1214,12 @@ def leaves_senesc_date_main_stem(n, Ln_final, phyllo, n0, n1, n3, ts1, ts3, Dse,
 #  s1 = npot1 - n1
 #  #Premiere phase de senescence
 #  if 0 <= n < s1:
-#    s0 = 0 #Nombre de feuilles mortes à t0
+#    s0 = 0 #Nombre de feuilles mortes ï¿½ t0
 #    a = (real_ts1 - real_ts0)/(s1 - s0)
 #    b = real_ts1 - a*s1
 #    return (a * n) + b
 #  elif s1 <= n <= Ln_final:
-#    s3 = Ln_final                #Nombre de feuilles mortes à t2
+#    s3 = Ln_final                #Nombre de feuilles mortes ï¿½ t2
 #    a = (real_ts3 - real_ts1)/(s3 - s1)
 #    b = real_ts3 - a*s3
 #    return (a * n) + b
@@ -1232,7 +1236,7 @@ def leaves_senesc_date_tiller(n, tiller, Ln_final, phyllo, n0, n1, n2, n3, ts1,t
   s2 = npot2 - n2
   #Premiere phase de senescence
   if 0 <= n < s1:
-    s0 = 0 #Nombre de feuilles mortes à t0
+    s0 = 0 #Nombre de feuilles mortes ï¿½ t0
     a = (real_ts1 - real_ts0)/(s1 - s0)
     b = real_ts1 - a*s1
     return (a * n) + b
@@ -1241,7 +1245,7 @@ def leaves_senesc_date_tiller(n, tiller, Ln_final, phyllo, n0, n1, n2, n3, ts1,t
     b = real_ts2 - a*s2
     return (a * n) + b
   elif s2 <= n <= Ln_final:
-    s3 = Ln_final                #Nombre de feuilles mortes à t2
+    s3 = Ln_final                #Nombre de feuilles mortes ï¿½ t2
     a = (real_ts3 - real_ts2)/(s3 - s2)
     b = real_ts2 - a*s2
     return (a * n) + b
@@ -1264,16 +1268,16 @@ def nb_emerged_leaves(tempcum, tiller, geno, Ln_final):
 #
 #  #Premiere phase de senescence
 #  if n <= (n1pot + (n0 - n1)):
-#    s0 = 0 #Nombre de feuilles mortes à t0
-#    s1 = n1pot + (n0 - n1) #Nombre de feuilles mortes à t1
+#    s0 = 0 #Nombre de feuilles mortes ï¿½ t0
+#    s1 = n1pot + (n0 - n1) #Nombre de feuilles mortes ï¿½ t1
 #
 #    a = (t1 - t0) /(s1 - s0)
 #    b = ((t0*s1) - (t1*s0))/(s1 - s0)
 #
 #  #Deuxieme phase de senescence
 #  elif (n1pot + (n0 - n1)) < n <= Ln_final:
-#    s1 = n1pot + (n0 - n1) #Nombre de feuilles mortes à t1
-#    s2 = Ln_final                #Nombre de feuilles mortes à t2
+#    s1 = n1pot + (n0 - n1) #Nombre de feuilles mortes ï¿½ t1
+#    s2 = Ln_final                #Nombre de feuilles mortes ï¿½ t2
 #
 #    a = (t3 - t1)/(s2 - s1)
 #    b = ((t1*s2) - (t3*s1))/(s2 - s1)
@@ -1283,8 +1287,8 @@ def nb_emerged_leaves(tempcum, tiller, geno, Ln_final):
 
 # Temporary date of senescence (in case of NOT knowing the final leaf number on the axis)
 def date_senescence_fake(n, t0):
-  #calcul intermédiaires pour la première phase de sénescence
-  #print "/|\ Date de sénescence douteuse !"
+  #calcul intermï¿½diaires pour la premiï¿½re phase de sï¿½nescence
+  #print "/|\ Date de sï¿½nescence douteuse !"
   return t0 + n/0.015
 
 # Setting a delay of floral transition of tiller according to the cohort number
@@ -1385,7 +1389,7 @@ def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):
     l_ear = L_E[rangeno]
     l_short = 0            
     #DETERMINING A'S RANGE, setting a < 0
-    alpha_a = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) # négatif si NENL=5
+    alpha_a = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) # nï¿½gatif si NENL=5
     beta_a = -4 * (ranNENL+1) * ( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) # est positif quand h > l_ear
     if alpha_a >= 0:
         print 'NENL =  ' + str(ranNENL) + '    unextected NENL?'
@@ -1742,28 +1746,11 @@ class Peduncle(Organ_Base):
 mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 
 
-###################################
-# LIRE UN FICHIERS DE RAYONNEMENT #
-###################################
-
-#if radiation_type == "complete":
-#  f_meteo_rad = open(os.getcwd()+"/../input/fichier_meteo_297j.csv", "r")
-#  meteo = f_meteo_rad.readlines()
-#  dico_meteo = {}
-#  liste_meteo = []
-#  for line in meteo:
-#    splited_line = line.rstrip("\n\r").rsplit("\t")
-#    dico_meteo[(int(splited_line[0]),int(splited_line[1]))] = (float(splited_line[2]),float(splited_line[3]))
-#else:
-#  PAR_df = pd.read_csv(os.getcwd()+"/../input/PAR/"+ location + "/" + location + "_" + year + "_PAR.csv", sep='\t')
-
-
-
 #### ENREGISTREMENT DES PARAMETRES
 
 
 location           = experimental_conditions[expe_related]["location"]
-year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier météo moyenné, year = 1901
+year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier mï¿½tï¿½o moyennï¿½, year = 1901
 sowing_date        = experimental_conditions[expe_related]["sowing_date"]
 
 dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
@@ -1780,10 +1767,11 @@ latitude           = dico_latitudes[location]
 # LIRE UN FICHIER METEO  #
 ##########################
 
-meteo_dF = pd.read_csv(os.getcwd()+"/input/meteo/" + location + ".csv", header=9, sep=";")
+meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
 
 var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
+print 'parms'
 print params
 
 for key, value, in params.iteritems():
@@ -1800,19 +1788,19 @@ L_B_max = {"Maxwell" : L_B_max_Maxwell, "Darwinkel_Maxwell" : L_B_max_Maxwell, "
 
 a_B_w = {"Maxwell" : a_B_w_Maxwell, "Darwinkel_Maxwell" : a_B_w_Maxwell, "Gigant_Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
 
-tab_top = datetime.date(int(year)-1,9,1)													      # On définit la date du début du fichier
+tab_top = datetime.date(int(year)-1,9,1)													      # On dï¿½finit la date du dï¿½but du fichier
 double_finger = datetime.date(int(year)-1,1,1)                               #Premier janvier
 sowing_DOY=(sowing_date-double_finger).days     # DOY du semis
 
 #################################################################################################################
 ### LE TEMPS QUI PASSE ###
-#delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le début du fichier
+#delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le dï¿½but du fichier
 #delta_date.days								                            # Retourne le nombre de jour en integer (c'est l'indice dans le tableau )
-date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date ï¿½ laquelle nous nous trouvons pour un elapsed_time donnï¿½
 DOY = int(date_current_day.strftime('%j'))
 
 
-Phl = {"Maxwell" : Phl_Maxwell, "Darwinkel_Maxwell" : Phl_Maxwell,"Gigant_Maxwell":Phl_Maxwell, "Soissons" : Phl_Soissons, "Renan" : Phl_Renan}  # Différentes valeurs issues de recalibrations He : 104      #Ly : 113.5    #Lecarpentier :
+Phl = {"Maxwell" : Phl_Maxwell, "Darwinkel_Maxwell" : Phl_Maxwell,"Gigant_Maxwell":Phl_Maxwell, "Soissons" : Phl_Soissons, "Renan" : Phl_Renan}  # Diffï¿½rentes valeurs issues de recalibrations He : 104      #Ly : 113.5    #Lecarpentier :
 
 Pls_Maxwell = phyll_adjust("Maxwell")/2
 Pls_Soissons = phyll_adjust("Soissons")/2
@@ -1884,10 +1872,11 @@ dy = crop_scheme["dy"]
 
 # Create a unique ID to the simulation according to a specific combination of parameters value
 global folder_name
+global out_dir
 
 if len(params) == 0:
   folder_name = "output_debug"
-
+  out_dir = pj(data_dir, "output")
 else:
   # If the json file already exists
   if os.path.isfile("index-table.json"):
@@ -1940,6 +1929,7 @@ else:
     json.dump(ID_params, open("index-table.json", "w"))
     
   folder_name = ID
+  out_dir = pj(data_dir, "output")
   print "ID : ",ID
   #Write the ID of the current simulation in an external file to catch it later un another script
   ID_simul = open("ID_simul.txt","w")
@@ -1947,13 +1937,18 @@ else:
   ID_simul.close()
 
 try:
-  os.mkdir("output/"+folder_name)
-  
+  if not os.path.exists(out_dir):
+    os.mkdir(out_dir)
+
+  if not os.path.exists(pj(out_dir, folder_name)):
+    os.mkdir(pj(out_dir, folder_name))
   if write_output_file["Lscene"]:
-    os.mkdir("output/"+folder_name+"/Lscenes")
+    if not os.path.exists(pj(out_dir, folder_name, "Lscenes")):
+      os.mkdir(pj(out_dir, folder_name, "Lscenes"))
   
   if write_output_file["Lstring"]:
-    os.mkdir("output/"+folder_name+"/Lstrings")
+    if not os.path.exists(pj(out_dir, folder_name, "Lstrings")):
+      os.mkdir(pj(out_dir, folder_name, "Lstrings"))
   
 except Exception, e:
   print(e)
@@ -1964,7 +1959,7 @@ def Start(lstring):
   useGroup(1)
   current_PAR = 0
   
-  #TODO ici c'est sale, il faut mettre ça dans Seed
+  #TODO ici c'est sale, il faut mettre ï¿½a dans Seed
   # Initialisation of the dictionnary regrouping Ts0 dates for each tiller
   #for tiller in tiller_2_ts0.keys():
   #  print "tiller : ",tiller, "tiller_2_ts0 : ", tiller_2_ts0
@@ -1987,9 +1982,9 @@ def StartEach(lstring):
   global Tempcum
   global date_current_day
   global DOY
-  elapsed_time += time_step                    #dj = incrément de temps en jours
-  date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
-  #mean_temperatures[current_day - tab_top).days]                   # Température moyenne du jour après elapsed time jours passés
+  elapsed_time += time_step                    #dj = incrï¿½ment de temps en jours
+  date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date ï¿½ laquelle nous nous trouvons pour un elapsed_time donnï¿½
+  #mean_temperatures[current_day - tab_top).days]                   # Tempï¿½rature moyenne du jour aprï¿½s elapsed time jours passï¿½s
   if DOY == 365:
     DOY = 1
   else:
@@ -2008,7 +2003,7 @@ def StartEach(lstring):
   except:
     pass
 
-  Temperature = current_temperature              # Température moyenne du jour après elapsed time jours passés
+  Temperature = current_temperature              # Tempï¿½rature moyenne du jour aprï¿½s elapsed time jours passï¿½s
   Tempcum += max(Tbase,Temperature)
   
   print "date : ", date_current_day, "|", location,"|", "Experiment : ", expe_related,"|", "densite : ", densite,"|", "num_jour : ",elapsed_time,"|", "tempcum : ",int(Tempcum),"|", "DOY : ",DOY,"|", "len : ",len(lstring), "|","T : ", current_temperature,"|", "PAR : ", current_PAR
@@ -2021,7 +2016,7 @@ def EndEach(lstring, lscene):
   
   new_lstring = lstring.replace("%", "")
   
-  # CALCUL DU GAI (à partir de la chaine)
+  # CALCUL DU GAI (ï¿½ partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
     Hcol_max[num_plt] = dict.fromkeys(Hcol_max[num_plt].keys(), 0)
     delta_H[num_plt] = dict.fromkeys(delta_H[num_plt].keys(), 0)
@@ -2044,7 +2039,7 @@ def EndEach(lstring, lscene):
         # Ancienne methode de calcul du GAI
         surface_plante[org[0].num_plante] += org[0].area
         
-        #Nouvelle méthode de calcul du GAI (uniquement que les parties visibles des feuilles)
+        #Nouvelle mï¿½thode de calcul du GAI (uniquement que les parties visibles des feuilles)
         tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
         
       if org.name == "Internode":
@@ -2076,7 +2071,7 @@ def EndEach(lstring, lscene):
       
       #Calcul de GAI (on ajoute les contributions des autres parties de la plante)
       Peraxes_dico_df["Visible_leaves_surface"].append(tiller_surface[(num_plt,axis)])
-      #TODO : transformer ces formules en fonctions à mettre en amont
+      #TODO : transformer ces formules en fonctions ï¿½ mettre en amont
       leaf_contrib = tiller_surface[(num_plt,axis)]
       stem_contrib = max(0,(Hcol_max[num_plt][axis] - max(L_b_S,Hcol_dead[num_plt][axis])) * d_S[genotype_map[num_plt]] * pi/2)
       peduncle_contrib = max(0,(delta_H[num_plt][axis] - L_E[genotype_map[num_plt]]) * pi/2 * d_P[genotype_map[num_plt]])
@@ -2116,12 +2111,12 @@ def EndEach(lstring, lscene):
   for key in tiller_surface.keys():
     surface_plante_visible[key[0]] += tiller_surface[key]
   
-  # Calcul du GAI de proximité
+  # Calcul du GAI de proximitï¿½
   for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
     surface_peupl = 0
     for num_voisin in dico_voisins[num_plante]:
       surface_peupl += surface_plante_visible[num_voisin]
-    GAI_prox[num_plt] = surface_peupl/(nb_voisins_glob[0] * (crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))  # On multiplie par 100 pour une conversion de m_squ à cm_squ
+    GAI_prox[num_plt] = surface_peupl/(nb_voisins_glob[0] * (crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))  # On multiplie par 100 pour une conversion de m_squ ï¿½ cm_squ
     GAI_ind[num_plt] = surface_plante_visible[num_plt]/((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))
   
   GAI_old = sum(surface_plante.values())/(crop_scheme["nplant_peupl"] * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100)))
@@ -2139,10 +2134,10 @@ def EndEach(lstring, lscene):
   if write_output_file["Lscene"]:
     if elapsed_time > 40:
       s_save = Scene(lscene)
-      s_save.save("./output/"+folder_name+"/Lscenes/lscene-day-"+"%s" % elapsed_time+".bgeom")
+      s_save.save(pj(out_dir,folder_name, "Lscenes", "lscene-day-"+"%s" % elapsed_time+".bgeom"))
   
   if write_output_file["Lstring"]:
-    out_lstring = open("./output/"+folder_name+"/Lstrings/lstring-day-"+"%s" % round(elapsed_time) +".txt", "w")
+    out_lstring = open(pj(out_dir,folder_name, "Lstrings", "lstring-day-"+"%s" % round(elapsed_time) +".txt"), "w")
     out_lstring.write("%s" % lstring)
   
   #s = Scene(lscene)
@@ -2152,7 +2147,7 @@ def EndEach(lstring, lscene):
   
   ## Pour l'instant on fait QUE du diffus
   
-  if CARIBU_state != "disabled":    #Le module de rayonnement peut être activé ou désactivé {"enabled";"disabled"}
+  if CARIBU_state != "disabled":    #Le module de rayonnement peut ï¿½tre activï¿½ ou dï¿½sactivï¿½ {"enabled";"disabled"}
     if type(lscene) != None:
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
@@ -2188,9 +2183,9 @@ def EndEach(lstring, lscene):
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
-              error_caribu_file = open("./output/"+folder_name+"/error_caribu.txt", "w")
+              error_caribu_file = open(pj(out_dir,folder_name, "error_caribu.txt"), "w")
             else:
-              error_default_file = open("./output/"+folder_name+"/error_default.txt", "w")
+              error_default_file = open(pj(out_dir,folder_name, "error_default.txt"), "w")
             
             sys.stderr.write(str(exception))
             exit(1)
@@ -2228,7 +2223,7 @@ def EndEach(lstring, lscene):
                   new_[0].organ_surface = res_sky["area"][mapping_table[id]]
                   dico_PAR[new_.name][new_[0].num_plante][new_[0].tiller][new_[0].n] = new_[0].PAR
 
-                  if tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, améliorer cette rustine
+                  if tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, amï¿½liorer cette rustine
                     dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += 0
                   else:
                     dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
@@ -2256,7 +2251,7 @@ def EndEach(lstring, lscene):
 
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
-      #Gestion du délai de protection d'une plante entre la mort successive de deux de ses talles
+      #Gestion du dï¿½lai de protection d'une plante entre la mort successive de deux de ses talles
       if plant_shield_indicator[num_plt]["Shield"] == True:
         plant_shield_indicator[num_plt]["count"] += max(0,Temperature)
         if plant_shield_indicator[num_plt]["count"] >= Delta_prot[genotype_map[num_plt]]:
@@ -2268,7 +2263,7 @@ def EndEach(lstring, lscene):
       nb_timestep_fenetre = 1
       PAR_2_write = 1
       
-      #Date effective du debut de regression des talles qui dépend du nombre de feuilles final
+      #Date effective du debut de regression des talles qui dï¿½pend du nombre de feuilles final
       if t_beg_reg_ind_Tht.keys(): #This is a simple and ugly test set to avoid performing the real test (on an empty dict) the first round of simulation before the dict t_beg_reg_ind_Tht fills itself
         #print elapsed_time, "tht beg reg : ",min(t_beg_reg_ind_Tht.values())
         if t_beg_reg_ind_Tht[num_plt] < Tempcum < dico_stades[num_plt][(1,)]["Flo"][1]: 
@@ -2286,7 +2281,7 @@ def EndEach(lstring, lscene):
             for axis, value in axis_census[num_plt].iteritems():
               if axis != (1,): #No regression is considered on the main stem
                 
-                # On délimite les bords de la fenêtre glissante
+                # On dï¿½limite les bords de la fenï¿½tre glissante
                 min_temp = min(dico_PAR_per_axis[num_plt][axis].keys())
                 max_temp = max(dico_PAR_per_axis[num_plt][axis].keys())
                 # Considering only the youngest axis
@@ -2349,73 +2344,73 @@ def End(lstring):
     _Apex_Sirius_df = pd.DataFrame(Apex_Sirius_dico_df)
     dF_labels = ["Elapsed_time","Temperature", "Temp_cum", "Daylength", "Num_plante", "Genotype", "PN", "LN", "Sumtemp", "Vern_rate", "Vern_prog", "Vern_flag", "Debut_ppd_flag", "Fin_ppd_flag", "Ln_pot", "Var_L_min","Ln_app", "Ln_final"]
     Apex_Sirius_df = _Apex_Sirius_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Apex_Sirius_df.to_csv("./output/"+folder_name+"/Apex_Sirius.csv", sep="\t", header=True, index=False)
+    Apex_Sirius_df.to_csv(pj(out_dir,folder_name, "Apex_Sirius.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Apex"] == True:
     _Apex_df = pd.DataFrame(Apex_dico_df)
     dF_labels = ["Elapsed_time", "Temperature", "Temp_cum", "Time_count", "Sum_temp", "Current_PAR", "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Nb_phyto_emi", "Nb_emerged_leaf", "Transiflo_flag", "STOP_init_flag", "Transiflo_DOY","Ln_final"]
     Apex_df = _Apex_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Apex_df.to_csv("./output/"+folder_name+"/Apex.csv", sep="\t", header=True, index=False)
+    Apex_df.to_csv(pj(out_dir,folder_name, "Apex.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Apex_R"] == True:
     _Apex_R_df = pd.DataFrame(Apex_R_dico_df)
     dF_labels = ["Elapsed_time", "DOY", "Temperature", "Temp_cum", "Sum_temp", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Ln_final", "Date_epiaison", "Epi_DOY", "Date_de_flo", "Mont_flag", "Mont_DOY", "Flo_flag", "Flo_DOY", "Death_flag", "Date_de_maturite", "Mat_DOY"]
     Apex_R_df = _Apex_R_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Apex_R_df.to_csv("./output/"+folder_name+"/Apex_R.csv", sep="\t", header=True, index=False)
+    Apex_R_df.to_csv(pj(out_dir,folder_name, "Apex_R.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Blade"] == True:
     _Blade_df = pd.DataFrame(Blade_dico_df)
     dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic"]
     Blade_df = _Blade_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Blade_df.to_csv("./output/"+folder_name+"/Blade.csv", sep="\t", header=True, index=False)
+    Blade_df.to_csv(pj(out_dir,folder_name, "Blade.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Internode"] == True:
     _Internode_df = pd.DataFrame(Internode_dico_df)
     dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_surface", "Internode_PAR", "Photosynthetic"]
     Internode_df = _Internode_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Internode_df.to_csv("./output/"+folder_name+"/Internode.csv", sep="\t", header=True, index=False)
+    Internode_df.to_csv(pj(out_dir,folder_name, "Internode.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Peduncle"] == True:
     _Peduncle_df = pd.DataFrame(Peduncle_dico_df)
     dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_surface", "Peduncle_PAR", "Photosynthetic"]
     Peduncle_df = _Peduncle_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Peduncle_df.to_csv("./output/"+folder_name+"/Peduncle.csv", sep = "\t", header=True, index=False)
+    Peduncle_df.to_csv(pj(out_dir,folder_name, "Peduncle.csv"), sep = "\t", header=True, index=False)
 
   if write_output_file["Sheath"] == True:
     _Sheath_df = pd.DataFrame(Sheath_dico_df)
     dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle" , "Num_cohorte", "Num_rang" ,"Sheath_sumtemp"  ,"Sheath_diameter" , "Sheath_length" ,  "Sheath_final_length" , "Sheath_surface" , "Sheath_PAR" , "Photosynthetic"]
     Sheath_df = _Sheath_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Sheath_df.to_csv("./output/"+folder_name+"/Sheath.csv", sep="\t", header=True, index=False)
+    Sheath_df.to_csv(pj(out_dir,folder_name, "Sheath.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Ear"] == True:
     _Ear_df = pd.DataFrame(Ear_dico_df)
     dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" ,"Ear_surface", "Ear_PAR", "Photosynthetic", "Emerged"]
     Ear_df = _Ear_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Ear_df.to_csv("./output/"+folder_name+"/Ear.csv", sep="\t", header=True, index=False)
+    Ear_df.to_csv(pj(out_dir,folder_name, "Ear.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Proba"] == True:
     _Proba_df = pd.DataFrame(Proba_dico_df)
     dF_labels = ["Elapsed_time", "Temperature", "Temp_cum", "Num_plante", "Genotype", "Num_talle", "Num_rang", "Sumtemp", "GAI_prox", "P_debourr"]
     Proba_df = _Proba_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Proba_df.to_csv("./output/"+folder_name+"/Probabilities.csv", sep="\t", header=True, index=False)
+    Proba_df.to_csv(pj(out_dir,folder_name, "Probabilities.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Peraxes"] == True:
     _Peraxes_df = pd.DataFrame(Peraxes_dico_df)
     dF_labels = ["Init_flag","Elapsed_time", "DOY","Temperature", "Temp_cum", "Num_plante", "Num_talle", "Sheath_max", "Collar_height", "Dead_collar_height", "Delta_H", "Visible_leaves_surface", "Visible_surface", "Leaf_contrib_to_GAI","Stem_contrib_to_GAI","Ear_contrib_to_GAI","Peduncle_contrib_to_GAI", "Stop_growth_flag"]
     Peraxes_df = _Peraxes_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Peraxes_df.to_csv("./output/"+folder_name+"/Peraxes.csv", sep="\t", header=True, index=False)
+    Peraxes_df.to_csv(pj(out_dir,folder_name, "Peraxes.csv"), sep="\t", header=True, index=False)
 
   if write_debug_PAR == True:
     Debug_PAR_df = pd.DataFrame(Debug_PAR_dico_df)
-    Debug_PAR_df.to_csv("./output/"+folder_name+"/Debug_PAR.csv", sep="\t", header=True, index=False)
+    Debug_PAR_df.to_csv(pj(out_dir,folder_name, "Debug_PAR.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["PAR_per_axes"] == True:
     PAR_per_axes_df = pd.DataFrame(PAR_per_axes_dico)
-    PAR_per_axes_df.to_csv("./output/"+folder_name+"/PAR_per_axes.csv", sep = "\t", header = True, index = False)
+    PAR_per_axes_df.to_csv(pj(out_dir,folder_name, "PAR_per_axes.csv"), sep = "\t", header = True, index = False)
 
   # FICHIER PARAMETRES
   
-  fichier_params = open("./output/"+folder_name+"/Parameters.csv", "w")
+  fichier_params = open(pj(out_dir,folder_name, "Parameters.csv"), "w")
   fichier_params.write("Parameter" + "\t" + "Genotype" + "\t" + "Value" + "\n" +
                        "WALTer_version" + "\t" + "All" + "\t" + "%s" % WALTer_version + "\n" +
                        "WALTer_build" + "\t" + "All" + "\t" + "%s" % WALTer_build + "\n" +
@@ -2543,7 +2538,7 @@ def End(lstring):
                          "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
-  fichier_individual= open("./output/"+folder_name+"/Individual_heterogeneity.csv", "w")
+  fichier_individual= open(pj(out_dir,folder_name, "Individual_heterogeneity.csv"), "w")
   fichier_individual.write("Parameter" + "\t" + "Num_plante" + "\t" + "Dse" + "\n" )
   for numplt in range(1,crop_scheme["nplant_peupl"] + 1):
     fichier_individual.write("Dse_ind" + "\t" + "%s" % numplt + "\t" + "%s" % Dse_heterogeneous[numplt] + "\n" )
@@ -2553,7 +2548,7 @@ def End(lstring):
     _GAI_df = pd.DataFrame(GAI_dico_df)
     dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
     GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
-    GAI_df.to_csv("./output/"+folder_name+"/GAI.csv", sep="\t", header=True, index=False)
+    GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
   
 
 Axiom:Seed
@@ -2570,7 +2565,7 @@ Seed:
   global beginning_CARIBU
   global ending_CARIBU
   
-  fichier_parcelle = open("./output/"+folder_name+"/Parcelle.csv", "w")
+  fichier_parcelle = open(pj(out_dir,folder_name, "Parcelle.csv"), "w")
   
   fichier_parcelle.write("X" + "\t" + "Y" + "\t" + "Num_plante" + "\t" + "Genotype" + "\n")
   
@@ -2717,7 +2712,7 @@ Seed:
   print "All plants in border : ",border_plants == plant_census
   set_neighbour(maillage, crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"], crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"], dGAIp, infinity_GAIp)
   
-  #déterminer la plante la plus précoce
+  #dï¿½terminer la plante la plus prï¿½coce
   global earliest_plant
   global latest_plant
   global param_Ln_final
@@ -2740,9 +2735,11 @@ Seed:
   
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
-  
-  #beginning_CARIBU = 100
-  beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
+
+  if 'beginning_CARIBU' in params:
+    beginning_CARIBU = params['beginning_CARIBU']
+  else:
+    beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
   ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
@@ -2756,7 +2753,7 @@ Apex(StA):
     StA.Ln_final = int(param_Ln_final)+int(random.random() + param_Ln_final%1)
     dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
-    t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce paramètre a été mis en place à la base
+    t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce paramï¿½tre a ï¿½tï¿½ mis en place ï¿½ la base
     useGroup(3)
   
   elif SIRIUS_state == "enabled":
@@ -2765,7 +2762,7 @@ Apex(StA):
     global DOY
     
     for day in range(1,300):
-      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date ï¿½ laquelle nous nous trouvons pour un elapsed_time donnï¿½
       _current_temperature = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['TM']
       current_temperature = _current_temperature[_current_temperature.last_valid_index()]
       _Tempcum += max(Tbase,current_temperature)
@@ -2825,8 +2822,8 @@ Apex(StA):
               StA.photop_flag = True
             else:
               StA.Ln_app = StA.var_Lmin + SLDL[StA.geno] * (DLsat - duree_du_jour(latitude,DOY))
-              #Sortie finale de la série de tests
-              if 0.5 * StA.Ln_app <= StA.ln: # Sert à déterminer le nombre de feuilles visibles EDIT (c'est plutôt le nombre de primordia emis)
+              #Sortie finale de la sï¿½rie de tests
+              if 0.5 * StA.Ln_app <= StA.ln: # Sert ï¿½ dï¿½terminer le nombre de feuilles visibles EDIT (c'est plutï¿½t le nombre de primordia emis)
                 StA.photop_flag = True
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
@@ -2835,9 +2832,9 @@ Apex(StA):
                 dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
                 
                 t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
-                t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce paramètre a été mis en place à la base
+                t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce paramï¿½tre a ï¿½tï¿½ mis en place ï¿½ la base
     _Tempcum = 0
-    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date à laquelle nous nous trouvons pour un elapsed_time donné
+    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date ï¿½ laquelle nous nous trouvons pour un elapsed_time donnï¿½
     DOY = int(date_current_day.strftime('%j'))
     useGroup(3)
 
@@ -2909,7 +2906,7 @@ Bud_primord(StBu_p):
   if StBu_p.sumtemp >= Delta_b * Pls[StBu_p.geno] and StBu_p.competent_flag == False:
     StBu_p.competent_flag = True
     new_tiller_name = StBu_p.tiller + (StBu_p.n,)
-    StBu = Bud(StBu_p.num_plante, StBu_p.geno, new_tiller_name, 0, StBu_p.sumtemp%Pls[StBu_p.geno]) #On discrétise proprement l'accumulation des températures en transmettant le surplus de température stockée à l'Bud néoformé
+    StBu = Bud(StBu_p.num_plante, StBu_p.geno, new_tiller_name, 0, StBu_p.sumtemp%Pls[StBu_p.geno]) #On discrï¿½tise proprement l'accumulation des tempï¿½ratures en transmettant le surplus de tempï¿½rature stockï¿½e ï¿½ l'Bud nï¿½oformï¿½
     StBu.sumtemp = StBu_p.sumtemp%Pls[StBu_p.geno]
     StBu.time = StBu_p.sumtemp%Pls[StBu_p.geno]
     
@@ -2946,8 +2943,8 @@ Bud_primord(StBu_p):
     dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = False
     produce CutPointBud(StCPB)[Bud(StBu)]
 
-#remettre elapsed_time à 0
-# TODO : exporter la lstring produite à la fin du group 3 pour l'importer?
+#remettre elapsed_time ï¿½ 0
+# TODO : exporter la lstring produite ï¿½ la fin du group 3 pour l'importer?
 
 Bud(StBu):
   StBu.nb_emerg_leaves = nb_emerged_leaves(Tempcum, StBu.tiller, StBu.geno, StBu.Ln_final)
@@ -2957,9 +2954,9 @@ Bud(StBu):
   StBu.age += max(Tbase,Temperature)
   StBu.time += max(Tbase,Temperature)
   
-  #Production de phytomères
+  #Production de phytomï¿½res
   if StBu.time >= Pls[StBu.geno]:
-    if GAI_prox[StBu.num_plante] <= GAI_c[geno] or cohort_number(StBu.tiller) < 8: #TODO peut être à enlever sui on est encore dans la graine?
+    if GAI_prox[StBu.num_plante] <= GAI_c[geno] or cohort_number(StBu.tiller) < 8: #TODO peut ï¿½tre ï¿½ enlever sui on est encore dans la graine?
       StL = Leaf(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu_p = Bud_primord(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu_p.sumtemp = StBu.time%Pls[StBu.geno]
@@ -3008,7 +3005,7 @@ Apex(StA):
   
   #Il ne se passe rien avant emergence
   if Tempcum >= Dse_heterogeneous[StA.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StA.tiller in axis_census[StA.num_plante] and axis_census[StA.num_plante][StA.tiller]["Stop_growth_flag"] == True:
       pass
     else:
@@ -3016,10 +3013,10 @@ Apex(StA):
       StA.sumtemp += max(Tbase,Temperature)
       StA.time += max(Tbase,Temperature)
       
-      # Transition florale du brin-maître
-      # TODO possible de définir les dimensions des limbes ici?
+      # Transition florale du brin-maï¿½tre
+      # TODO possible de dï¿½finir les dimensions des limbes ici?
       if StA.tiller == (1,):
-        if StA.n >= StA.Ln_final and StA.transiflo == False: #Si brin-maitre ET nombre final de feuilles atteint on déclenche la transiflo
+        if StA.n >= StA.Ln_final and StA.transiflo == False: #Si brin-maitre ET nombre final de feuilles atteint on dï¿½clenche la transiflo
           StA.transiflo = True
           dico_stades[StA.num_plante][StA.tiller]["Transiflo"] = [True, Tempcum, DOY]
           for axis in dico_stades[StA.num_plante].keys():
@@ -3146,20 +3143,20 @@ Apex_R(StAR):
   else:
     StAR.sumtemp += max(Tbase,Temperature)
     
-    #Passage à Montaison
+    #Passage ï¿½ Montaison
     if StAR.mont == False:
       # TODO : pourquoi ces tests en deux etapes?
       if max(leaf_emergence[StAR.num_plante][StAR.tiller].keys()) >= StAR.Ln_final - 4:
-        if Tempcum >= leaf_emerg_date(StAR.Ln_final - 4, StAR.tiller, StAR.geno, StAR.num_plante) + (ED_B + ED_S) * phyll_adjust(StAR.geno): #Test pour savoir si on est à montaison (ligulation de feuille n-4)
+        if Tempcum >= leaf_emerg_date(StAR.Ln_final - 4, StAR.tiller, StAR.geno, StAR.num_plante) + (ED_B + ED_S) * phyll_adjust(StAR.geno): #Test pour savoir si on est ï¿½ montaison (ligulation de feuille n-4)
           
-          # Identification des talles destinées à mourir
-          # TODO : regression à la josette masle, obsolete à enlever
+          # Identification des talles destinï¿½es ï¿½ mourir
+          # TODO : regression ï¿½ la josette masle, obsolete ï¿½ enlever
           for axis in leaf_emergence[StAR.num_plante].keys():
-            if max(leaf_emergence[StAR.num_plante][axis].keys()) < 4:    # Si le nombre de feuilles sur l'axe est inférieur à 3
+            if max(leaf_emergence[StAR.num_plante][axis].keys()) < 4:    # Si le nombre de feuilles sur l'axe est infï¿½rieur ï¿½ 3
               tiller_death[StAR.num_plante][dico_stades[StAR.num_plante][axis]["Age"]] = []
               
           for axis in leaf_emergence[StAR.num_plante].keys():
-            if max(leaf_emergence[StAR.num_plante][axis].keys()) < 4:    # Si le nombre de feuilles sur l'axe est inférieur à 3
+            if max(leaf_emergence[StAR.num_plante][axis].keys()) < 4:    # Si le nombre de feuilles sur l'axe est infï¿½rieur ï¿½ 3
               tiller_death[StAR.num_plante][dico_stades[StAR.num_plante][axis]["Age"]].append(axis)
           
           #### Fin de suppression ####
@@ -3167,19 +3164,19 @@ Apex_R(StAR):
           dico_stades[StAR.num_plante][StAR.tiller]["Montaison"] = (True,Tempcum, DOY)
           StAR.mont = True
         
-    # Passage à épiaison
+    # Passage ï¿½ ï¿½piaison
     if Tempcum >= dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][1] and StAR.epi == False:
       dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][0] = True
       dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][2] = DOY
       StAR.epi = True
     
-    # Passage à floraison
+    # Passage ï¿½ floraison
     if Tempcum >= dico_stades[StAR.num_plante][StAR.tiller]["Flo"][1] and StAR.flo == False:
       dico_stades[StAR.num_plante][StAR.tiller]["Flo"][0] = True
       dico_stades[StAR.num_plante][StAR.tiller]["Flo"][2] = DOY
       StAR.flo = True
     
-    #Passage à maturité
+    #Passage ï¿½ maturitï¿½
     if Tempcum >= dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][1] and StAR.mat == False:
       dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][0] = True
       dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][2] = DOY
@@ -3210,7 +3207,7 @@ Apex_R(StAR):
 
 Bud_primord(StBu_p):
   if Tempcum >= Dse_heterogeneous[StBu_p.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StBu_p.tiller in axis_census[StBu_p.num_plante] and axis_census[StBu_p.num_plante][StBu_p.tiller]["Stop_growth_flag"] == True:
       pass
     else:
@@ -3218,11 +3215,11 @@ Bud_primord(StBu_p):
       if StBu_p.sumtemp >= Delta_b * Pls[StBu_p.geno] and StBu_p.competent_flag == False:
         StBu_p.competent_flag = True
         new_tiller_name = StBu_p.tiller + (StBu_p.n,)
-        StBu = Bud(StBu_p.num_plante, StBu_p.geno, new_tiller_name, 0, StBu_p.sumtemp % Pls[StBu_p.geno]) #On discrétise proprement l'accumulation des températures en transmettant le surplus de température stockée à l'Bud néoformé
+        StBu = Bud(StBu_p.num_plante, StBu_p.geno, new_tiller_name, 0, StBu_p.sumtemp % Pls[StBu_p.geno]) #On discrï¿½tise proprement l'accumulation des tempï¿½ratures en transmettant le surplus de tempï¿½rature stockï¿½e ï¿½ l'Bud nï¿½oformï¿½
         StBu.sumtemp = StBu_p.sumtemp % Pls[StBu_p.geno]
         StBu.time = StBu_p.sumtemp % Pls[StBu_p.geno]
         
-        # Etape de formatage des dictionnaire (on créé un nouveau sous-dico avec le nouvel embanchement)
+        # Etape de formatage des dictionnaire (on crï¿½ï¿½ un nouveau sous-dico avec le nouvel embanchement)
         #if StBu.n == 0:
         
         # Formatting dictionnaries
@@ -3262,9 +3259,9 @@ Bud_primord(StBu_p):
 
 Bud(StBu):
   
-  # Tout est inactif jusqu'à l'émergence de la première feuille de la plante
+  # Tout est inactif jusqu'ï¿½ l'ï¿½mergence de la premiï¿½re feuille de la plante
   if Tempcum >= Dse_heterogeneous[StBu.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StBu.tiller in axis_census[StBu.num_plante] and axis_census[StBu.num_plante][StBu.tiller]["Stop_growth_flag"] == True:
       pass
     else:
@@ -3280,10 +3277,10 @@ Bud(StBu):
         dico_stades[StBu.num_plante][StBu.tiller]["Transiflo"][2] = DOY
         StBuR = Bud_R(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n)
         StBuR.nb_j = StBu.nb_j
-        StBuR.sumtemp = StBu.sumtemp # TODO on aurait pu le concaténer en une ligne
+        StBuR.sumtemp = StBu.sumtemp # TODO on aurait pu le concatï¿½ner en une ligne
         StBu.Ln_final = StBu.n
         StBuR.Ln_final = StBu.Ln_final
-        StBuR.emerg = StBu.emerg  # .emerg est un booléen
+        StBuR.emerg = StBu.emerg  # .emerg est un boolï¿½en
         
         # Calcul et stockage des dates de stade
         dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"] = StBu.Ln_final
@@ -3328,8 +3325,8 @@ Bud(StBu):
         else:
           dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True  
         
-        #C'est aussi le moment de potentiellement émerger
-        if Tempcum >= leaf_emerg_date(StBu.tiller[len(StBu.tiller)-1] + 2,StBu.tiller[0:len(StBu.tiller)-1] , StBu.geno, StBu.num_plante) and StBu.emerg == False: #TODO améliorer la méthode de calcul comme dans la fonction de synchrone correspondance (n=StBu.tiller[-1], )
+        #C'est aussi le moment de potentiellement ï¿½merger
+        if Tempcum >= leaf_emerg_date(StBu.tiller[len(StBu.tiller)-1] + 2,StBu.tiller[0:len(StBu.tiller)-1] , StBu.geno, StBu.num_plante) and StBu.emerg == False: #TODO amï¿½liorer la mï¿½thode de calcul comme dans la fonction de synchrone correspondance (n=StBu.tiller[-1], )
           StBu.emerg = True
           StBu.Tmoy = StBu.sumtemp / StBu.nb_j #TODO : OBSOLETE
           
@@ -3338,11 +3335,11 @@ Bud(StBu):
           #else:
             #StBu.p_debourr = 0
           
-          # TODO c'est quand même sale...
+          # TODO c'est quand mï¿½me sale...
           if type(dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"]) != int:
             StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], 100)
           else:
-            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle mère
+            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle mï¿½re
           
           # Enregistrement des informations
           if write_output_file["Proba"]:
@@ -3383,7 +3380,7 @@ Bud(StBu):
           else:
             dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True
             
-            #TODO habituellement, on ne met pas à jour la chaîne, à virer?
+            #TODO habituellement, on ne met pas ï¿½ jour la chaï¿½ne, ï¿½ virer?
             nproduce Bud(StBu)
         else:
           nproduce Bud(StBu)
@@ -3400,7 +3397,7 @@ Bud(StBu):
           if type(dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"]) != int:
             StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], 100)
           else:
-            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle mère
+            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle mï¿½re
           # Enregistrement des informations
           if write_output_file["Proba"]:
             Proba_dico_df["Elapsed_time"].append(elapsed_time)
@@ -3445,13 +3442,13 @@ Bud(StBu):
 
 
 Bud_R(StBuR):
-  # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+  # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
   if StBuR.tiller in axis_census[StBuR.num_plante] and axis_census[StBuR.num_plante][StBuR.tiller]["Stop_growth_flag"] == True:
     pass
   else:
     StBuR.sumtemp += max(Tbase,Temperature)
     
-    # C'est le moment où le bourgeon a la possibilité d'émerger
+    # C'est le moment oï¿½ le bourgeon a la possibilitï¿½ d'ï¿½merger
     if Tempcum >= leaf_emerg_date(StBuR.tiller[len(StBuR.tiller)-1] + 2,StBuR.tiller[0:len(StBuR.tiller)-1] , StBuR.geno, StBuR.num_plante) and StBuR.emerg == False:
       StBuR.emerg = True
       StBuR.Tmoy = StBuR.sumtemp / StBuR.nb_j # TODO inutile
@@ -3462,7 +3459,7 @@ Bud_R(StBuR):
       if type(dico_stades[StBuR.num_plante][StBuR.tiller]["Ln_final"]) != int:
         StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], 100)
       else:
-        StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], dico_stades[StBuR.num_plante][StBuR.tiller[0:len(StBuR.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle mère
+        StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], dico_stades[StBuR.num_plante][StBuR.tiller[0:len(StBuR.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle mï¿½re
       
       # Enregistrement des informations
       if write_output_file["Proba"]:
@@ -3477,7 +3474,7 @@ Bud_R(StBuR):
         Proba_dico_df["GAI_prox"].append(GAI_prox[StBuR.num_plante])
         Proba_dico_df["P_debourr"].append(StBuR.p_debourr)
         
-      # Si le bourgeon émerge
+      # Si le bourgeon ï¿½merge
       if random.random() <= StBuR.p_debourr:
         # Formatting dictionnaries
         ## Dictionnaries including datas about emerged organs
@@ -3515,21 +3512,21 @@ Bud_R(StBuR):
 
 CutPointBud(StCPB):
   
-  ### On Coupe toutes les structures produites par un Bud qui n'émergera jamais!
-  #Dés qu'on franchit le GAIcritique, on coupe toutes les structures qui n'ont pas émergée
+  ### On Coupe toutes les structures produites par un Bud qui n'ï¿½mergera jamais!
+  #Dï¿½s qu'on franchit le GAIcritique, on coupe toutes les structures qui n'ont pas ï¿½mergï¿½e
   if GAI_prox[StCPB.num_plante] >= GAI_c[StCPB.geno] and StCPB.tiller not in axis_census[StCPB.num_plante]:
     dico_cut_fantom_axes[StCPB.num_plante][StCPB.tiller] = True
   if StCPB.tiller != (1,):
     if dico_cut_fantom_axes[StCPB.num_plante][StCPB.tiller] == True:
       produce % CutPointBud(StCPB)
   
-  ### On coupe les structures présentes sur les talles qui régressent par manque de rayonnement
+  ### On coupe les structures prï¿½sentes sur les talles qui rï¿½gressent par manque de rayonnement
   if Tempcum > leaf_emerg_date(t_beg_reg[StCPB.geno], (1,), genotype_map[StCPB.num_plante], StCPB.num_plante) + 1.6*phyll_adjust(StCPB.geno):
     #Gestion de la mort des talles
     if StCPB.tiller in axis_census[StCPB.num_plante].keys():
       if axis_census[StCPB.num_plante][StCPB.tiller]['Stop_growth_flag'] == True:
         StCPB.reg_count += Temperature
-        #TODO : enlever une étape
+        #TODO : enlever une ï¿½tape
         if Delta_SGtC > StCPB.reg_count > Delta_SGtR:
           axis_census[StCPB.num_plante][StCPB.tiller]['Regression_flag'] = True
         elif StCPB.reg_count > Delta_SGtC:
@@ -3539,7 +3536,7 @@ CutPointBud(StCPB):
 
 Leaf(StL):
   if Tempcum >= Dse_heterogeneous[StL.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StL.tiller in axis_census[StL.num_plante] and axis_census[StL.num_plante][StL.tiller]["Stop_growth_flag"] == True:
       pass
     else:
@@ -3549,7 +3546,7 @@ Leaf(StL):
         leaf_emergence[StL.num_plante][StL.tiller][StL.n] = (Tempcum,StL.sumtemp)
         StBl = Blade(StL.num_plante, StL.geno, StL.tiller, StL.n)
         StBl.tiller = StL.tiller # TODO inutile?
-        StS = Sheath(StL.num_plante, StL.geno, StL.tiller, StL.n)  # On considère qu'à ce moment la longueur gaine est initialisée à 0
+        StS = Sheath(StL.num_plante, StL.geno, StL.tiller, StL.n)  # On considï¿½re qu'ï¿½ ce moment la longueur gaine est initialisï¿½e ï¿½ 0
         StS.tiller = StL.tiller  # TODO inutile?
         
         #Calcul de la taille finale que va avoir le limbe
@@ -3560,13 +3557,13 @@ Leaf(StL):
         else:
           previous_length = final_blade_length[StBl.num_plante][StBl.tiller][StBl.n-1]
           
-          #La transition florale n'est pas passée
+          #La transition florale n'est pas passï¿½e
           if dico_stades[StBl.num_plante][StBl.tiller]["Transiflo"][0] == False:
             StBl.final_length = previous_length + s_B_1[geno]
             StBl.width = blade_width(StBl.final_length, a_B_w[StBl.geno], b_B_w[StBl.geno])
             StS.final_length = sheath_length(StBl.final_length, a_S_L[StS.geno], b_S_L[StS.geno])
             
-          #La transition florale est passée !
+          #La transition florale est passï¿½e !
           else:
             if dico_stades[StBl.num_plante][StBl.tiller]["Blade_Transiflo"] == False:
               first_leaf_phase2[StBl.num_plante][StBl.tiller]["num_first_leaf_phase_2"] =  StBl.n -1
@@ -3591,18 +3588,18 @@ Leaf(StL):
         #Initialisation de la longueur
         ## L'axe en question n'a pas encore de gaine
         if StBl.n <= 2:
-          ## Sur le brin-maître la longueur du limbe est initialisée à la longueur du coleoptile
+          ## Sur le brin-maï¿½tre la longueur du limbe est initialisï¿½e ï¿½ la longueur du coleoptile
           if StBl.tiller == (1,):
             StBl.length = l_c
             StS.length = 0.0
-          ## Sur les talles, la longueur du limbe est initialisée à la longueur de la plus longue gaine présente sur l'axe parent
+          ## Sur les talles, la longueur du limbe est initialisï¿½e ï¿½ la longueur de la plus longue gaine prï¿½sente sur l'axe parent
           else:
             StBl.length = max([current_sheath_length[StBl.num_plante][StBl.tiller[0:len(StBl.tiller)-1]][x] for x in range(1, StBl.n + 4)])
             StS.length = 0.0
         elif current_sheath_length[StL.num_plante][StL.tiller][StL.n-2] > StBl.final_length:
           StBl.length = StBl.final_length
           StS.length = current_sheath_length[StL.num_plante][StL.tiller][StL.n-2] - StBl.final_length
-        #cas classique : la longueur du limbe est initialisée à la longueur de la gaine n-2 (qui vient de finir sa croissance)
+        #cas classique : la longueur du limbe est initialisï¿½e ï¿½ la longueur de la gaine n-2 (qui vient de finir sa croissance)
         else:
           StBl.length = current_sheath_length[StL.num_plante][StL.tiller][StL.n-2]  #On recherche la gaine la plus longue sur toute la talle
           StS.length = 0.0
@@ -3615,7 +3612,7 @@ Leaf(StL):
         
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
         
-        #Ajout du point de coupe pour représenter la sénescence des limbes
+        #Ajout du point de coupe pour reprï¿½senter la sï¿½nescence des limbes
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
         produce Sheath(StS)CutPointBlade(StCPBl)Blade(StBl)
       else:
@@ -3633,7 +3630,7 @@ CutPointBlade(StCPBl):
 Blade(StBl):
   
   if Tempcum >= Dse_heterogeneous[StBl.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StBl.tiller in axis_census[StBl.num_plante] and axis_census[StBl.num_plante][StBl.tiller]["Stop_growth_flag"] == True:
       pass
       if StBl.tiller in axis_census[StBl.num_plante].keys() and axis_census[StBl.num_plante][StBl.tiller]['Regression_flag'] == False:
@@ -3644,7 +3641,7 @@ Blade(StBl):
           StBl.visible_length -= StBl.reverse_incr * max(0,Temperature)
     
     else:
-      StBl.sumtemp += max(Tbase,Temperature) #lui mettre un nom (a max) et réutiliser
+      StBl.sumtemp += max(Tbase,Temperature) #lui mettre un nom (a max) et rï¿½utiliser
       StBl.age += time_step
       
       if StBl.sumtemp/phyll_adjust(StBl.geno) <= ED_B:
@@ -3674,8 +3671,8 @@ Blade(StBl):
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][1] = Tempcum
     
     StBl.area = (StBl.width * StBl.length * 0.75)
-    StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incrémentation
-    StBl.visible_area = visible_area(StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incrémentation
+    StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incrï¿½mentation
+    StBl.visible_area = visible_area(StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incrï¿½mentation
     
     if write_output_file["Blade"]:
       Blade_dico_df['Elapsed_time'].append(elapsed_time)
@@ -3704,7 +3701,7 @@ Sheath(StS):
   StS.diameter = d_S[StS.geno]
   
   if Tempcum >= Dse_heterogeneous[StS.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StS.tiller in axis_census[StS.num_plante] and axis_census[StS.num_plante][StS.tiller]["Stop_growth_flag"] == True:
       pass
     else:
@@ -3770,7 +3767,7 @@ Internode(StI):
   StI.diameter = d_I[StI.geno]
   
   if Tempcum >= Dse_heterogeneous[StI.num_plante]:
-    # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+    # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
     if StI.tiller in axis_census[StI.num_plante] and axis_census[StI.num_plante][StI.tiller]["Stop_growth_flag"] == True:
       StI.area = StI.diameter * pi * StI.length
       current_internode_length[StI.num_plante][StI.tiller][StI.n] = StI.length
@@ -3844,7 +3841,7 @@ Internode(StI):
 
 Peduncle(StP):
   StP.diameter = d_P[StP.geno]
-  # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+  # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
   if StP.tiller in axis_census[StP.num_plante] and axis_census[StP.num_plante][StP.tiller]["Stop_growth_flag"] == True:
     pass
   else:
@@ -3880,7 +3877,7 @@ Peduncle(StP):
   produce Peduncle(StP)
 
 Ear(StE):
-  # Tant que l'axe n'a pas été désigné pour régresser, tout fonctionne normalement
+  # Tant que l'axe n'a pas ï¿½tï¿½ dï¿½signï¿½ pour rï¿½gresser, tout fonctionne normalement
   if StE.tiller in axis_census[StE.num_plante] and axis_census[StE.num_plante][StE.tiller]["Stop_growth_flag"] == True:
     pass
   else:
@@ -3935,7 +3932,7 @@ Sheath(StS):
 
 Blade(StBl):
   if StBl.num_plante in plant_census:
-    if StBl.n <=2 and StBl.tiller == (1,): #Les deux premières feuilles tester sur la taille des gaines
+    if StBl.n <=2 and StBl.tiller == (1,): #Les deux premiï¿½res feuilles tester sur la taille des gaines
       if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
         StBl.incl = 1
         width = d_S[StBl.geno]-0.05
@@ -3969,7 +3966,7 @@ Blade(StBl):
           produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
   else:
     # Pour les plantes de bordures
-    if StBl.n <=2 and StBl.tiller == (1,): #Les deux premières feuilles tester sur la taille des gaines
+    if StBl.n <=2 and StBl.tiller == (1,): #Les deux premiï¿½res feuilles tester sur la taille des gaines
       if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
         StBl.incl = 1
         width = d_S[StBl.geno]-0.05
