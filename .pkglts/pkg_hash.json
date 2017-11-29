@@ -1,0 +1,48 @@
+{
+  "AUTHORS.rst": {
+    "doc": "zYU/fcor0WZzL4FhFDa07IRtJHQbTHYq84OML7QkjSbb9XgvU/N9HNlaCrsTkBCkCBqPgSqed8AC0cNoE7Tagw=="
+  }, 
+  "CONTRIBUTING.rst": {}, 
+  "HISTORY.rst": {}, 
+  "LICENSE": {
+    "license": "21ExMhSzB2uXQuU1VoH7++nrb4u6TbesqGtJDpM39OLPWft9SJ2tJ956R6foYmkI9VuJay7SUrhFLPxxMEHLxg=="
+  }, 
+  "MANIFEST.in": {
+    "pysetup": "pma8FbkJSqSuGu98wmRj8X8WhKlqDz0v7EfQMz5pItQxurZ6A0gyNYXwyRBsbIjPBDj0TFBdYbcbip/mTyuL4A=="
+  }, 
+  "README.rst": {
+    "doc": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="
+  }, 
+  "doc/_static/nonempty.txt": {}, 
+  "doc/authors.rst": {}, 
+  "doc/contributing.rst": {}, 
+  "doc/history.rst": {}, 
+  "doc/index.rst": {}, 
+  "doc/installation.rst": {}, 
+  "doc/readme.rst": {}, 
+  "doc/usage.rst": {}, 
+  "dvlpt_requirements.txt": {
+    "pysetup": "+tw0AnDGyS0gAPyOmThBySRLGuZg1DYG4ZQu7uZn+ndb9IBdEd1yME2iBbKM4lMpl34iWQTPART6zT3Y1o4Khw=="
+  }, 
+  "requirements.txt": {
+    "pysetup": "/5djJXLbrvuFk7LIgtfgYR8RnQrY5BEmOB4zEd0PrKeswR/8sQkzj4yKy7Zl3LAdRzYjPDhWiRkS1oMCG4FX7Q=="
+  }, 
+  "setup.cfg": {
+    "pysetup": "rFiT1aXKTVa72LWfGtl0DzAd1yhXXlb64GW3GynO0SSSWT4F6LkV29pV+7xrnQsnrzS2kcOLJ6IvUjubSa4W9g=="
+  }, 
+  "setup.py": {
+    "pysetup.call": "2wHuP94SpWKZpqOzExkQGTxnhGPgBHK3qOdPn0Ncstj5FkZ7FBGGM/inqAXaI4QLKQtTNlOUYRGSkYUWAUcf1w==", 
+    "pysetup.kwds": "e6PoyAzyOGSCnhHsdyMPA4UWkzAHymB69PsUQWI6h4Cq2OC7xiCI4A8p3/BMLyAhj9gvhCSRTtVLPDuO2C5Tbw=="
+  }, 
+  "src/walter/__init__.py": {
+    "base": "gR33dW0qqYmsV9NSNB+DD8XmuxnC2t0mKjnMoU5728qh97fSER6MbX+3QKxpZDLByZToaAay4xhx8acxketJmA=="
+  }, 
+  "src/walter/data_access.py": {
+    "data": "SJDwvbSKzN3HR9+wOCfITwdN0DBrLqdRTPndiOU7uEyMkfpQD976ifZ4Eo8LjhFgrZ3ZipTyLN4uGAnKTHw6Kw=="
+  }, 
+  "src/walter/version.py": {
+    "version": "a/6CZgkZzICbILb0VqWkuIomGKv1TZZdVesCPtlYuZufwsaBAiJPGsZAJ+qcT+oB7DgYk5bKGPW2rN5EsrLlIw=="
+  }, 
+  "src/walter_data/__init__.py": {}, 
+  "test/__init__.py": {}
+}
