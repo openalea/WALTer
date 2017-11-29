@@ -1,0 +1,48 @@
+{% set version = "2.0.0" %}
+
+package:
+  name: openalea.walter
+  version: {{ version }}
+
+source:
+  path: ..
+  #git_url: https://github.com/openalea/eartrack
+  #git_rev: v1.0.0
+
+build:
+  number: 0
+  preserve_egg_dir: True
+  #entry_points:
+  #  - walter = walter.main:main
+  script: python setup.py install
+
+requirements:
+  build:
+    - python
+    - setuptools
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - matplotlib
+
+test:
+  imports:
+    - walter
+    - walter.data_access
+    - walter_data
+
+  #commands:
+  #  - eartrack --help
+
+about:
+  home: https://github.com/openalea-incubator/WALTer
+  license: Cecill-C
+  license_file: LICENSE
+  summary: WALTer - A 3D Wheat FSPM in mixture that takes into account light competition for tillering.
+
+extra:
+  recipe-maintainers:
+    - pradal
+
