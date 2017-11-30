@@ -1,4 +1,7 @@
 {
+  ".gitignore": {
+    "github": "MRdLys3vaDL9iwBuZQW4YB3oJ8OwaGJeAHqZDUpPSpGHl0pENcpfsckLl8SPhFIKnodXkYM41AsPFBz5QJQu0w=="
+  }, 
   "AUTHORS.rst": {
     "doc": "zYU/fcor0WZzL4FhFDa07IRtJHQbTHYq84OML7QkjSbb9XgvU/N9HNlaCrsTkBCkCBqPgSqed8AC0cNoE7Tagw=="
   }, 
@@ -22,17 +25,17 @@
   "doc/readme.rst": {}, 
   "doc/usage.rst": {}, 
   "dvlpt_requirements.txt": {
-    "pysetup": "+tw0AnDGyS0gAPyOmThBySRLGuZg1DYG4ZQu7uZn+ndb9IBdEd1yME2iBbKM4lMpl34iWQTPART6zT3Y1o4Khw=="
+    "pysetup": "lCbGKPjPfZaLiwclMKKn7EdCraYOyhNIZcfBdXCFnX8YV/uOTypLRFYBm7uxfWtnSe62wAlYDv/2EzakafsQtw=="
   }, 
   "requirements.txt": {
     "pysetup": "/5djJXLbrvuFk7LIgtfgYR8RnQrY5BEmOB4zEd0PrKeswR/8sQkzj4yKy7Zl3LAdRzYjPDhWiRkS1oMCG4FX7Q=="
   }, 
   "setup.cfg": {
-    "pysetup": "rFiT1aXKTVa72LWfGtl0DzAd1yhXXlb64GW3GynO0SSSWT4F6LkV29pV+7xrnQsnrzS2kcOLJ6IvUjubSa4W9g=="
+    "pysetup": "1iCSDvs9xY0GOgde2dHQdpu5siqLRSbSiVZr6vEMin886x1NKrTLw0f1AJuSUwPfsoXa1a1EfRsDFadXx3Qy8A=="
   }, 
   "setup.py": {
     "pysetup.call": "2wHuP94SpWKZpqOzExkQGTxnhGPgBHK3qOdPn0Ncstj5FkZ7FBGGM/inqAXaI4QLKQtTNlOUYRGSkYUWAUcf1w==", 
-    "pysetup.kwds": "e6PoyAzyOGSCnhHsdyMPA4UWkzAHymB69PsUQWI6h4Cq2OC7xiCI4A8p3/BMLyAhj9gvhCSRTtVLPDuO2C5Tbw=="
+    "pysetup.kwds": "RqgHtCwUylUf+fwAxvriM1omyctYvakjlI7J/K/uXWEE1cKhvoUsflZeNmhbsYbyz8KSd/RkRFVILk5sER37Gw=="
   }, 
   "src/walter/__init__.py": {
     "base": "gR33dW0qqYmsV9NSNB+DD8XmuxnC2t0mKjnMoU5728qh97fSER6MbX+3QKxpZDLByZToaAay4xhx8acxketJmA=="
@@ -41,7 +44,7 @@
     "data": "SJDwvbSKzN3HR9+wOCfITwdN0DBrLqdRTPndiOU7uEyMkfpQD976ifZ4Eo8LjhFgrZ3ZipTyLN4uGAnKTHw6Kw=="
   }, 
   "src/walter/version.py": {
-    "version": "a/6CZgkZzICbILb0VqWkuIomGKv1TZZdVesCPtlYuZufwsaBAiJPGsZAJ+qcT+oB7DgYk5bKGPW2rN5EsrLlIw=="
+    "version": "/gf3jQMBJ/R/AefNOQFe3GaDKGQ+pQc67xg148ePyT+F1WzE58lDDz5Cn4eFWjnghkz6ejAFZj1XRFF8c2J8gA=="
   }, 
   "src/walter_data/__init__.py": {}, 
   "test/__init__.py": {}
