@@ -20,6 +20,23 @@ data_dir = pj(data_access.get_data_dir())
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
+
+
+# create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
+lpy_cut_bug = True
+if lpy_cut_bug:
+  from openalea.lpy import Lsystem
+  fake_rule = """
+  Fake:
+    produce Fake"""
+  fake_lsys = Lsystem()
+  fake_lsys.addRule(fake_rule)
+
+  def force_cut(lstring)
+    fake_lsys.axiom = lstring
+    return fake_lsys.iterate()
+
+
 ### Importations de fichiers annexes ###
 
 ### Rayonnement ###
@@ -2012,8 +2029,10 @@ def StartEach(lstring):
 
 
 def EndEach(lstring, lscene):
-
-  
+  globals lpy_cut_bug:
+  if lpy_cut_bug:
+    # Force removal of cut branches to have a consistent indexing between lscene and lstring (see test_cut_module.py)
+    lstring = force_cut(lstring)
   # CALCUL DU GAI (� partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
     Hcol_max[num_plt] = dict.fromkeys(Hcol_max[num_plt].keys(), 0)
@@ -2141,15 +2160,9 @@ def EndEach(lstring, lscene):
   #s = Scene(lscene)
   #s.add(lscene)
   #s.save("./lscene-debug.bgeom")
-  #print(type(lscene))
+  #print(type(lscene))w<<
   
   ## Pour l'instant on fait QUE du diffus
-  # Export de la Lstring
-  if lstring.find('%'):
-    new_lstring = lstring.replace("%", "")
-  else:
-    print "no cut found!!!"
-    new_lstring = lstring
 
   if CARIBU_state != "disabled":    #Le module de rayonnement peut �tre activ� ou d�sactiv� {"enabled";"disabled"}
     if type(lscene) != None:
@@ -2208,7 +2221,7 @@ def EndEach(lstring, lscene):
                 dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
             for id in res_sky['Ei'].keys():
               #if id not in new_lstring: continue
-              new_ = new_lstring[id]
+              new_ = lstring[id]
               if ((new_.name == "Blade" and new_[0].photosynthetic == True) or
                  (new_.name in ("Sheath", "Internode", "Peduncle")) or
                  (new_.name == "Ear" and new_[0].emerged)):
@@ -2223,19 +2236,19 @@ def EndEach(lstring, lscene):
                   new_[0].organ_surface = res_sky["area"][id]
                   dico_PAR[new_.name][new_[0].num_plante][new_[0].tiller][new_[0].n] = new_[0].PAR
 
-                  if tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, am�liorer cette rustine
-                    dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += 0
+                  if tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, am�liorer cette rustine
+                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += 0
                   else:
-                    dico_PAR_per_axis[new_lstring[id][0].num_plante][new_lstring[id][0].tiller][round(Tempcum, 1)] += new_lstring[id][0].PAR/Temperature/tiller_surface[(new_lstring[id][0].num_plante,new_lstring[id][0].tiller)]
+                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)]
                   if write_debug_PAR == True :
                     Debug_PAR_dico_df["Elapsed_time"].append(elapsed_time)
                     Debug_PAR_dico_df["Temp_cum"].append(Temperature)
-                    Debug_PAR_dico_df["Organ_type"].append(new_lstring[id].name)
-                    Debug_PAR_dico_df["Num_talle"].append(new_lstring[id][0].tiller)
-                    Debug_PAR_dico_df["Num_plante"].append(new_lstring[id][0].num_plante)
-                    Debug_PAR_dico_df["Num_organe"].append(new_lstring[id][0].n)
-                    Debug_PAR_dico_df["Organ_surface"].append(new_lstring[id][0].organ_surface)
-                    Debug_PAR_dico_df["Organ_PAR"].append(new_lstring[id][0].PAR)
+                    Debug_PAR_dico_df["Organ_type"].append(lstring[id].name)
+                    Debug_PAR_dico_df["Num_talle"].append(lstring[id][0].tiller)
+                    Debug_PAR_dico_df["Num_plante"].append(lstring[id][0].num_plante)
+                    Debug_PAR_dico_df["Num_organe"].append(lstring[id][0].n)
+                    Debug_PAR_dico_df["Organ_surface"].append(lstring[id][0].organ_surface)
+                    Debug_PAR_dico_df["Organ_PAR"].append(lstring[id][0].PAR)
                     
                     
           
@@ -3931,9 +3944,9 @@ Sheath(StS):
 
 
 Blade(StBl):
-  if StBl.num_plante in plant_census:
+  if StBl.num_plante in plant_census: # for color between centyre and border plant
     if StBl.n <=2 and StBl.tiller == (1,): #Les deux premi�res feuilles tester sur la taille des gaines
-      if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
+      if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno): # no inclinaison avant ligulation
         StBl.incl = 1
         width = d_S[StBl.geno]-0.05
       else:
