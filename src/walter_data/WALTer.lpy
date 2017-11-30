@@ -16,6 +16,7 @@ import json
 
 from walter import data_access
 from os.path import join as pj
+
 data_dir = pj(data_access.get_data_dir())
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
@@ -95,6 +96,7 @@ rep                  = 1
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep"]
 
+params={}
 for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
@@ -317,9 +319,9 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 50
-  dist_border_x = 0.20*100 #inside a rang
-  dist_border_y = 0.20*100 #rang 
+  nb_plt_utiles = 1
+  dist_border_x = 0.0*100 #inside a rang
+  dist_border_y = 0.0*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -735,7 +737,7 @@ PAS               = 24
 
 ##
 
-nbj               = 25 + 300                             # Dur�e de la simulation
+nbj               = 22 + 115                             # Dur�e de la simulation
 time_step         = 1.                                   # Temps qui s'�coule   (jour)
 Tbase             = 0.                                 
 
@@ -2062,6 +2064,8 @@ def EndEach(lstring, lscene):
     
       #Calculs
       Sh_max_temp = max([Sh_max[num_plt][axis][x] for x in range(0,max(Sh_max[num_plt][axis].keys()) + 1)])
+      print "Sh_max :", Sh_max
+      print "Sh_max_temp :", Sh_max_temp
       Sh_dead_max = max([dead_sheath_length[num_plt][axis][x] for x in range(0,max(dead_sheath_length[num_plt][axis].keys()) + 1)])
       Hcol_max[num_plt][axis] = Hcol_max[num_plt][axis] + Sh_max_temp
       Hcol_dead[num_plt][axis] =  Hcol_dead[num_plt][axis] + Sh_dead_max
@@ -2337,8 +2341,10 @@ def EndEach(lstring, lscene):
   
   
 
-def End(lstring):
+def End(lstring, lscene):
   
+  for shp in lscene:
+    print shp.id
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
@@ -3919,6 +3925,8 @@ Ear(StE):
 
 interpretation:
 
+
+
 #Apex(StA):
 #  produce ;(7)^(45)@O(0.01)
 
@@ -3927,11 +3935,18 @@ interpretation:
 #  produce ;(4)lorient@g(Scaled(Vector3(1,1,StL.length),Leaf))
 
 Sheath(StS):
+
   if StS.photosynthetic == True:
-    produce ;(2)_(StS.diameter/2)F(StS.length)
+    my_color = 2
   else:
-    produce ;(6)_(StS.diameter/2)F(StS.length)
+    my_color = 6
     
+  Sh_max_temp = max([Sh_max[StS.num_plante][StS.tiller][x] for x in range(0,max(Sh_max[StS.num_plante][StS.tiller].keys()) + 1)])
+  if StS.length == Sh_max_temp and StS.length > 0:
+    # To represent only the longest blade and thus to avoid nested cylinders
+    produce ;(my_color)_(StS.diameter/2)F(StS.length)
+  else:
+    produce ;(my_color)_(StS.diameter/2)f(StS.length)
 
 
 Blade(StBl):
@@ -4033,7 +4048,6 @@ Blade(StBl):
 #
 Ear(StE):
   StE.zenith = Phi_zen_E
-  #if dico_stades[StE.num_plante][StE.tiller]["End_internode_elongation"] == True and Tempcum < dico_stades[StE.num_plante][StE.tiller]["Flo"][1]:
   if StE.photosynthetic == True:
     if delta_H[StE.num_plante][StE.tiller] > 0:
       visible_length = min(delta_H[StE.num_plante][StE.tiller], L_E[StE.geno])
@@ -4059,23 +4073,23 @@ Peduncle(StP):
 
 Internode(StI):
   if StI.photosynthetic == True:
-    produce ;(3)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
+    my_color = 3
   else:
-    produce ;(5)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
-    
+    my_color = 5
+  
+  if StI.length > 0:
+    produce ;(my_color)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
+  else:
+    produce ;(my_color)_(StI.diameter/2)f(StI.length)\(StI.azimuth)
+
 
 CutPointBud(StCPB):
   if Tempcum < leaf_emerg_date(1, StCPB.tiller, StCPB.geno, StCPB.num_plante) + (ED_B + ED_S) * phyll_adjust(StCPB.geno):
     StCPB.zenith = 0
   else:
     StCPB.zenith = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
-  #StCPB.zenith = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
   StCPB.azimuth = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_azimuth"]
-  #if StCPB.tiller == (1,2):
-    #print "zen : ", StCPB.zenith, "azi : ",StCPB.azimuth
-  #if StCPB.tiller == (1,) or StCPB.tiller == (1,2):
-    #print "axe : ", StCPB.tiller, "zen : ", StCPB.zenith, "azi : ", StCPB.azimuth
-  produce /(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+  produce /(StCPB.azimuth)+(StCPB.zenith)f(0.01)
 
 endlsystem
 ###### INITIALISATION ######
