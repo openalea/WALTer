@@ -16,7 +16,7 @@ import json
 
 from walter import data_access
 from os.path import join as pj
-data_dir = pj(data_access.get_data_dir())
+data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
@@ -69,9 +69,9 @@ module CutPointBlade
 #         pass
 
 #Param�tres de mise � l'�chelle pour que 1=1 dans chacune des directions
-scalex = 0.5              
-scaley = 1                
-scalez = 0.5              
+scalex = 0.5
+scaley = 1
+scalez = 0.5
 
 #########################
 
@@ -319,7 +319,7 @@ elif crop_ccptn == "Darwinkel_original":
 elif crop_ccptn == "Mesh_for_nplants":
   nb_plt_utiles = 50
   dist_border_x = 0.20*100 #inside a rang
-  dist_border_y = 0.20*100 #rang 
+  dist_border_y = 0.20*100 #rang
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -392,7 +392,7 @@ phyllo_incr         = 1.25
 # Adjusting phyllochron to extreme sowing dates
 SDSA = 200                                      # mi-juillet (en DOY)
 SDWS = 90                                       # Fin de l'hiver (
-Rp = 0.003                                      # decroissement du phyllo 
+Rp = 0.003                                      # decroissement du phyllo
 
 VAI_Maxwell = 0.00906
 VAI_Soissons = 0.00906
@@ -406,8 +406,8 @@ VBEE = {"Maxwell" :VBEE_Maxwell, "Gigant_Maxwell" :VBEE_Maxwell , "Darwinkel_Max
 
 SLDL_Maxwell = 1.34
 SLDL_Soissons = 1.34
-SLDL_Renan = 1.12 
-SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Diff�rentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier : 
+SLDL_Renan = 1.12
+SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Diff�rentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier :
 
 # Final plant height (internodes+peduncle+ear of mainstem)
 Param_PlHeight_Maxwell = 55.6155
@@ -416,7 +416,7 @@ Param_PlHeight_Gigant_Maxwell = 110
 Param_PlHeight_Darwinkel_Maxwell = 55.6155
 
 var_registerHeight = ["Param_PlHeight_Maxwell","Param_PlHeight_Soissons","Param_PlHeight_Gigant_Maxwell","Param_PlHeight_Darwinkel_Maxwell"]
-  
+
 for key, value, in params.iteritems():
   if key in var_registerHeight:
     exec(key+"=value")
@@ -497,7 +497,7 @@ shp_I_Darwinkel_Maxwell = "ExpIncrease"
 shp_I_Soissons = "squared"
 
 var_registerShape = ["shp_I_Soissons","shp_I_Maxwell","shp_I_Gigant_Maxwell","shp_I_Darwinkel_Maxwell"]
-  
+
 for key, value, in params.iteritems():
   if key in var_registerShape:
     exec(key+"=value")
@@ -737,7 +737,7 @@ PAS               = 24
 
 nbj               = 25 + 300                             # Dur�e de la simulation
 time_step         = 1.                                   # Temps qui s'�coule   (jour)
-Tbase             = 0.                                 
+Tbase             = 0.
 
 
 liste_talles = [(1,2),(1,3)]#,(1,4),(1,5),(1,6),(1,7)]
@@ -1385,9 +1385,9 @@ def visible_area(length_from_the_top, width_max, total_length):
 # Finding the possible range of a and b values, for a given height and NENL
 # these a and b values are used when shape = 'ExpIncrease' or shape = 'ExpDecrease'
 
-def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):        
+def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):
     l_ear = L_E[rangeno]
-    l_short = 0            
+    l_short = 0
     #DETERMINING A'S RANGE, setting a < 0
     alpha_a = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) # n�gatif si NENL=5
     beta_a = -4 * (ranNENL+1) * ( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) # est positif quand h > l_ear
@@ -1400,19 +1400,19 @@ def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):
             print 'a range problem : square root of negative number'
             posrange_a = [np.nan, np.nan]
         elif beta_a*alpha_a < 0:
-            val_a = -sqrt(-beta_a / alpha_a )            
+            val_a = -sqrt(-beta_a / alpha_a )
             posrange_a = [-100, val_a] # would actually be -infinity
     elif alpha_a < 0:
         if beta_a*alpha_a > 0:
             print 'a range problem : square root of negative number'
             posrange_a = [np.nan, np.nan]
         elif beta_a*alpha_a < 0:
-            val_a = -sqrt(-beta_a / alpha_a ) # val_a is the value for which delta = 0, a < 0            
-            posrange_a = [val_a,0]    
-    # DETERMINIG B'S RANGE, setting b > 0    
-    alpha_b = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) 
-    beta_b = (-2/3)*(ranNENL+1)*(ranNENL+2)*(2*ranNENL+3)*( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) 
-    if alpha_b >= 0: 
+            val_a = -sqrt(-beta_a / alpha_a ) # val_a is the value for which delta = 0, a < 0
+            posrange_a = [val_a,0]
+    # DETERMINIG B'S RANGE, setting b > 0
+    alpha_b = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) )
+    beta_b = (-2/3)*(ranNENL+1)*(ranNENL+2)*(2*ranNENL+3)*( l_ear - ranh + l_short*(leaf_nf - ranNENL) )
+    if alpha_b >= 0:
         print 'NENL =  ' + str(ranNENL) + '    unextected NENL?'
         if alpha_b == 0:
             print 'b range problem : division by 0'
@@ -1421,38 +1421,38 @@ def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):
             print 'b range problem : square root of negative number'
             posrange_b = [np.nan, np.nan]
         elif beta_b*alpha_b < 0:
-            val_b = -sqrt(-beta_b / alpha_b )            
-            posrange_b = [val_b, 100] # would actually be +infinity         
-    elif alpha_b < 0: # is what we have for NENL = 5    
+            val_b = -sqrt(-beta_b / alpha_b )
+            posrange_b = [val_b, 100] # would actually be +infinity
+    elif alpha_b < 0: # is what we have for NENL = 5
         if beta_b*alpha_b > 0:
             print 'b range problem : square root of negative number'
             posrange_b = [np.nan, np.nan]
         elif beta_b*alpha_b < 0:
-            val_b = sqrt(-beta_b / alpha_b ) # val_b is the value for which delta = 0, b > 0       
-            posrange_b = [0, val_b]        
+            val_b = sqrt(-beta_b / alpha_b ) # val_b is the value for which delta = 0, b > 0
+            posrange_b = [0, val_b]
     return [posrange_a, posrange_b]
 
 # provides a, b or NENL, knowing all of the other parameters and the height (the parameter we want is ppar_of_interest, and we set it as nan)
 # used when when shape = 'ExpIncrease' or shape = 'ExpDecrease'
 
 def getHeightPar(ph, pgeno, pa, pb, pNENL, leaf_nf, ppar_of_interest):
-    l_ear = L_E[pgeno] 
-    l_short = 0    
+    l_ear = L_E[pgeno]
+    l_short = 0
     if ppar_of_interest == 'a': # knowing h, b and NENL
         p_0 = (pNENL+1)*(pNENL+2)*(2*pNENL+3)*(1/6)
         p_1 = (pNENL+1)*(pNENL+2)*pb
         p_2 = l_ear + (leaf_nf - pNENL)*l_short + (pNENL+1)*pb**2 - ph
         p = [p_0, p_1, p_2]
         roots = np.roots(p)
-        return ['a', roots]        
+        return ['a', roots]
     if ppar_of_interest == 'b': # knowing h, a and NENL
         p_0 = (pNENL+1)
         p_1 = (pNENL+1)*(pNENL+2)*pa
         p_2 = l_ear + (leaf_nf - pNENL)*l_short + (pNENL+1)*(pNENL+2)*(pa**2)*(2*pNENL + 3)*(1/6 ) - ph
         p = [p_0, p_1, p_2]
         roots = np.roots(p)
-        return ['b', roots]    
-    if ppar_of_interest == 'NENL': # knowing h, a and b 
+        return ['b', roots]
+    if ppar_of_interest == 'NENL': # knowing h, a and b
         p_0 = (pa**2)/3
         p_1 = pa*pb + (pa**2)*(3/2)
         p_2 = pb**2 - l_short + 3*pa*pb + (pa**2)*(13/6)
@@ -1495,14 +1495,14 @@ def EN_fin_length(n, Ln_final, geno, shape, PlHeight):
       intL = aL*rel_rank + bL
       return intL
     elif shape == "ExpIncrease":
-      aEi = getRangeHeightPar(ranh=PlHeight, ranNENL=N_I_el[geno] ,rangeno=geno, leaf_nf=Ln_final)[0][0]*(3/6)        
-      bEi = min(getHeightPar(ph=PlHeight, pgeno=geno, pa=aEi, pb=np.nan, pNENL=N_I_el[geno], leaf_nf=Ln_final, ppar_of_interest='b')[1])  
+      aEi = getRangeHeightPar(ranh=PlHeight, ranNENL=N_I_el[geno] ,rangeno=geno, leaf_nf=Ln_final)[0][0]*(3/6)
+      bEi = min(getHeightPar(ph=PlHeight, pgeno=geno, pa=aEi, pb=np.nan, pNENL=N_I_el[geno], leaf_nf=Ln_final, ppar_of_interest='b')[1])
       intEi = ( aEi*rel_rank + bEi)**2
       return intEi
     elif shape == "ExpDecrease":
-      aEd = getRangeHeightPar(ranh=PlHeight, ranNENL=N_I_el[geno] ,rangeno=geno, leaf_nf=Ln_final)[0][0]*(3/6)        
-      bEd = max(getHeightPar(ph=PlHeight, pgeno=geno, pa=aEd, pb=np.nan, pNENL=N_I_el[geno], leaf_nf=Ln_final, ppar_of_interest='b')[1])        
-      intEd = (aEd*rel_rank + bEd)**2        
+      aEd = getRangeHeightPar(ranh=PlHeight, ranNENL=N_I_el[geno] ,rangeno=geno, leaf_nf=Ln_final)[0][0]*(3/6)
+      bEd = max(getHeightPar(ph=PlHeight, pgeno=geno, pa=aEd, pb=np.nan, pNENL=N_I_el[geno], leaf_nf=Ln_final, ppar_of_interest='b')[1])
+      intEd = (aEd*rel_rank + bEd)**2
       return intEd
 
 
@@ -1845,7 +1845,7 @@ elif crop_ccptn == "neo_Darwinkel":
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print crop_scheme
 
-elif crop_ccptn == "Darwinkel_original": 
+elif crop_ccptn == "Darwinkel_original":
   area = area_targeted
   crop_scheme = {"area" : area, "density" : densite}
   #border_prop = 0.8
@@ -1880,54 +1880,54 @@ if len(params) == 0:
 else:
   # If the json file already exists
   if os.path.isfile("index-table.json"):
-    # The use of the byteify function kill encoding problems from json importation between unicode and strings 
-    
+    # The use of the byteify function kill encoding problems from json importation between unicode and strings
+
     ID_params = byteify(json.load(open("index-table.json")))
     already_known_ID = False
-    
+
     for id in ID_params.keys():
-      
+
       # If the combination of parameters has already been encountered previously and stored in the json file
       if sorted(ID_params[id].values()) == sorted(params.values()):
         already_known_ID = True
-      
+
     #If the ID of the simulation is already known
     if already_known_ID:
       ID = id
-    
+
     #If the ID of the simulation is not known
     elif not already_known_ID:
       # We choose a random ID
       ID = "id-"+str(uuid.uuid4())
       ID_params = {}
       ID_params[ID] = params
-      
+
       json_2_human = open("from_json_to_humanbeing.txt", "a")
-      
+
       for key, val in params.iteritems():
         json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
       json_2_human.write("\n")
       json_2_human.close()
-      
+
       json.dump(ID_params, open("index-table.json", "w"))
-      
-      
+
+
   # If the json file doesnot exists
   elif not os.path.isfile("index-table.json"):
     # We choose a random ID
     ID = "id-"+str(uuid.uuid4())
     ID_params = {}
     ID_params[ID] = params
-    
+
     json_2_human = open("from_json_to_humanbeing.txt", "a")
-    
+
     for key, val in params.iteritems():
       json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
     json_2_human.write("\n")
     json_2_human.close()
-      
+
     json.dump(ID_params, open("index-table.json", "w"))
-    
+
   folder_name = ID
   out_dir = pj(data_dir, "output")
   print "ID : ",ID
@@ -1945,11 +1945,11 @@ try:
   if write_output_file["Lscene"]:
     if not os.path.exists(pj(out_dir, folder_name, "Lscenes")):
       os.mkdir(pj(out_dir, folder_name, "Lscenes"))
-  
+
   if write_output_file["Lstring"]:
     if not os.path.exists(pj(out_dir, folder_name, "Lstrings")):
       os.mkdir(pj(out_dir, folder_name, "Lstrings"))
-  
+
 except Exception, e:
   print(e)
   pass
@@ -1958,7 +1958,7 @@ except Exception, e:
 def Start(lstring):
   useGroup(1)
   current_PAR = 0
-  
+
   #TODO ici c'est sale, il faut mettre �a dans Seed
   # Initialisation of the dictionnary regrouping Ts0 dates for each tiller
   #for tiller in tiller_2_ts0.keys():
@@ -1966,7 +1966,7 @@ def Start(lstring):
   #  for Tht in range(1, 3000):
   #    define_ts0(Tht, tiller, Ln_final_dict[tiller], phyllo_Maxwell, n1_Maxwell, n3_Maxwell, t1_sen_Maxwell, t3_sen_Maxwell, Dse_mean_Maxwell, DelayTipToHS*phyllo_Maxwell, test_res)
   #  test_res= [True]
-  
+
   #for axis in tiller_2_ts0.keys():
   #  cohort_2_ts0[cohort_number(axis)] = tiller_2_ts0[axis]
 
@@ -1976,7 +1976,7 @@ def Start(lstring):
 def StartEach(lstring):
   #if getIterationNb() % 2 == 0:
   frameDisplay(True)
-  
+
   global Temperature
   global elapsed_time
   global Tempcum
@@ -2005,7 +2005,7 @@ def StartEach(lstring):
 
   Temperature = current_temperature              # Temp�rature moyenne du jour apr�s elapsed time jours pass�s
   Tempcum += max(Tbase,Temperature)
-  
+
   print "date : ", date_current_day, "|", location,"|", "Experiment : ", expe_related,"|", "densite : ", densite,"|", "num_jour : ",elapsed_time,"|", "tempcum : ",int(Tempcum),"|", "DOY : ",DOY,"|", "len : ",len(lstring), "|","T : ", current_temperature,"|", "PAR : ", current_PAR
   #daily_seed = rep + elapsed_time
   #random.seed(daily_seed)
@@ -2013,69 +2013,69 @@ def StartEach(lstring):
 
 def EndEach(lstring, lscene):
   # Export de la Lstring
-  
+
   new_lstring = lstring.replace("%", "")
-  
+
   # CALCUL DU GAI (� partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
     Hcol_max[num_plt] = dict.fromkeys(Hcol_max[num_plt].keys(), 0)
     delta_H[num_plt] = dict.fromkeys(delta_H[num_plt].keys(), 0)
     Hcol_dead[num_plt] = dict.fromkeys(Hcol_dead[num_plt].keys(), 0)
-  
+
   global tiller_surface
   global surface_plante_visible
   global surface_plante
-  
+
   tiller_surface = dict.fromkeys(tiller_surface.keys(), 0)
   surface_plante = dict.fromkeys(surface_plante.keys(), 0)
   surface_plante_visible = dict.fromkeys(surface_plante_visible.keys(), 0)
-  
+
   #Calcul du GAI
   for org_id in range(len(lstring)):
     org = lstring[org_id]
     if org.name in organ_type:
       if org.name == "Blade" and org[0].photosynthetic == True:
-        
+
         # Ancienne methode de calcul du GAI
         surface_plante[org[0].num_plante] += org[0].area
-        
+
         #Nouvelle m�thode de calcul du GAI (uniquement que les parties visibles des feuilles)
         tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
-        
+
       if org.name == "Internode":
         if org[0].photosynthetic == True:
           # Hauteur max du collet (par axe)
           Hcol_max[org[0].num_plante][org[0].tiller] += org[0].length
-        
+
         else:
           # Hauteur du col mort
           Hcol_dead[org[0].num_plante][org[0].tiller] += org[0].length
-        
+
       if org.name == "Peduncle" and org[0].photosynthetic == True:
         #  Delta H (Lepi + Lped) - Lgmax)
         delta_H[org[0].num_plante][org[0].tiller] += org[0].length
-        
+
       if org.name == "Ear" and org[0].photosynthetic == True:
         #  Delta H (Lepi + Lped) - Lgmax)
         delta_H[org[0].num_plante][org[0].tiller] += org[0].length
-  
+
   for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
     for axis in axis_census[num_plt].keys():
-    
+
       #Calculs
       Sh_max_temp = max([Sh_max[num_plt][axis][x] for x in range(0,max(Sh_max[num_plt][axis].keys()) + 1)])
       Sh_dead_max = max([dead_sheath_length[num_plt][axis][x] for x in range(0,max(dead_sheath_length[num_plt][axis].keys()) + 1)])
       Hcol_max[num_plt][axis] = Hcol_max[num_plt][axis] + Sh_max_temp
       Hcol_dead[num_plt][axis] =  Hcol_dead[num_plt][axis] + Sh_dead_max
       delta_H[num_plt][axis] = max(0, delta_H[num_plt][axis] - Sh_max_temp)
-      
+
       #Calcul de GAI (on ajoute les contributions des autres parties de la plante)
       Peraxes_dico_df["Visible_leaves_surface"].append(tiller_surface[(num_plt,axis)])
       #TODO : transformer ces formules en fonctions � mettre en amont
       leaf_contrib = tiller_surface[(num_plt,axis)]
       stem_contrib = max(0,(Hcol_max[num_plt][axis] - max(L_b_S,Hcol_dead[num_plt][axis])) * d_S[genotype_map[num_plt]] * pi/2)
       peduncle_contrib = max(0,(delta_H[num_plt][axis] - L_E[genotype_map[num_plt]]) * pi/2 * d_P[genotype_map[num_plt]])
-      
+
       if delta_H[num_plt][axis] <= 0:
         tiller_surface[(num_plt,axis)] = leaf_contrib + stem_contrib
         ear_contrib = 0
@@ -2085,8 +2085,8 @@ def EndEach(lstring, lscene):
       elif 0 < delta_H[num_plt][axis] < L_E[genotype_map[num_plt]]:
         ear_contrib = (L_E[genotype_map[num_plt]] - delta_H[num_plt][axis]) * d_E[genotype_map[num_plt]] * pi/2
         tiller_surface[(num_plt,axis)] = leaf_contrib + stem_contrib + ear_contrib
-      
-      
+
+
       #Remplissages de dico de sortie
       if write_output_file["Peraxes"]:
         Peraxes_dico_df["Init_flag"].append(initialization_Flag[num_plt])
@@ -2096,7 +2096,7 @@ def EndEach(lstring, lscene):
         Peraxes_dico_df["Temp_cum"].append(Tempcum)
         Peraxes_dico_df["Num_plante"].append(num_plt)
         Peraxes_dico_df["Num_talle"].append(axis)
-        Peraxes_dico_df["Sheath_max"].append(Sh_max_temp)      
+        Peraxes_dico_df["Sheath_max"].append(Sh_max_temp)
         Peraxes_dico_df["Collar_height"].append(Hcol_max[num_plt][axis])
         Peraxes_dico_df["Dead_collar_height"].append(Hcol_dead[num_plt][axis])
         Peraxes_dico_df["Delta_H"].append(delta_H[num_plt][axis])
@@ -2106,11 +2106,11 @@ def EndEach(lstring, lscene):
         Peraxes_dico_df["Stem_contrib_to_GAI"].append(stem_contrib)
         Peraxes_dico_df["Ear_contrib_to_GAI"].append(ear_contrib)
         Peraxes_dico_df["Peduncle_contrib_to_GAI"].append(peduncle_contrib)
-  
+
 #aggregate axes surface per plant
   for key in tiller_surface.keys():
     surface_plante_visible[key[0]] += tiller_surface[key]
-  
+
   # Calcul du GAI de proximit�
   for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
     surface_peupl = 0
@@ -2118,35 +2118,35 @@ def EndEach(lstring, lscene):
       surface_peupl += surface_plante_visible[num_voisin]
     GAI_prox[num_plt] = surface_peupl/(nb_voisins_glob[0] * (crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))  # On multiplie par 100 pour une conversion de m_squ � cm_squ
     GAI_ind[num_plt] = surface_plante_visible[num_plt]/((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))
-  
+
   GAI_old = sum(surface_plante.values())/(crop_scheme["nplant_peupl"] * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100)))
   GAI_tot = sum(surface_plante_visible.values())/(crop_scheme["nplant_peupl"] * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100)))
   Surf_center = 0
   for interest_plt in plant_census:
     Surf_center += surface_plante_visible[interest_plt]
   GAI_center = Surf_center/(len(plant_census) * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100)))
-  
-  
+
+
   ##################################
   ##Module de rayonnement : CARIBU #
   ##################################
-  
+
   if write_output_file["Lscene"]:
     if elapsed_time > 40:
       s_save = Scene(lscene)
       s_save.save(pj(out_dir,folder_name, "Lscenes", "lscene-day-"+"%s" % elapsed_time+".bgeom"))
-  
+
   if write_output_file["Lstring"]:
     out_lstring = open(pj(out_dir,folder_name, "Lstrings", "lstring-day-"+"%s" % round(elapsed_time) +".txt"), "w")
     out_lstring.write("%s" % lstring)
-  
+
   #s = Scene(lscene)
   #s.add(lscene)
   #s.save("./lscene-debug.bgeom")
   #print(type(lscene))
-  
+
   ## Pour l'instant on fait QUE du diffus
-  
+
   if CARIBU_state != "disabled":    #Le module de rayonnement peut �tre activ� ou d�sactiv� {"enabled";"disabled"}
     if type(lscene) != None:
       if len(lscene) > 0:
@@ -2155,8 +2155,8 @@ def EndEach(lstring, lscene):
           xmin = crop_scheme["dist_intra_rang"]/2
           ymin = crop_scheme["dist_inter_rang"]/2
           xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
-          ymax = crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] + crop_scheme["dist_inter_rang"]/2            
-          
+          ymax = crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] + crop_scheme["dist_inter_rang"]/2
+
           # Creation of a mapping table to connect the id of each shape and the key of dict result of CARIBU
           mapping_table = {}
           if lscene:
@@ -2165,18 +2165,18 @@ def EndEach(lstring, lscene):
           # Definition ciel
           #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
           #On selectionne uniquement la valeur de PAR pour le current day
-          
+
           #sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
           sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
           sky = GetLight.GetLight(sky)
           sky = sky.split()
           sky_tup = []
-          
-          
+
+
           for i in range(nb_azimuth*nb_zenith):
             sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
-            i+=4 
-          
+            i+=4
+
           c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
           try:
             output = c_scene.run()
@@ -2186,12 +2186,12 @@ def EndEach(lstring, lscene):
               error_caribu_file = open(pj(out_dir,folder_name, "error_caribu.txt"), "w")
             else:
               error_default_file = open(pj(out_dir,folder_name, "error_default.txt"), "w")
-            
+
             sys.stderr.write(str(exception))
             exit(1)
-          
+
           res_sky = output[1]["default_band"]
-          
+
 #          except Exception:
 #            print '#'*80
 #            print '*'*80
@@ -2201,7 +2201,7 @@ def EndEach(lstring, lscene):
 #            s_save = Scene(lscene)
 #            s_save.save("./debug/lscene-day-"+"%s" % elapsed_time+".geom")
 #            res_sky = None
-          
+
           if Temperature > 0 and res_sky:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
@@ -2214,7 +2214,7 @@ def EndEach(lstring, lscene):
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
                   Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][mapping_table[id]])
-                  
+
                   if res_sky["Ei"][mapping_table[id]] < 0:
                     new_[0].PAR = 0
                   else:
@@ -2236,9 +2236,9 @@ def EndEach(lstring, lscene):
                     Debug_PAR_dico_df["Num_organe"].append(new_lstring[id][0].n)
                     Debug_PAR_dico_df["Organ_surface"].append(new_lstring[id][0].organ_surface)
                     Debug_PAR_dico_df["Organ_PAR"].append(new_lstring[id][0].PAR)
-                    
-                    
-          
+
+
+
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
@@ -2257,30 +2257,30 @@ def EndEach(lstring, lscene):
         if plant_shield_indicator[num_plt]["count"] >= Delta_prot[genotype_map[num_plt]]:
           plant_shield_indicator[num_plt]["Shield"] = False
           plant_shield_indicator[num_plt]["count"] = plant_shield_indicator[num_plt]["count"]%Delta_prot[genotype_map[num_plt]]
-      
+
       weakest_axis = "No"
       PAR = 1
       nb_timestep_fenetre = 1
       PAR_2_write = 1
-      
+
       #Date effective du debut de regression des talles qui d�pend du nombre de feuilles final
       if t_beg_reg_ind_Tht.keys(): #This is a simple and ugly test set to avoid performing the real test (on an empty dict) the first round of simulation before the dict t_beg_reg_ind_Tht fills itself
         #print elapsed_time, "tht beg reg : ",min(t_beg_reg_ind_Tht.values())
-        if t_beg_reg_ind_Tht[num_plt] < Tempcum < dico_stades[num_plt][(1,)]["Flo"][1]: 
+        if t_beg_reg_ind_Tht[num_plt] < Tempcum < dico_stades[num_plt][(1,)]["Flo"][1]:
           #Determining the maximal cohort of the day
           PAR_per_youngest_tiller = (0, float('inf'))
           if len(axis_census[num_plt].values()) > 0: #If at least one axis is composing the plant
-            
+
             # We calculate the highest emergence date of the tiller in order to point the youngest tiller
             date_emergence_max = 0
             for tal in axis_census[num_plt].keys():
               if axis_census[num_plt][tal]["emerg_date"] > date_emergence_max:
                 date_emergence_max = axis_census[num_plt][tal]["emerg_date"]
             #date_emergence_max = max(axis_census[num_plt].values())["emerg_date"]
-            
+
             for axis, value in axis_census[num_plt].iteritems():
               if axis != (1,): #No regression is considered on the main stem
-                
+
                 # On d�limite les bords de la fen�tre glissante
                 min_temp = min(dico_PAR_per_axis[num_plt][axis].keys())
                 max_temp = max(dico_PAR_per_axis[num_plt][axis].keys())
@@ -2290,26 +2290,26 @@ def EndEach(lstring, lscene):
                     weakest_axis = axis
                     #for temp in range(min(dico_PAR_per_axis[num_plt][axis].keys(), key=lambda x:abs(x-(max_temp-Delta_l))), max_temp+1):
                     Temp_keys = [t for t in dico_PAR_per_axis[num_plt][axis].keys() if t > max(dico_PAR_per_axis[num_plt][axis].keys()) - Delta_l]
-                    PAR = 0            
+                    PAR = 0
                     for temp in Temp_keys:
                       PAR += dico_PAR_per_axis[num_plt][axis][temp]
                     nb_timestep_fenetre = len(Temp_keys)
                     #print "num plt : ", num_plt, "weakest_axis",weakest_axis, "PAR moyen: ",PAR/nb_timestep_fenetre, "test mort : ", PAR/nb_timestep_fenetre < PAR_t[genotype_map[num_plt]]
                     if PAR/nb_timestep_fenetre < PAR_t[genotype_map[num_plt]]:
                       PAR_per_youngest_tiller = (axis, dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)])
-                      
-            
+
+
             if PAR_per_youngest_tiller != (0, float('inf')) and plant_shield_indicator[num_plt]["Shield"] == False:
               plant_shield_indicator[num_plt]["Shield"] = True
-              axis_census[num_plt][PAR_per_youngest_tiller[0]]["Stop_growth_flag"] = True 
-              axis_census[num_plt][PAR_per_youngest_tiller[0]]["emerg_date"] = 0        
-        
+              axis_census[num_plt][PAR_per_youngest_tiller[0]]["Stop_growth_flag"] = True
+              axis_census[num_plt][PAR_per_youngest_tiller[0]]["emerg_date"] = 0
+
       #global GAI_df
       GAI_dico_df['Weakest_axis'].append(weakest_axis)
       GAI_dico_df['PAR_weakest_axis'].append(PAR/nb_timestep_fenetre)
-  
+
   ###### Fin rayonnement
-  
+
   for num in range(1, crop_scheme["nplant_peupl"] + 1):
     GAI_dico_df["Init_flag"].append(initialization_Flag[num])
     GAI_dico_df['Elapsed_time'].append(elapsed_time)
@@ -2329,12 +2329,12 @@ def EndEach(lstring, lscene):
       GAI_dico_df['Position'].append("center")
     else:
       GAI_dico_df['Position'].append("border")
-  
-  
-  
+
+
+
 
 def End(lstring):
-  
+
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
@@ -2409,7 +2409,7 @@ def End(lstring):
     PAR_per_axes_df.to_csv(pj(out_dir,folder_name, "PAR_per_axes.csv"), sep = "\t", header = True, index = False)
 
   # FICHIER PARAMETRES
-  
+
   fichier_params = open(pj(out_dir,folder_name, "Parameters.csv"), "w")
   fichier_params.write("Parameter" + "\t" + "Genotype" + "\t" + "Value" + "\n" +
                        "WALTer_version" + "\t" + "All" + "\t" + "%s" % WALTer_version + "\n" +
@@ -2549,7 +2549,7 @@ def End(lstring):
     dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
     GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
     GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
-  
+
 
 Axiom:Seed
 
@@ -2564,70 +2564,70 @@ group 1:
 Seed:
   global beginning_CARIBU
   global ending_CARIBU
-  
+
   fichier_parcelle = open(pj(out_dir,folder_name, "Parcelle.csv"), "w")
-  
+
   fichier_parcelle.write("X" + "\t" + "Y" + "\t" + "Num_plante" + "\t" + "Genotype" + "\n")
-  
+
   # Calculates the coordinates of each plant
   plant_disposition(crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"], crop_scheme["dist_inter_rang"], crop_scheme["dist_intra_rang"])
-  
+
   xmin = -(crop_scheme["dy"]*100)/2
   xmax = (crop_scheme["dy"]*100)/2
   ymin = -(crop_scheme["dx"]*100)/2
   ymax = (crop_scheme["dx"]*100)/2
-  
+
   #  xmin_center = xmin + ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  xmax_center = xmax - ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  ymin_center = ymin + ((crop_scheme["dist_inter_rang"]*100 * nb_rang_border) + y_position_hazard)
   #  ymax_center = ymax - ((crop_scheme["dist_inter_rang"]*100 * nb_rang_border) + y_position_hazard)
-  #  
+  #
   xmin_center = xmin + (dist_border_x + x_position_hazard)
   xmax_center = xmax - (dist_border_x + x_position_hazard)
   ymin_center = ymin + (dist_border_y + y_position_hazard)
   ymax_center = ymax - (dist_border_y + y_position_hazard)
-  
-  
+
+
   print "xmin : ", xmin, "xmax : ", xmax, "xmin_center", xmin_center, "xmax_center", xmax_center
   print "ymin : ", ymin, "ymax : ", ymax, "ymin_center", ymin_center, "ymax_center", ymax_center
-  
+
   for num_plante in range(1,int(crop_scheme["nplant_peupl"]) + 1):
     #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
     x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
     y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
     geno = random.choice(crop_genotype)    ## selection geno random
     genotype_map[num_plante] = geno
-    
+
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[geno]["mean"],Dse[geno]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
-    
+
     #Determining which plant is in the border, which plant is not
     if positions[num_plante]["x"] <= xmin_center or positions[num_plante]["x"] >= xmax_center:
       border_plants.append(num_plante)
     if num_plante not in border_plants:
       if positions[num_plante]["y"] <= ymin_center or positions[num_plante]["y"] >= ymax_center:
         border_plants.append(num_plante)
-    
+
     #Dictionnary initialisation
-    
+
     ## Individual scale
     initialization_Flag[num_plante] = True
     GAI_prox[num_plante] = 0
     GAI_ind[num_plante] = 0
     tiller_death[num_plante] = {}
     tiller_death_now[num_plante] = (2,)
-    dead_tillers[num_plante] = []      
+    dead_tillers[num_plante] = []
     youngest_axes[num_plante] = []
     weakest_axis[num_plante] = {}
-    dico_cut_fantom_axes[num_plante] = {}      
+    dico_cut_fantom_axes[num_plante] = {}
     future_dead_axes[num_plante] = []
     plant_shield_indicator[num_plante] = {"Shield": False, "count": 0.0}
-    
+
     surface_plante[num_plante] = 0.01
     surface_plante_visible[num_plante] = 0.01
-    
+
     surface_sol[num_plante] = crop_scheme["dist_inter_rang"] * crop_scheme["dist_intra_rang"]
-    
+
     ## Axis scale
     ### about emerged organs
     first_leaf_phase2[num_plante] = {}
@@ -2636,10 +2636,10 @@ Seed:
     LNfinal[num_plante][tiller_init] = 0
     axis_census[num_plante] = {}
     axis_census[num_plante][tiller_init] = {"emerg_date" : Dse_heterogeneous[num_plante], "Stop_growth_flag" : False, "Regression_flag" : False}
-    
+
     dico_stades[num_plante] = {}
     dico_stades[num_plante][tiller_init] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
-    
+
     dico_PAR["Blade"][num_plante] = {}
     dico_PAR["Sheath"][num_plante] = {}
     dico_PAR["Internode"][num_plante] = {}
@@ -2652,13 +2652,13 @@ Seed:
     dico_PAR["Ear"][num_plante][tiller_init] = {}
     dico_PAR_per_axis[num_plante] = {}
     dico_PAR_per_axis[num_plante][tiller_init] = {}
-    
+
     dico_cut_dead_blades[num_plante] = {}
     dico_cut_dead_blades[num_plante][tiller_init] = []
-    
+
     hazard_dict_axis[num_plante] = {}
     hazard_dict_axis[num_plante][tiller_init] = {"tiller_azimuth" : Phi_azi_S , "tiller_zenith" : Phi_zen_S}
-    
+
     ### about initiated organs
     date_emission[num_plante] = {}
     date_emission[num_plante][tiller_init] = Dse_heterogeneous[num_plante]
@@ -2667,72 +2667,72 @@ Seed:
     Hcol_dead[num_plante] = {}
     Hcol_dead[num_plante][tiller_init] = 0
     delta_H[num_plante] = {}
-    delta_H[num_plante][tiller_init] = 0      
+    delta_H[num_plante][tiller_init] = 0
     tiller_surface[(num_plante,tiller_init)] = 0.0
-    
+
     # Phytomer scale
-    
+
     current_sheath_length[num_plante] = {}
     current_sheath_length[num_plante][tiller_init] = {0: l_c}
     dead_sheath_length[num_plante] = {}
     dead_sheath_length[num_plante][tiller_init] = {0:0}
-    
-    
+
+
     current_internode_length[num_plante] = {}
-    current_internode_length[num_plante][tiller_init] = {} 
-    
+    current_internode_length[num_plante][tiller_init] = {}
+
     final_blade_length[num_plante] = {}
-    final_blade_length[num_plante][tiller_init] = {} 
-    
+    final_blade_length[num_plante][tiller_init] = {}
+
     leaf_emergence[num_plante] = {}
     leaf_emergence[num_plante][tiller_init] = {1: (0,0)}
-    
+
     Sh_max[num_plante] = {}
     Sh_max[num_plante][tiller_init] = {0 : 0.0}
-    
+
     hazard_dict_organ[num_plante] = {}
     hazard_dict_organ[num_plante][tiller_init] = {}
-    
+
     fichier_parcelle.write("%s" % positions[num_plante]["x"] + "\t" + "%s" % positions[num_plante]["y"] + "\t" + "%s" % num_plante + "\t" + "%s" % geno + "\n")
     nproduce  @M(positions[num_plante]["x"],positions[num_plante]["y"],positions[num_plante]["z"])
-    
+
     StA = Apex(num_plante, geno, tiller_init, 0,0)
     StCPB = CutPointBud(num_plante,geno,tiller_init)
     nproduce CutPointBud(StCPB)Apex(StA)
-  
+
   print "border plants : ", border_plants
-  
+
   if border_plants != plant_census: #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
     for brd_plt in border_plants:
       plant_census.remove(brd_plt)
   print "plant census 2 : ",plant_census
   crop_scheme["nb_useful_plt"] = len(plant_census)
-  nb_plantes_utiles = crop_scheme["nb_useful_plt"] 
+  nb_plantes_utiles = crop_scheme["nb_useful_plt"]
   print crop_scheme["nb_useful_plt"]," plantes utiles sur ",crop_scheme["nplant_peupl"]
   print "All plants in border : ",border_plants == plant_census
   set_neighbour(maillage, crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"], crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"], dGAIp, infinity_GAIp)
-  
+
   #d�terminer la plante la plus pr�coce
   global earliest_plant
   global latest_plant
   global param_Ln_final
   minimal_emergence = min(Dse_heterogeneous.values())
   maximal_emergence = max(Dse_heterogeneous.values())
-  
+
   for key, value in Dse_heterogeneous.iteritems():
     if value == minimal_emergence:
       earliest_plant = key
     if value == maximal_emergence:
       latest_plant = key
-  
+
   #List phyllochrones of all the genotypes presents within the crop
   all_phyllo = {}
   for g in crop_genotype:
     all_phyllo[phyll_adjust(g)] = g
-  
+
   longest_phyllo = max(all_phyllo.keys())
   shortest_phyllo = min(all_phyllo.keys())
-  
+
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
 
@@ -2755,12 +2755,12 @@ Apex(StA):
     t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
     t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
     useGroup(3)
-  
+
   elif SIRIUS_state == "enabled":
-    
+
     global _Tempcum
     global DOY
-    
+
     for day in range(1,300):
       date_current_day = sowing_date + datetime.timedelta(day) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
       _current_temperature = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['TM']
@@ -2791,14 +2791,14 @@ Apex(StA):
       Apex_Sirius_dico_df['Ln_final'].append(StA.Ln_final)
       if _Tempcum >= Dse_heterogeneous[StA.num_plante]:
         StA.sumtemp += max(Tbase,current_temperature)
-        
+
         if StA.ln < Ldecr:
           StA.ln = phyllo_decr * StA.sumtemp /phyll_adjust(StA.geno)
         elif Ldecr <= StA.ln < Lincr:
           StA.ln = StA.sumtemp /phyll_adjust(StA.geno)
         elif StA.ln >= Lincr:
           StA.ln = phyllo_incr * StA.sumtemp /phyll_adjust(StA.geno)
-        
+
         StA.pn = 2 * StA.ln + 4
         # Vernalisation
         if StA.vrn == False:
@@ -2827,10 +2827,10 @@ Apex(StA):
                 StA.photop_flag = True
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
-                
+
                 StA.Ln_final = int(StA.Ln_app)+int(random.random()+StA.Ln_app%1)
                 dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
-                
+
                 t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
                 t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
     _Tempcum = 0
@@ -2840,7 +2840,7 @@ Apex(StA):
 
 group 3:
 
-#INITIALISATION DU MODELE 
+#INITIALISATION DU MODELE
 ###########################
 
 Apex(StA):
@@ -2848,12 +2848,12 @@ Apex(StA):
   global Tempcum
   global DOY
   global date_current_day
-  
-  
+
+
   if StA.n < N_p_s and initialization_Flag[StA.num_plante] == True:
     StA.sumtemp += max(Tbase,Temperature)
     StA.time += max(Tbase,Temperature)
-    
+
     if StA.time >= Pls[StA.geno]:
       StL = Leaf(StA.num_plante, StA.geno, StA.tiller, StA.n + 1)
       StBu_p = Bud_primord(StA.num_plante, StA.geno, StA.tiller, StA.n + 1)
@@ -2862,30 +2862,30 @@ Apex(StA):
       StI = Internode(StA.num_plante, StA.geno, StA.tiller, StA.n + 1)
       StA.time = StA.time % Pls[StA.geno]
       StL.date_emerg = leaf_emerg_date(StL.n, StL.tiller, StL.geno, StL.num_plante)
-      
+
       # Formatting phytomer scaled dictionnaries
-      current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0 
+      current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0
       Sh_max[StA.num_plante][StL.tiller][StL.n] = 0.0
       final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0        # Formater le dico des longueurs finales
       final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0
       current_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
-      
+
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
-      
+
       ### End of dictionnaries formatting ###
-      
+
       blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
-      
+
       StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
       #print "angle", StI.tiller, "n", StI.n, StI.azimuth
-      
+
       nproduce [Bud_primord(StBu_p)]Internode(StI)[Leaf(StL)]Apex(StA)
       StA.n += 1
     else:
       produce Apex(StA)
-      
+
   elif StA.n >= N_p_s :
     #print "Moi, numero",StA.num_plante,"J'ai fini l'initialisation"
     StA.sumtemp = 0
@@ -2902,30 +2902,30 @@ Apex(StA):
 
 Bud_primord(StBu_p):
   StBu_p.sumtemp += max(Tbase,Temperature)
-  
+
   if StBu_p.sumtemp >= Delta_b * Pls[StBu_p.geno] and StBu_p.competent_flag == False:
     StBu_p.competent_flag = True
     new_tiller_name = StBu_p.tiller + (StBu_p.n,)
     StBu = Bud(StBu_p.num_plante, StBu_p.geno, new_tiller_name, 0, StBu_p.sumtemp%Pls[StBu_p.geno]) #On discr�tise proprement l'accumulation des temp�ratures en transmettant le surplus de temp�rature stock�e � l'Bud n�oform�
     StBu.sumtemp = StBu_p.sumtemp%Pls[StBu_p.geno]
     StBu.time = StBu_p.sumtemp%Pls[StBu_p.geno]
-    
+
     # TODO : virer cette ligne si inutile ?
     # Formatting dictionnaries
-    ## 
+    ##
     date_emission[StBu.num_plante][new_tiller_name] = Tempcum
     Hcol_max[StBu.num_plante][new_tiller_name] = 0
     Hcol_dead[StBu.num_plante][new_tiller_name] = 0
     delta_H[StBu.num_plante][new_tiller_name] = 0
     tiller_surface[(StBu.num_plante,new_tiller_name)] = 0.0
     dico_cut_dead_blades[StBu.num_plante][new_tiller_name] = []
-    
+
     hazard_dict_organ[StBu.num_plante][new_tiller_name] = {}
     hazard_dict_axis[StBu.num_plante][new_tiller_name] = {}
     hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_azimuth"] = Phi_azi_T + random.uniform(-till_azi_hazard, till_azi_hazard)
     hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_zenith"] = Phi_zen_T + random.uniform(-till_zen_hazard, till_zen_hazard)
     dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
-    
+
     ## Phytomer scaled dictionnaries
     current_internode_length[StBu.num_plante][StBu.tiller] = {}
     Sh_max[StBu.num_plante][StBu.tiller] = {0: 0.0}
@@ -2933,13 +2933,13 @@ Bud_primord(StBu_p):
     current_sheath_length[StBu.num_plante][StBu.tiller] = {0: l_c}
     dead_sheath_length[StBu.num_plante][StBu.tiller] = {0:0.0}
     leaf_emergence[StBu.num_plante][StBu.tiller] = {1: (0,0)}
-    
+
     ### END OF DICTIONNARIES FORMATAGE ###
-    
+
     StCPB = CutPointBud(StBu.num_plante, StBu.geno, StBu.tiller)
     StCPB.tiller = StBu.tiller
     StCPB.tiller_zen = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
-    
+
     dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = False
     produce CutPointBud(StCPB)[Bud(StBu)]
 
@@ -2948,12 +2948,12 @@ Bud_primord(StBu_p):
 
 Bud(StBu):
   StBu.nb_emerg_leaves = nb_emerged_leaves(Tempcum, StBu.tiller, StBu.geno, StBu.Ln_final)
-  
+
   StBu.sumtemp += max(Tbase,Temperature)
   StBu.nb_j += time_step
   StBu.age += max(Tbase,Temperature)
   StBu.time += max(Tbase,Temperature)
-  
+
   #Production de phytom�res
   if StBu.time >= Pls[StBu.geno]:
     if GAI_prox[StBu.num_plante] <= GAI_c[geno] or cohort_number(StBu.tiller) < 8: #TODO peut �tre � enlever sui on est encore dans la graine?
@@ -2963,20 +2963,20 @@ Bud(StBu):
       StI = Internode(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu.time = StBu.time % Pls[StBu.geno]
       StL.date_emerg = leaf_emerg_date(StL.n, StL.tiller, StL.geno, StL.num_plante)
-      
+
       # Formatting phytomer scaled dictionnaries
-      current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0 
+      current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0
       Sh_max[StL.num_plante][StL.tiller][StL.n] = 0.0
       final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0        # Formater le dico des longueurs finales
       final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0
       current_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
-      
+
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
-      
+
       ### End of dictionnaries formatting ###
-      
+
       blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
       StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
       nproduce [Bud_primord(StBu_p)]Internode(StI)[Leaf(StL)]Bud(StBu)
@@ -2990,7 +2990,7 @@ Leaf(StL):
   StL.sumtemp += max(Tbase,Temperature)
   StL.age += time_step
   produce Leaf(StL)
-  
+
 
 Internode(StI):
   StI.diameter = d_I[StI.geno]
@@ -3001,8 +3001,8 @@ Internode(StI):
 group 4:
 
 Apex(StA):
-  
-  
+
+
   #Il ne se passe rien avant emergence
   if Tempcum >= Dse_heterogeneous[StA.num_plante]:
     # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
@@ -3012,7 +3012,7 @@ Apex(StA):
       StA.age += time_step
       StA.sumtemp += max(Tbase,Temperature)
       StA.time += max(Tbase,Temperature)
-      
+
       # Transition florale du brin-ma�tre
       # TODO possible de d�finir les dimensions des limbes ici?
       if StA.tiller == (1,):
@@ -3036,7 +3036,7 @@ Apex(StA):
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
           produce Peduncle(StP)Ear(StE)Apex_R(StAR)
-          
+
       # Transition florale des talles
       elif StA.tiller != (1,) and StA.transiflo == False:
         if Tempcum >= dico_stades[StA.num_plante][StA.tiller]["Transiflo"][1]:
@@ -3061,7 +3061,7 @@ Apex(StA):
           StAR.sumtemp = StA.sumtemp
           StAR.Ln_final = StA.Ln_final
           produce Peduncle(StP)Ear(StE)Apex_R(StAR)
-      
+
       # Production de primordia
       if StA.transiflo == False and StA.time >= Pls[StA.geno]  :
         StL = Leaf(StA.num_plante, StA.geno, StA.tiller, StA.n + 1)
@@ -3071,25 +3071,25 @@ Apex(StA):
         StI = Internode(StA.num_plante, StA.geno, StA.tiller, StA.n + 1)
         StA.time = StA.time % Pls[StA.geno]
         StL.date_emerg = leaf_emerg_date(StL.n, StL.tiller, StL.geno, StL.num_plante)
-        
+
         # Formatting phytomer scaled dictionnaries
-        current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0 
+        current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0
         Sh_max[StA.num_plante][StL.tiller][StL.n] = 0.0
         final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0        # Formater le dico des longueurs finales
         final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0
         current_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
         dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
-        
+
         hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
         hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
-        
+
         ### End of dictionnaries formatting ###
-        
+
         blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
-        
+
         StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
         nproduce [Bud_primord(StBu_p)]Internode(StI)[Leaf(StL)]Apex(StA)
-        
+
         StA.n += 1
       else:
         #Ecriture dans fichiers
@@ -3113,7 +3113,7 @@ Apex(StA):
         Apex_dico_df['Transiflo_DOY'].append(dico_stades[StA.num_plante][StA.tiller]["Transiflo"][2])
         Apex_dico_df['Ln_final'].append(StA.Ln_final)
         produce Apex(StA)
-        
+
   #Ecriture dans fichiers
   Apex_dico_df['Elapsed_time'].append(elapsed_time)
   Apex_dico_df['Temperature'].append(Temperature)
@@ -3137,51 +3137,51 @@ Apex(StA):
 
 
 Apex_R(StAR):
-  
+
   if StAR.tiller in axis_census[StAR.num_plante] and axis_census[StAR.num_plante][StAR.tiller]["Stop_growth_flag"] == True:
     pass
   else:
     StAR.sumtemp += max(Tbase,Temperature)
-    
+
     #Passage � Montaison
     if StAR.mont == False:
       # TODO : pourquoi ces tests en deux etapes?
       if max(leaf_emergence[StAR.num_plante][StAR.tiller].keys()) >= StAR.Ln_final - 4:
         if Tempcum >= leaf_emerg_date(StAR.Ln_final - 4, StAR.tiller, StAR.geno, StAR.num_plante) + (ED_B + ED_S) * phyll_adjust(StAR.geno): #Test pour savoir si on est � montaison (ligulation de feuille n-4)
-          
+
           # Identification des talles destin�es � mourir
           # TODO : regression � la josette masle, obsolete � enlever
           for axis in leaf_emergence[StAR.num_plante].keys():
             if max(leaf_emergence[StAR.num_plante][axis].keys()) < 4:    # Si le nombre de feuilles sur l'axe est inf�rieur � 3
               tiller_death[StAR.num_plante][dico_stades[StAR.num_plante][axis]["Age"]] = []
-              
+
           for axis in leaf_emergence[StAR.num_plante].keys():
             if max(leaf_emergence[StAR.num_plante][axis].keys()) < 4:    # Si le nombre de feuilles sur l'axe est inf�rieur � 3
               tiller_death[StAR.num_plante][dico_stades[StAR.num_plante][axis]["Age"]].append(axis)
-          
+
           #### Fin de suppression ####
-          
+
           dico_stades[StAR.num_plante][StAR.tiller]["Montaison"] = (True,Tempcum, DOY)
           StAR.mont = True
-        
+
     # Passage � �piaison
     if Tempcum >= dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][1] and StAR.epi == False:
       dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][0] = True
       dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][2] = DOY
       StAR.epi = True
-    
+
     # Passage � floraison
     if Tempcum >= dico_stades[StAR.num_plante][StAR.tiller]["Flo"][1] and StAR.flo == False:
       dico_stades[StAR.num_plante][StAR.tiller]["Flo"][0] = True
       dico_stades[StAR.num_plante][StAR.tiller]["Flo"][2] = DOY
       StAR.flo = True
-    
+
     #Passage � maturit�
     if Tempcum >= dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][1] and StAR.mat == False:
       dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][0] = True
       dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][2] = DOY
       StAR.mat = True
-      
+
     if write_output_file["Apex_R"]:
       Apex_R_dico_df['Elapsed_time'].append(elapsed_time)
       Apex_R_dico_df['DOY'].append(DOY)
@@ -3218,10 +3218,10 @@ Bud_primord(StBu_p):
         StBu = Bud(StBu_p.num_plante, StBu_p.geno, new_tiller_name, 0, StBu_p.sumtemp % Pls[StBu_p.geno]) #On discr�tise proprement l'accumulation des temp�ratures en transmettant le surplus de temp�rature stock�e � l'Bud n�oform�
         StBu.sumtemp = StBu_p.sumtemp % Pls[StBu_p.geno]
         StBu.time = StBu_p.sumtemp % Pls[StBu_p.geno]
-        
+
         # Etape de formatage des dictionnaire (on cr�� un nouveau sous-dico avec le nouvel embanchement)
         #if StBu.n == 0:
-        
+
         # Formatting dictionnaries
         ##
         date_emission[StBu.num_plante][new_tiller_name] = Tempcum
@@ -3230,27 +3230,27 @@ Bud_primord(StBu_p):
         delta_H[StBu.num_plante][new_tiller_name] = 0
         tiller_surface[(StBu.num_plante,new_tiller_name)] = 0.0
         leaf_emergence[StBu.num_plante][StBu.tiller] = {1: (0,0)}
-        
+
         hazard_dict_organ[StBu.num_plante][new_tiller_name] = {}
         hazard_dict_axis[StBu.num_plante][new_tiller_name] = {}
         hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_azimuth"] = Phi_azi_T + random.uniform(-till_azi_hazard, till_azi_hazard)
         hazard_dict_axis[StBu.num_plante][new_tiller_name]["tiller_zenith"] = Phi_zen_T + random.uniform(-till_zen_hazard, till_zen_hazard)
-        
+
         dico_cut_dead_blades[StBu.num_plante][new_tiller_name] = []
-        
+
         dico_stades[StBu.num_plante][new_tiller_name] = {"Age" : 0 ,"Blade_Transiflo" : False, "Transiflo" : [False,10000,0], "Montaison" : [False,10000,0],"Ear_emergence" : False, "Epiaison" : [False,10000,0], "Flo" : [False,10000,0], "Maturite" : [False,10000,0], "Ln_final":"undefined", "End_internode_elongation" : False, "Senescence_flag_leaf" : [False, 10000, 0]}
-        
+
         ## Phytomer scaled dictionnaries
         current_internode_length[StBu.num_plante][StBu.tiller] = {}
         Sh_max[StBu.num_plante][StBu.tiller] = {0: 0.0}
         final_blade_length[StBu.num_plante][StBu.tiller] = {}
         current_sheath_length[StBu.num_plante][StBu.tiller] = {0: l_c}
         dead_sheath_length[StBu.num_plante][StBu.tiller] = {0:0.0}
-        
+
         leaf_emergence[StBu.num_plante][StBu.tiller] = {1: (0,0)}
-        
+
         ### END OF DICTIONNARIES FORMATAGE ###
-        
+
         StCPB = CutPointBud(StBu.num_plante, StBu.geno, StBu.tiller)
         StCPB.tiller = StBu.tiller
         StCPB.tiller_zen = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
@@ -3258,7 +3258,7 @@ Bud_primord(StBu_p):
         produce CutPointBud(StCPB)[Bud(StBu)]
 
 Bud(StBu):
-  
+
   # Tout est inactif jusqu'� l'�mergence de la premi�re feuille de la plante
   if Tempcum >= Dse_heterogeneous[StBu.num_plante]:
     # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
@@ -3269,7 +3269,7 @@ Bud(StBu):
       StBu.nb_j += time_step
       StBu.age += max(Tbase,Temperature)
       StBu.time += max(Tbase,Temperature)
-      
+
       #Transition florale du bourgeon
       if Tempcum >= dico_stades[StBu.num_plante][StBu.tiller]["Transiflo"][1] and StBu.transiflo == False:
         StBu.transiflo = True
@@ -3281,7 +3281,7 @@ Bud(StBu):
         StBu.Ln_final = StBu.n
         StBuR.Ln_final = StBu.Ln_final
         StBuR.emerg = StBu.emerg  # .emerg est un bool�en
-        
+
         # Calcul et stockage des dates de stade
         dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"] = StBu.Ln_final
         StBuR.date_de_flo = leaf_emerg_date((StBu.Ln_final), StBu.tiller, StBu.geno, StBu.num_plante) + (ED_FB + ED_S + Delta_lflf) * phyll_adjust(StBu.geno)
@@ -3292,7 +3292,7 @@ Bud(StBu):
         StP = Peduncle(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n)
         StP.final_length = L_P[StP.geno]
         produce Peduncle(StP)Ear(StE)Bud_R(StBuR)
-        
+
       # Producting vegetative phytomers
       if StBu.time > Pls[StBu.geno] and StBu.transiflo == False:
         if GAI_prox[StBu.num_plante] <= GAI_c[StBu.geno] and cohort_number(StBu.tiller) < cohorte_max:
@@ -3302,45 +3302,45 @@ Bud(StBu):
           StI = Internode(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
           StBu.time = StBu.time % Pls[StBu.geno]
           StL.date_emerg = leaf_emerg_date(StL.n, StL.tiller, StL.geno, StL.num_plante)
-          
+
           # Formatting phytomer scaled dictionnaries
           current_internode_length[StL.num_plante][StL.tiller][StL.n] = 0
           Sh_max[StL.num_plante][StL.tiller][StL.n] = 0.0
           final_blade_length[StL.num_plante][StL.tiller][StL.n] = 0
           current_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
           dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
-          
+
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"] = Phi_azi_B + random.uniform(-blade_azi_hazard, blade_azi_hazard)
-          
+
           ### End of dictionnaries formatting ###
-          
+
           blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
-          
+
           StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
           nproduce [Bud_primord(StBu_p)]Internode(StI)[Leaf(StL)]
           StBu.n += 1
-        
+
         else:
-          dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True  
-        
+          dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True
+
         #C'est aussi le moment de potentiellement �merger
         if Tempcum >= leaf_emerg_date(StBu.tiller[len(StBu.tiller)-1] + 2,StBu.tiller[0:len(StBu.tiller)-1] , StBu.geno, StBu.num_plante) and StBu.emerg == False: #TODO am�liorer la m�thode de calcul comme dans la fonction de synchrone correspondance (n=StBu.tiller[-1], )
           StBu.emerg = True
           StBu.Tmoy = StBu.sumtemp / StBu.nb_j #TODO : OBSOLETE
-          
+
           #if StBu.tiller in liste_talles:
             #StBu.p_debourr = 1
           #else:
             #StBu.p_debourr = 0
-          
+
           # TODO c'est quand m�me sale...
           if type(dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"]) != int:
             StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], 100)
           else:
             StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle m�re
-          
+
           # Enregistrement des informations
           if write_output_file["Proba"]:
             Proba_dico_df["Elapsed_time"].append(elapsed_time)
@@ -3353,23 +3353,23 @@ Bud(StBu):
             Proba_dico_df["Sumtemp"].append(StBu.sumtemp)
             Proba_dico_df["GAI_prox"].append(GAI_prox[StBu.num_plante])
             Proba_dico_df["P_debourr"].append(StBu.p_debourr)
-          
+
           if random.random() <= StBu.p_debourr:
             # Formatting dictionnaries
             ## Dictionnaries including datas about emerged organs
             ### Axis scale dictionnaries
             first_leaf_phase2[StBu.num_plante][StBu.tiller] = {"num_first_leaf_phase_2" : 0, "length_first_leaf_phase_2" : 0}
             LNfinal[StBu.num_plante][StBu.tiller] = 0
-            
+
             axis_census[StBu.num_plante][StBu.tiller] = {"emerg_date" : Tempcum, "Stop_growth_flag" : False, "Regression_flag" : False}
-            
+
             dico_PAR["Blade"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Internode"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Sheath"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Peduncle"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Ear"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR_per_axis[StBu.num_plante][StBu.tiller] = {}
-            
+
             ### End of dictionnaries formatting ###
             StA = Apex(StBu.num_plante, StBu.geno,StBu.tiller,StBu.n,StBu.time)
             StA.nb_emerg_leaves = StBu.nb_emerg_leaves # TODO : pourquoi ?
@@ -3379,12 +3379,12 @@ Bud(StBu):
             nproduce Apex(StA)
           else:
             dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True
-            
+
             #TODO habituellement, on ne met pas � jour la cha�ne, � virer?
             nproduce Bud(StBu)
         else:
           nproduce Bud(StBu)
-        
+
       else:
         # Si c'est le moment d'emerger
         if Tempcum >= leaf_emerg_date(StBu.tiller[len(StBu.tiller)-1] + 2,StBu.tiller[0:len(StBu.tiller)-1] , StBu.geno, StBu.num_plante) and StBu.emerg == False:
@@ -3410,23 +3410,23 @@ Bud(StBu):
             Proba_dico_df["Sumtemp"].append(StBu.sumtemp)
             Proba_dico_df["GAI_prox"].append(GAI_prox[StBu.num_plante])
             Proba_dico_df["P_debourr"].append(StBu.p_debourr)
-            
+
           if random.random() <= StBu.p_debourr:
             # Formatting dictionnaries
             ## Dictionnaries including datas about emerged organs
             ### Axis scale dictionnaries
             first_leaf_phase2[StBu.num_plante][StBu.tiller] = {"num_first_leaf_phase_2" : 0, "length_first_leaf_phase_2" : 0}
             LNfinal[StBu.num_plante][StBu.tiller] = 0
-            
+
             axis_census[StBu.num_plante][StBu.tiller] = {"emerg_date" : Tempcum, "Stop_growth_flag" : False, "Regression_flag" : False}
-            
+
             dico_PAR["Blade"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Internode"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Sheath"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Peduncle"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Ear"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR_per_axis[StBu.num_plante][StBu.tiller] = {}
-            
+
             ### End of dictionnaries formatting ###
             StA = Apex(StBu.num_plante, StBu.geno,StBu.tiller,StBu.n,StBu.time)
             StA.time = StBu.time
@@ -3447,7 +3447,7 @@ Bud_R(StBuR):
     pass
   else:
     StBuR.sumtemp += max(Tbase,Temperature)
-    
+
     # C'est le moment o� le bourgeon a la possibilit� d'�merger
     if Tempcum >= leaf_emerg_date(StBuR.tiller[len(StBuR.tiller)-1] + 2,StBuR.tiller[0:len(StBuR.tiller)-1] , StBuR.geno, StBuR.num_plante) and StBuR.emerg == False:
       StBuR.emerg = True
@@ -3460,7 +3460,7 @@ Bud_R(StBuR):
         StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], 100)
       else:
         StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], dico_stades[StBuR.num_plante][StBuR.tiller[0:len(StBuR.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle m�re
-      
+
       # Enregistrement des informations
       if write_output_file["Proba"]:
         Proba_dico_df["Elapsed_time"].append(elapsed_time)
@@ -3473,7 +3473,7 @@ Bud_R(StBuR):
         Proba_dico_df["Sumtemp"].append(StBuR.sumtemp)
         Proba_dico_df["GAI_prox"].append(GAI_prox[StBuR.num_plante])
         Proba_dico_df["P_debourr"].append(StBuR.p_debourr)
-        
+
       # Si le bourgeon �merge
       if random.random() <= StBuR.p_debourr:
         # Formatting dictionnaries
@@ -3481,9 +3481,9 @@ Bud_R(StBuR):
         ### Axis scale dictionnaries
         first_leaf_phase2[StBuR.num_plante][StBuR.tiller] = {"num_first_leaf_phase_2" : 0, "length_first_leaf_phase_2" : 0}
         LNfinal[StBuR.num_plante][StBuR.tiller] = 0
-        
+
         axis_census[StBuR.num_plante][StBuR.tiller] = {"emerg_date" : Tempcum, "Stop_growth_flag" : False, "Regression_flag" : False}
-        
+
         dico_PAR["Blade"][StBuR.num_plante][StBuR.tiller] = {}
         dico_PAR["Internode"][StBuR.num_plante][StBuR.tiller] = {}
         dico_PAR["Sheath"][StBuR.num_plante][StBuR.tiller] = {}
@@ -3491,9 +3491,9 @@ Bud_R(StBuR):
         dico_PAR["Ear"][StBuR.num_plante][StBuR.tiller] = {}
         dico_PAR_per_axis[StBuR.num_plante][StBuR.tiller] = {}
         dico_cut_dead_blades[StBuR.num_plante][StBuR.tiller] = []
-        
+
         ### End of dictionnaries formatting ###
-        
+
         # The previously produced ear emerges
         dico_stades[StBuR.num_plante][StBuR.tiller]["Ear_emergence"] = True
         StP = Peduncle(StBuR.num_plante, StBuR.geno, StBuR.tiller, StBuR.n)
@@ -3506,12 +3506,12 @@ Bud_R(StBuR):
         produce Apex_R(StAR)
       else:
         dico_cut_fantom_axes[StBuR.num_plante][StBuR.tiller] = True
-      
+
     else:
       produce Bud_R(StBuR)
 
 CutPointBud(StCPB):
-  
+
   ### On Coupe toutes les structures produites par un Bud qui n'�mergera jamais!
   #D�s qu'on franchit le GAIcritique, on coupe toutes les structures qui n'ont pas �merg�e
   if GAI_prox[StCPB.num_plante] >= GAI_c[StCPB.geno] and StCPB.tiller not in axis_census[StCPB.num_plante]:
@@ -3519,7 +3519,7 @@ CutPointBud(StCPB):
   if StCPB.tiller != (1,):
     if dico_cut_fantom_axes[StCPB.num_plante][StCPB.tiller] == True:
       produce % CutPointBud(StCPB)
-  
+
   ### On coupe les structures pr�sentes sur les talles qui r�gressent par manque de rayonnement
   if Tempcum > leaf_emerg_date(t_beg_reg[StCPB.geno], (1,), genotype_map[StCPB.num_plante], StCPB.num_plante) + 1.6*phyll_adjust(StCPB.geno):
     #Gestion de la mort des talles
@@ -3548,7 +3548,7 @@ Leaf(StL):
         StBl.tiller = StL.tiller # TODO inutile?
         StS = Sheath(StL.num_plante, StL.geno, StL.tiller, StL.n)  # On consid�re qu'� ce moment la longueur gaine est initialis�e � 0
         StS.tiller = StL.tiller  # TODO inutile?
-        
+
         #Calcul de la taille finale que va avoir le limbe
         if StBl.n == 1:
           StBl.final_length = L_B_1[StBl.geno]
@@ -3556,13 +3556,13 @@ Leaf(StL):
           StS.final_length = sheath_length(StBl.final_length, a_S_L[StS.geno], b_S_L[StS.geno])
         else:
           previous_length = final_blade_length[StBl.num_plante][StBl.tiller][StBl.n-1]
-          
+
           #La transition florale n'est pas pass�e
           if dico_stades[StBl.num_plante][StBl.tiller]["Transiflo"][0] == False:
             StBl.final_length = previous_length + s_B_1[geno]
             StBl.width = blade_width(StBl.final_length, a_B_w[StBl.geno], b_B_w[StBl.geno])
             StS.final_length = sheath_length(StBl.final_length, a_S_L[StS.geno], b_S_L[StS.geno])
-            
+
           #La transition florale est pass�e !
           else:
             if dico_stades[StBl.num_plante][StBl.tiller]["Blade_Transiflo"] == False:
@@ -3584,7 +3584,7 @@ Leaf(StL):
                 StBl.width = blade_width(StBl.final_length, a_B_w[StBl.geno], b_B_w[StBl.geno])
                 StS.final_length = sheath_length(StBl.final_length, a_S_L[StS.geno], b_S_L[StS.geno])
         final_blade_length[StBl.num_plante][StBl.tiller][StBl.n] = StBl.final_length
-        
+
         #Initialisation de la longueur
         ## L'axe en question n'a pas encore de gaine
         if StBl.n <= 2:
@@ -3603,15 +3603,15 @@ Leaf(StL):
         else:
           StBl.length = current_sheath_length[StL.num_plante][StL.tiller][StL.n-2]  #On recherche la gaine la plus longue sur toute la talle
           StS.length = 0.0
-        
+
         #Calcul de la vitesse de croissance du limbe et de la gaine
         if StBl.n == dico_stades[StBl.num_plante][StBl.tiller]["Ln_final"]:
           StBl.gr_blade = (StBl.final_length - StBl.length) / (phyll_adjust(StL.geno) * ED_FB)
         else:
-          StBl.gr_blade = (StBl.final_length - StBl.length) / (phyll_adjust(StL.geno) * ED_B)      
-        
+          StBl.gr_blade = (StBl.final_length - StBl.length) / (phyll_adjust(StL.geno) * ED_B)
+
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
-        
+
         #Ajout du point de coupe pour repr�senter la s�nescence des limbes
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
         produce Sheath(StS)CutPointBlade(StCPBl)Blade(StBl)
@@ -3628,7 +3628,7 @@ CutPointBlade(StCPBl):
         produce % CutPointBlade(StCPBl)
 
 Blade(StBl):
-  
+
   if Tempcum >= Dse_heterogeneous[StBl.num_plante]:
     # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
     if StBl.tiller in axis_census[StBl.num_plante] and axis_census[StBl.num_plante][StBl.tiller]["Stop_growth_flag"] == True:
@@ -3639,16 +3639,16 @@ Blade(StBl):
         StBl.reg_count += max(0,Temperature)
         if StBl.reg_count <= Delta_Reg:
           StBl.visible_length -= StBl.reverse_incr * max(0,Temperature)
-    
+
     else:
       StBl.sumtemp += max(Tbase,Temperature) #lui mettre un nom (a max) et r�utiliser
       StBl.age += time_step
-      
+
       if StBl.sumtemp/phyll_adjust(StBl.geno) <= ED_B:
         StBl.length += min(max(Tbase,StBl.gr_blade * Temperature),StBl.final_length - StBl.length) #gr_blade * max(T_base, Temperature)
       else:
         StBl.length = StBl.final_length   ##TODO superflu ?
-      
+
     #Si on a pas fait la transiflo encore
     if dico_stades[StBl.num_plante][StBl.tiller]["Ln_final"] == "undefined":
       if Tempcum >= date_senescence_fake(StBl.n, t0_sen[StBl.geno]) and StBl.photosynthetic == True:
@@ -3669,11 +3669,11 @@ Blade(StBl):
           if StBl.n == dico_stades[StBl.num_plante][StBl.tiller]["Ln_final"]:
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][0] = True
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][1] = Tempcum
-    
+
     StBl.area = (StBl.width * StBl.length * 0.75)
     StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
     StBl.visible_area = visible_area(StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
-    
+
     if write_output_file["Blade"]:
       Blade_dico_df['Elapsed_time'].append(elapsed_time)
       Blade_dico_df['Temp_cum'].append(Tempcum)
@@ -3693,13 +3693,13 @@ Blade(StBl):
       Blade_dico_df['Blade_PAR'].append(StBl.PAR)
       Blade_dico_df['Senesc_flag'].append(StBl.senesc_flag)
       Blade_dico_df['Photosynthetic'].append(StBl.photosynthetic)
-    
+
     produce Blade(StBl)
 
 
 Sheath(StS):
   StS.diameter = d_S[StS.geno]
-  
+
   if Tempcum >= Dse_heterogeneous[StS.num_plante]:
     # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
     if StS.tiller in axis_census[StS.num_plante] and axis_census[StS.num_plante][StS.tiller]["Stop_growth_flag"] == True:
@@ -3713,12 +3713,12 @@ Sheath(StS):
       elif StS.sumtemp/phyll_adjust(StS.geno) >  ED_B + ED_S:
         StS.length = StS.final_length
       current_sheath_length[StS.num_plante][StS.tiller][StS.n] = StS.length
-      
+
     if dico_stades[StS.num_plante][StS.tiller]["Ln_final"] == "undefined":
       if Tempcum >= date_senescence_fake(StS.n + 1, t0_sen[StS.geno]) and StS.photosynthetic == True:
         StS.photosynthetic = False
         dead_sheath_length[StS.num_plante][StS.tiller][StS.n] = StS.length
-          
+
     else:
       #Senescence of sheaths
       if StS.tiller == (1,):
@@ -3729,7 +3729,7 @@ Sheath(StS):
         if Tempcum >= leaves_senesc_date_tiller(min(StS.n +1, dico_stades[StS.num_plante][StS.tiller]["Ln_final"]), StS.tiller, dico_stades[StS.num_plante][StS.tiller]["Ln_final"], Phl[StS.geno], n0_sen[StS.geno], n1_sen[StS.geno], n2_sen[StS.geno], n3_sen[StS.geno], t1_sen[StS.geno], t2_sen[StS.geno], t3_sen[StS.geno], Dse_heterogeneous[StS.num_plante], DelayTipToHS[StS.geno]) and StS.photosynthetic == True:
           StS.photosynthetic = False
           dead_sheath_length[StS.num_plante][StS.tiller][StS.n] = StS.length
-    
+
     #Estimate the max length of sheath (between previous of the axis and on the parent axis)
     if StS.tiller == (1,):
       Sh_max[StS.num_plante][StS.tiller][StS.n] = max(map(current_sheath_length[StS.num_plante][StS.tiller].get, range(0, StS.n+1)))
@@ -3738,12 +3738,12 @@ Sheath(StS):
         Sh_max[StS.num_plante][StS.tiller][StS.n] = max(map(current_sheath_length[StS.num_plante][StS.tiller].get, range(0, StS.n+1)))
       else:
         Sh_max[StS.num_plante][StS.tiller][StS.n] = 0
-    
-    
+
+
     StS.area = StS.diameter * pi * StS.length
     #if StS.tiller == (1,):
       #print "gaine : ", StS.n, StS.length
-    
+
     if write_output_file["Sheath"]:
       Sheath_dico_df['Elapsed_time'].append(elapsed_time)
       Sheath_dico_df['Temp_cum'].append(Tempcum)
@@ -3760,12 +3760,12 @@ Sheath(StS):
       Sheath_dico_df['Sheath_surface'].append(pi * (StS.diameter/2) * StS.length)
       Sheath_dico_df['Sheath_PAR'].append(StS.PAR)
       Sheath_dico_df['Photosynthetic'].append(StS.photosynthetic)
-      
+
     produce Sheath(StS)
 
 Internode(StI):
   StI.diameter = d_I[StI.geno]
-  
+
   if Tempcum >= Dse_heterogeneous[StI.num_plante]:
     # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
     if StI.tiller in axis_census[StI.num_plante] and axis_census[StI.num_plante][StI.tiller]["Stop_growth_flag"] == True:
@@ -3794,26 +3794,26 @@ Internode(StI):
         Internode_dico_df['Internode_surface'].append(StI.area)
         Internode_dico_df['Internode_PAR'].append(StI.PAR)
         Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
-      
+
     else:
       StI.age += time_step
       StI.sumtemp += max(Tbase,Temperature)
-      
+
       if dico_stades[StI.num_plante][StI.tiller]["Transiflo"][0] == True:
         StI.Ln_final = dico_stades[StI.num_plante][StI.tiller]["Ln_final"]
         StI.final_length = EN_fin_length(n=StI.n, Ln_final=StI.Ln_final, geno=StI.geno, shape=shp_I[StI.geno], PlHeight=Param_PlHeight[StI.geno])
-        
+
         if Tempcum >= dico_stades[StI.num_plante][StI.tiller]["Montaison"][1]:
           if leaf_emerg_date(StI.n, StI.tiller, StI.geno, StI.num_plante) + (ED_B + ED_S) * phyll_adjust(StI.geno) <= Tempcum <= leaf_emerg_date(StI.n, StI.tiller, StI.geno, StI.num_plante) + (ED_B + ED_S + ED_I) * phyll_adjust(StI.geno):
             StI.gr = StI.final_length/(ED_I * phyll_adjust(StI.geno))
             StI.length += min(max(Tbase, StI.gr * Temperature), StI.final_length - StI.length)
-            
+
             if StI.n == StI.Ln_final and dico_stades[StI.num_plante][StI.tiller]["End_internode_elongation"] == False:
               dico_stades[StI.num_plante][StI.tiller]["End_internode_elongation"] = True
-            
+
           StI.area = StI.diameter * pi * StI.length
           current_internode_length[StI.num_plante][StI.tiller][StI.n] = StI.length
-        
+
         #Senescence of internodes
         if StI.tiller == (1,):
           if Tempcum >= leaves_senesc_date_main_stem(min(StI.n +1, StI.Ln_final), StI.Ln_final, phyll_adjust(StI.geno), n0_sen[StI.geno], n1_sen[StI.geno], n3_sen[StI.geno], t1_sen[StI.geno], t3_sen[StI.geno], Dse_heterogeneous[StI.num_plante], DelayTipToHS[StI.geno]) and StI.photosynthetic == True:
@@ -3821,7 +3821,7 @@ Internode(StI):
         else:
           if Tempcum >= leaves_senesc_date_tiller(min(StI.n +1, StI.Ln_final), StI.tiller,  StI.Ln_final, phyll_adjust(StI.geno), n0_sen[StI.geno], n1_sen[StI.geno], n2_sen[StI.geno], n3_sen[StI.geno], t1_sen[StI.geno], t2_sen[StI.geno], t3_sen[StI.geno], Dse_heterogeneous[StI.num_plante], DelayTipToHS[StI.geno]) and StI.photosynthetic == True:
             StI.photosynthetic = False
-      
+
       if write_output_file["Internode"]:
         Internode_dico_df['Elapsed_time'].append(elapsed_time)
         Internode_dico_df['Temp_cum'].append(Tempcum)
@@ -3836,7 +3836,7 @@ Internode(StI):
         Internode_dico_df['Internode_surface'].append(StI.area)
         Internode_dico_df['Internode_PAR'].append(StI.PAR)
         Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
-        
+
       nproduce Internode(StI)
 
 Peduncle(StP):
@@ -3854,10 +3854,10 @@ Peduncle(StP):
       else:
         StP.length = StP.final_length
   StP.area = StP.diameter * pi * StP.length
-  
+
   if Tempcum >= dico_stades[StP.num_plante][StP.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StP.photosynthetic == True:
     StP.photosynthetic = False
-  
+
   if write_output_file["Peduncle"]:
     Peduncle_dico_df['Elapsed_time'].append(elapsed_time)
     Peduncle_dico_df['Temp_cum'].append(Tempcum)
@@ -3873,7 +3873,7 @@ Peduncle(StP):
     Peduncle_dico_df['Peduncle_surface'].append(StP.area)
     Peduncle_dico_df['Peduncle_PAR'].append(StP.PAR)
     Peduncle_dico_df['Photosynthetic'].append(StP.photosynthetic)
-    
+
   produce Peduncle(StP)
 
 Ear(StE):
@@ -3889,12 +3889,12 @@ Ear(StE):
     StE.final_length = L_E[StE.geno]
     if Tempcum >= 1300:#dico_stades[StE.num_plante][StE.tiller]["Epiaison"][1]:
       StE.length = StE.final_length
-  
+
   StE.area = StE.length * pi * StE.diameter
-  
+
   if Tempcum >= dico_stades[StE.num_plante][StE.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StE.photosynthetic == True:
     StE.photosynthetic = False
-  
+
   if write_output_file["Ear"]:
     Ear_dico_df["Elapsed_time"].append(elapsed_time)
     Ear_dico_df["Temp_cum"].append(Tempcum)
@@ -3907,7 +3907,7 @@ Ear(StE):
     Ear_dico_df["Emerged"].append(StE.emerged)
     Ear_dico_df["Ear_PAR"].append(StE.PAR)
     Ear_dico_df["Photosynthetic"].append(StE.photosynthetic)
-  
+
   produce Ear(StE)
 
 
@@ -3927,7 +3927,7 @@ Sheath(StS):
     produce ;(2)_(StS.diameter/2)F(StS.length)
   else:
     produce ;(6)_(StS.diameter/2)F(StS.length)
-    
+
 
 
 Blade(StBl):
@@ -3956,7 +3956,7 @@ Blade(StBl):
           produce ;(couleur)+(StBl.incl)f(Sh_max[StBl.num_plante][StBl.tiller][StBl.n])@g(Scaled(Vector3(d_S[StBl.geno],0.25,StBl.visible_length),Blade_geo))
         else:
           produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno]-0.05,0.25,StBl.visible_length),Blade_geo))
-          
+
       # Si la ligule du limbe est apparente
       else:
         StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
@@ -4010,7 +4010,7 @@ Blade(StBl):
 #          produce ;(14)+(StBl.incl)f(Sh_max[StBl.num_plante][StBl.tiller][StBl.n])@g(Scaled(Vector3(sheath_diameter,0.25,StBl.visible_length),Blade_geo))
 #        else:
 #          produce ;(11)+(StBl.incl)@g(Scaled(Vector3(sheath_diameter,0.25,StBl.length),Blade_geo))
-#      
+#
 #  else:
 #    #Si le limbe n'a pas fini de sortir de la grande gaine
 #    if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
@@ -4050,7 +4050,7 @@ Peduncle(StP):
     produce ;(7)_(StP.diameter/2)F(StP.length)
   else:
     produce ;(5)_(StP.diameter/2)F(StP.length)
-    
+
 
 
 Internode(StI):
@@ -4058,7 +4058,7 @@ Internode(StI):
     produce ;(3)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
   else:
     produce ;(5)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
-    
+
 
 CutPointBud(StCPB):
   if Tempcum < leaf_emerg_date(1, StCPB.tiller, StCPB.geno, StCPB.num_plante) + (ED_B + ED_S) * phyll_adjust(StCPB.geno):
