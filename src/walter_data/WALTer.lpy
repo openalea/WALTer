@@ -2012,9 +2012,7 @@ def StartEach(lstring):
 
 
 def EndEach(lstring, lscene):
-  # Export de la Lstring
-  
-  new_lstring = lstring.replace("%", "")
+
   
   # CALCUL DU GAI (� partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
@@ -2146,7 +2144,13 @@ def EndEach(lstring, lscene):
   #print(type(lscene))
   
   ## Pour l'instant on fait QUE du diffus
-  
+  # Export de la Lstring
+  if lstring.find('%'):
+    new_lstring = lstring.replace("%", "")
+  else:
+    print "no cut found!!!"
+    new_lstring = lstring
+
   if CARIBU_state != "disabled":    #Le module de rayonnement peut �tre activ� ou d�sactiv� {"enabled";"disabled"}
     if type(lscene) != None:
       if len(lscene) > 0:

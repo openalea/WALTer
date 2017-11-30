@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from openalea.lpy import Lsystem
-import sys
-from walter import data_access
 from os.path import join as pj
+
+from openalea.lpy import Lsystem
+from walter import data_access
 
 
 def test_main():
@@ -12,7 +12,7 @@ def test_main():
     lsys = Lsystem(lsystem_file,{'params': {'nb_plt_utiles': 1,
                                   'dist_border_x':0,
                                   'dist_border_y': 0,
-                                  'nbj': 30,
+                                  'nbj': 55,
                                   'beginning_CARIBU': 290
 
          }})
@@ -29,18 +29,3 @@ def test_main():
     # Viewer.display(s)
 
 
-def test_caribu():
-    lsystem_file = pj(data_access.get_data_dir(), 'WALTer.lpy')
-    lsys = Lsystem(lsystem_file,{'params': {'nb_plt_utiles': 1,
-                                  'dist_border_x':0,
-                                  'dist_border_y': 0,
-                                  'nbj': 55,
-                                  'beginning_CARIBU': 290
-
-         }})
-    assert isinstance(lsys, Lsystem)
-
-    # lsys.nbj = 10
-    # lsys.derivationLength = lsys.nbj
-    # lsys.animate()
-    lstring = lsys.iterate()
