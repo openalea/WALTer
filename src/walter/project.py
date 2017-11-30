@@ -5,8 +5,11 @@ Questions: Do we need to separate Project and Simulation classes?
 
 import sys, os
 from os.path import join as pj
-from path import Path
 import tempfile
+import argparse
+from subprocess import Popen
+
+from path import Path
 import pandas as pd
 
 from openalea.lpy import Lsystem
@@ -40,8 +43,8 @@ class Project(object):
         if not dirname.exists():
             dirname.mkdir()
 
-        self.name = str(dirname.name)
         self.dirname = dirname.abspath()
+        self.name = str(self.dirname.name)
 
         # remove global variables into class fields
         # self.set_dir()
@@ -151,10 +154,14 @@ class Simulation(object):
         return lsys, lstring
 
 
-    def run_all(self):
+    def run_all(self, i=-1):
         """
         """
-        for p in self.parameters:
+        if i == -1:
+            for p in self.parameters:
+                self.run(**p)
+        else:
+            p = self.parameters[i]
             self.run(**p)
 
 
@@ -232,7 +239,76 @@ def run(**kwds):
 
 
 def main():
-    pass
+    """
+    """
+
+    input_folder = Path(os.getcwd()).abspath()
+
+    usage = """
+WALTer generates a project directory and run simulations inside this directory.
+
+
+1. To create a full simulation project, run:
+
+       walter -p simu_walter
+
+
+2. To run simulations inside the project, type:
+
+       cd simu_walter
+       walter -i sim_scheme.csv
+
+"""
+
+    parser = argparse.ArgumentParser(description=usage)
+    parser.add_argument("-i", type=str,
+                        help="Select input simulation scheme")
+    parser.add_argument("-p", type=str,
+                        help="Name of the project where simulations will be run")
+
+    args = parser.parse_args()
+
+    _cwd = cwd()
+    project_name = str(_cwd.name)
+
+    project = '.'
+
+    if args.i:
+        sim_scheme = args.i
+        print (sim_scheme)
+    if args.p:
+        project = args.p
+        print(project)
+
+    prj = Project(project)
+
+    # TODO: add a flag in the project to know if the project has been generated, modified or not.
+    if Path(project).exists():
+        print('Use Project %s located at %s'%(prj.name, prj.dirname))
+    else:
+        print('Project %s has been generated at %s'%(prj.name, prj.dirname))
+
+
+    param_list = prj.csv_parameters(sim_scheme)
+
+    if len(param_list) == 1:
+        prj.run(**(param_list[0]))
+    else:
+        tmp = prj.dirname/'tmp'
+        if not tmp.exists():
+            tmp.mkdir()
+
+        pids = []
+        for i, pdict in enumerate(param_list):
+            df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
+            scheme_name = str(tmp/'sim_scheme_%d.csv'%(i+1))
+            df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
+
+            pid = Popen(["walter", "-i", scheme_name]).pid#, env={"PATH": "/Users/pradal/miniconda2/envs/adel2/bin"})
+            #os.system("walter -i %s"%scheme_name)
+            pids.append(pid)
+
+
 
 
 
