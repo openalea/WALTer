@@ -1,5 +1,5 @@
 import sys
-import simulation
+from walter import simulation
 
 simulation.set_dir('simu1')
 simulation.copy_input()
