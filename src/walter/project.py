@@ -51,6 +51,8 @@ class Project(object):
         generate_output()
         which_output()
 
+        self._outputs = {}
+
     def activate(self):
         set_dir(self.dirname)
 
@@ -64,6 +66,26 @@ class Project(object):
         self.deactivate()
         if force:
             self.dirname.rmtree()
+
+    @property
+    def which_outputs(self):
+        if not self._outputs:
+            df=pd.read_csv(self.dirname/'which_output_files.csv', sep='\t')
+            outs = df.to_dict(orient='records')[0]
+            self._outputs = outs
+
+        return self._outputs
+
+
+    @which_outputs.setter
+    def which_outputs(self, outputs):
+        self._outputs = outputs
+
+        # Write the which_output_files
+        df = pd.DataFrame.from_dict(data=[outputs], orient='columns')
+        df.to_csv(path_or_buf=self.dirname/'which_output_files.csv', sep='\t', index=False)
+
+
 
     def run(self, **kwds):
         """ Run WALTer locally.

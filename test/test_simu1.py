@@ -20,10 +20,17 @@ def test_simu2():
     p = project.Project(name='simu_test2')
     params = p.csv_parameters('sim_scheme_test.csv')
 
+    for param in params:
+        param['CARIBU_state'] = 'disabled'
+
+    outs = p.which_outputs
+    outs['GAIp'] = 0
+    p.which_outputs = outs
+
     for param_dict in params:
         yield run_one_simu, p, param_dict
     p.deactivate()
-    p.remove()
+    p.remove(force=True)
 
 
 def run_one_simu(p, param_dict):
