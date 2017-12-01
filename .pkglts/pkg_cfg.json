@@ -32,6 +32,11 @@
       "light competition"
     ]
   },
+  "github": {
+    "owner": "openalea-incubator",
+    "project": "{{ base.pkgname }}",
+    "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
+  },
   "license": {
     "name": "cecill-c",
     "organization": "INRA",
@@ -50,6 +55,6 @@
   "version": {
     "major": 2,
     "minor": 0,
-    "post": 0
+    "post": 1
   }
 }
