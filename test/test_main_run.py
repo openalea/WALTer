@@ -14,10 +14,10 @@ def test_main():
                                   'dist_border_y': 0,
                                   'nbj': 55,
                                   'beginning_CARIBU': 290
-
+	
          }})
     assert isinstance(lsys, Lsystem)
-
+	
     # lsys.nbj = 10
     # lsys.derivationLength = lsys.nbj
     # lsys.animate()
