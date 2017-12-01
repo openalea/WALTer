@@ -52,7 +52,7 @@ setup_kwds = dict(
 
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    
+
     include_package_data=True,
     package_data={'walter_data': data_files},
     install_requires=[
@@ -68,6 +68,7 @@ setup_kwds = dict(
 # #}
 # change setup_kwds below before the next pkglts tag
 
+setup_kwds['entry_points']['console_scripts'] = ['walter = walter.project:main', ]
 # do not change things below
 # {# pkglts, pysetup.call
 setup(**setup_kwds)

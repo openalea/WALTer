@@ -17,7 +17,8 @@ import json
 from walter import data_access
 from os.path import join as pj
 
-data_dir = pj(data_access.get_data_dir())
+data_dir = os.getcwd()
+
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
@@ -52,12 +53,12 @@ from collections import defaultdict
 
 import datetime
 
-# Liste des modules utilis�s par la suite dans le mod�le :
+# Liste des modules utilises par la suite dans le modele :
 
-# Plan de semis dans lequel on sp�cifie le nombre de plantes et espacement entre les plantes
+# Plan de semis dans lequel on specifie le nombre de plantes et espacement entre les plantes
 module Seed
 
-# Diff�rents organes qui vont suivre des lois de production "propres"
+# Differents organes qui vont suivre des lois de production "propres"
 module Apex
 module Bud_primord
 module Bud
@@ -74,7 +75,7 @@ module Blade
 module Peduncle
 module Ear
 
-# Module "d'insertion de branche" dans lequel on va faire �voluer les r�gles de r�gression de talles
+# Module "d'insertion de branche" dans lequel on va faire evoluer les regles de regression de talles
 module CutPointBud
 module CutPointBlade
 
@@ -86,14 +87,14 @@ module CutPointBlade
 #     except:
 #         pass
 
-#Param�tres de mise � l'�chelle pour que 1=1 dans chacune des directions
-scalex = 0.5              
-scaley = 1                
-scalez = 0.5              
+#Parametres de mise a l'echelle pour que 1=1 dans chacune des directions
+scalex = 0.5
+scaley = 1
+scalez = 0.5
 
 #########################
 
-#Importation des figures cr��es dans des scenes
+#Importation des figures creees dans des scenes
 scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
 scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
 
@@ -2746,7 +2747,7 @@ Seed:
   
   longest_phyllo = max(all_phyllo.keys())
   shortest_phyllo = min(all_phyllo.keys())
-  
+
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
 
