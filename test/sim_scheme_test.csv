@@ -1,2 +1,2 @@
 P_T_Maxwell	P_CT_Maxwell	GAI_c_Maxwell	PAR_t_Maxwell	location	densite	L_B_max_Maxwell	dGAIp	Delta_prot_Maxwell	param_Ln_final	nbj	crop_ccptn	expe_related	rep	nb_plt_utiles	dist_border_x	dist_border_y	CARIBU_state	Dse_Maxwell_mean	Dse_Maxwell_sd	a_B_w_Maxwell	t_beg_reg_Maxwell	Phl_Maxwell	Pls_Maxwell	nb_plt_temp	nb_rang
-0.88	0	0.59	280000	Grignon	217	17.4	1	75	11.3	325	classical	Mariem	1	0	10	10	enabled	81	30	0.099	6.8	99	44.5	50	10
+0.88	0	0.59	280000	Grignon	217	17.4	1	75	11.3	325	classical	Mariem	1	0	10	10	enabled	81	30	0.099	6.8	99	44.5	4	2
