@@ -113,7 +113,6 @@ rep                  = 1
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep"]
 
-params={}
 for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
@@ -2196,7 +2195,7 @@ def EndEach(lstring, lscene):
           c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup, pattern = (xmin, ymin, xmax, ymax) )
           res_sky= None
           try:
-            _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)
+            _, res_sky = c_scene.run(simplify=True, infinite = True, direct = True)
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
