@@ -2350,8 +2350,6 @@ def EndEach(lstring, lscene):
 
 def End(lstring, lscene):
   
-  for shp in lscene:
-    print shp.id
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
