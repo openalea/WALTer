@@ -267,7 +267,7 @@ experimental_conditions = {
 liste_expe = experimental_conditions.keys()
 
 ## CARIBU
-infinity_CARIBU      = bool(0)              # En booleen 0 : False 1: True
+infinity_CARIBU      = 0              # En booleen 0 : False 1: True
 nb_azimuth = 5
 nb_zenith = 4
 
@@ -2193,10 +2193,10 @@ def EndEach(lstring, lscene):
             sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
             i+=4 
           
-          c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
+          c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup, pattern = (xmin, ymin, xmax, ymax) )
           res_sky= None
           try:
-            _, res_sky = c_scene.run(simplify=True)
+            _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
