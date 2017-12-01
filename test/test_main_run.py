@@ -33,7 +33,7 @@ def test_infinitized_run():
     lsys = Lsystem(lsystem_file,{'params': {'nb_plt_utiles': 1,
                                   'dist_border_x':0,
                                   'dist_border_y': 0,
-                                  'nbj': 200,
+                                  'nbj': 70,
                                   'infinity_CARIBU' : 1,
                                   'beginning_CARIBU': 290
 
