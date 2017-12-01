@@ -16,7 +16,7 @@ import json
 
 from walter import data_access
 from os.path import join as pj
-data_dir = pj(data_access.get_data_dir())
+data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
@@ -86,9 +86,9 @@ module CutPointBlade
 #         pass
 
 #Param�tres de mise � l'�chelle pour que 1=1 dans chacune des directions
-scalex = 0.5              
-scaley = 1                
-scalez = 0.5              
+scalex = 0.5
+scaley = 1
+scalez = 0.5
 
 #########################
 
@@ -2745,7 +2745,7 @@ Seed:
   
   longest_phyllo = max(all_phyllo.keys())
   shortest_phyllo = min(all_phyllo.keys())
-  
+
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
 
