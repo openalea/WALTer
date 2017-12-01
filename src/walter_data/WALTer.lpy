@@ -754,7 +754,7 @@ PAS               = 24
 
 ##
 
-nbj               = 22 + 115                             # Dur�e de la simulation
+nbj               = 22 + 300                             # Dur�e de la simulation
 time_step         = 1.                                   # Temps qui s'�coule   (jour)
 Tbase             = 0.                                 
 
@@ -2083,8 +2083,6 @@ def EndEach(lstring, lscene):
     
       #Calculs
       Sh_max_temp = max([Sh_max[num_plt][axis][x] for x in range(0,max(Sh_max[num_plt][axis].keys()) + 1)])
-      print "Sh_max :", Sh_max
-      print "Sh_max_temp :", Sh_max_temp
       Sh_dead_max = max([dead_sheath_length[num_plt][axis][x] for x in range(0,max(dead_sheath_length[num_plt][axis].keys()) + 1)])
       Hcol_max[num_plt][axis] = Hcol_max[num_plt][axis] + Sh_max_temp
       Hcol_dead[num_plt][axis] =  Hcol_dead[num_plt][axis] + Sh_dead_max
@@ -2357,8 +2355,7 @@ def End(lstring, lscene):
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
-  print "Aloha"
-
+  
   if write_output_file["Apex_Sirius"] == True:
     _Apex_Sirius_df = pd.DataFrame(Apex_Sirius_dico_df)
     dF_labels = ["Elapsed_time","Temperature", "Temp_cum", "Daylength", "Num_plante", "Genotype", "PN", "LN", "Sumtemp", "Vern_rate", "Vern_prog", "Vern_flag", "Debut_ppd_flag", "Fin_ppd_flag", "Ln_pot", "Var_L_min","Ln_app", "Ln_final"]
