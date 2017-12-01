@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 short_descr = "WALTer : a 3D FSPM Wheat model that simulates the tillering plasticity based on light competition"
 readme = open('README.rst').read()
-history = open('HISTORY.rst').read()
+history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 
 # find version number in src/walter/version.py
@@ -44,8 +44,8 @@ setup_kwds = dict(
     version=version["__version__"],
     description=short_descr,
     long_description=readme + '\n\n' + history,
-    author="Christophe Lecarpentier",
-    author_email="christophe.lecarpentier@inra.fr",
+    author="Christophe Lecarpentier, Emmanuelle Blanc, ",
+    author_email="christophe.lecarpentier@inra.fr, emmanuelle.blanc@u-psud.fr, ",
     url='https://github.com/openalea-incubator/WALTer',
     license='cecill-c',
     zip_safe=False,
@@ -55,18 +55,16 @@ setup_kwds = dict(
 
     include_package_data=True,
     package_data={'walter_data': data_files},
-    setup_requires=[
-        "pytest-runner",
-        ],
     install_requires=[
         ],
     tests_require=[
         "mock",
-        "pytest",
+        "nose",
         ],
     entry_points={},
     keywords='wheat, FSPM, tillering, light competition',
-    )
+    test_suite='nose.collector',
+)
 # #}
 # change setup_kwds below before the next pkglts tag
 
