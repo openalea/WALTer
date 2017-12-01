@@ -12,7 +12,7 @@ def test_caribu():
     lsys = Lsystem(lsystem_file,{'params': {'nb_plt_utiles': 1,
                                   'dist_border_x':0,
                                   'dist_border_y': 0,
-                                  'nbj': 52,
+                                  'nbj': 80,
                                   'beginning_CARIBU': 23000
 
          }})

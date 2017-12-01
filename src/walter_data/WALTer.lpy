@@ -32,7 +32,7 @@ if lpy_cut_bug:
   fake_lsys = Lsystem()
   fake_lsys.addRule(fake_rule)
 
-  def force_cut(lstring)
+  def force_cut(lstring):
     fake_lsys.axiom = lstring
     return fake_lsys.iterate()
 
@@ -2029,7 +2029,7 @@ def StartEach(lstring):
 
 
 def EndEach(lstring, lscene):
-  globals lpy_cut_bug:
+  global lpy_cut_bug
   if lpy_cut_bug:
     # Force removal of cut branches to have a consistent indexing between lscene and lstring (see test_cut_module.py)
     lstring = force_cut(lstring)
