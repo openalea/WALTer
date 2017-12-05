@@ -114,7 +114,6 @@ rep                  = 1
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep"]
 
-params={}
 for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
