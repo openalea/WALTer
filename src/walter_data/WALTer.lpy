@@ -10,12 +10,12 @@ import pandas as pd
 import numpy as np
 
 import sys
-import os, os.path
+import os
 import uuid
 import json
 
 
-from os.path import join as pj
+pj = os.path.join
 data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
@@ -2736,18 +2736,14 @@ Seed:
       earliest_plant = key
     if value == maximal_emergence:
       latest_plant = key
-  
-  #List phyllochrones of all the genotypes presents within the crop
+  # List phyllochrones of all the genotypes presents within the crop
   all_phyllo = {}
   for g in crop_genotype:
     all_phyllo[phyll_adjust(g)] = g
-  
   longest_phyllo = max(all_phyllo.keys())
   shortest_phyllo = min(all_phyllo.keys())
-
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
-
   if 'beginning_CARIBU' in params:
     beginning_CARIBU = params['beginning_CARIBU']
   else:
