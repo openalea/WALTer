@@ -4084,7 +4084,10 @@ CutPointBud(StCPB):
     #print "zen : ", StCPB.zenith, "azi : ",StCPB.azimuth
   #if StCPB.tiller == (1,) or StCPB.tiller == (1,2):
     #print "axe : ", StCPB.tiller, "zen : ", StCPB.zenith, "azi : ", StCPB.azimuth
-  produce /(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+  if StCPB.tiller == (1,):
+	produce @R/(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+  else:
+    produce /(StCPB.azimuth)+(StCPB.zenith)F(0.01)
 
 endlsystem
 ###### INITIALISATION ######
