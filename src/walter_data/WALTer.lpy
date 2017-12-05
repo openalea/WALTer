@@ -14,13 +14,17 @@ import os, os.path
 import uuid
 import json
 
-from walter import data_access
+
 from os.path import join as pj
 data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
-
+# setup params if and only if not defined as Lsys args
+try:
+  params = params
+except NameError:
+  params = {}
 
 # create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
 lpy_cut_bug = True
@@ -78,12 +82,7 @@ module CutPointBud
 module CutPointBlade
 
 ### REPRESENTATION DES ORGANES
-# params = dict(map(lambda x: x.split('='), sys.argv[1:]))
-# for key, item in params.items():
-#     try :
-#         params[key] = float(item)
-#     except:
-#         pass
+
 
 #Param�tres de mise � l'�chelle pour que 1=1 dans chacune des directions
 scalex = 0.5
