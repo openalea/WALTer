@@ -18,23 +18,21 @@ def test_main():
 
     p.deactivate()
     p.remove(force=True)
-def test_infinitized_run():
-    lsystem_file = pj(data_access.get_data_dir(), 'WALTer.lpy')
-    lsys = Lsystem(lsystem_file,{'params': {'nb_plt_utiles': 1,
-                                  'dist_border_x':0,
-                                  'dist_border_y': 0,
-                                  'nbj': 70,
-                                  'infinity_CARIBU' : 1,
-                                  'beginning_CARIBU': 290
 
-         }})
-    assert isinstance(lsys, Lsystem)
-    
-    lstring = lsys.iterate()
-    assert len(lstring) > 10
-    
-    s=lsys.sceneInterpretation(lstring)
-    assert len(s) > 2
+
+def test_infinitized_run():
+    p = project.Project(name='simu_test1')
+
+    lsys, lstring = p.run(nb_plt_utiles=1,
+                          dist_border_x=0,
+                          dist_border_y=0,
+                          nbj=70,
+                          infinity_CARIBU=1,
+                          beginning_CARIBU=290)
+
+    p.deactivate()
+    p.remove(force=True)
+
 
 
 
