@@ -22,8 +22,6 @@ def test_project1():
 
     assert (cwd/p.name).exists() is False
 
-def test_lecarpentier():
-    p = project.Project(name='Lecarpentier')
 
 def test_read_parameters():
     fn = 'sim_scheme_test.csv'
