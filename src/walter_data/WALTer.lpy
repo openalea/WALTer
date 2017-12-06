@@ -2168,10 +2168,10 @@ def EndEach(lstring, lscene):
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
           print "The date : ", str(datetime.datetime.now())
-          xmin = crop_scheme["dist_intra_rang"]/2
-          ymin = crop_scheme["dist_inter_rang"]/2
-          xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
-          ymax = crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] + crop_scheme["dist_inter_rang"]/2            
+          xmin = crop_scheme["dist_intra_rang"] * 100. / 2
+          ymin = crop_scheme["dist_inter_rang"] * 100. / 2
+          xmax = xmin + crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] * 100
+          ymax = ymin + crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] * 100
           
           # Mapping table no longer needed for caribu tag > 1.4
 

@@ -27,7 +27,7 @@ def test_infinitized_run():
                           dist_border_x=0,
                           dist_border_y=0,
                           nbj=53,
-                          infinity_CARIBU=0,
+                          infinity_CARIBU=1,
                           beginning_CARIBU=290)
 
     p.deactivate()
