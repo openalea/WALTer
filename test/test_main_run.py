@@ -26,8 +26,8 @@ def test_infinitized_run():
     lsys, lstring = p.run(nb_plt_utiles=1,
                           dist_border_x=0,
                           dist_border_y=0,
-                          nbj=70,
-                          infinity_CARIBU=1,
+                          nbj=53,
+                          infinity_CARIBU=0,
                           beginning_CARIBU=290)
 
     p.deactivate()
