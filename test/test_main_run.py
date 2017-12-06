@@ -15,7 +15,7 @@ def test_main():
 
     assert len(lstring) > 10
     s=lsys.sceneInterpretation(lstring)
-    assert len(s) > 2
+    assert len(s) == 1
 
     p.deactivate()
     p.remove(force=True)
