@@ -17,6 +17,14 @@ def test_simu1():
 
 
 def test_simu2():
+
+    def run_one_simu(p, param_dict):
+        lsys, lstring = p.run(**param_dict)
+
+        assert len(lstring) > 10
+        s = lsys.sceneInterpretation(lstring)
+        assert len(s) > 2
+
     p = project.Project(name='simu_test2')
     params = p.csv_parameters('sim_scheme_test.csv')
 
@@ -26,16 +34,10 @@ def test_simu2():
     outs = p.which_outputs
     outs['GAIp'] = 0
     p.which_outputs = outs
-
     for param_dict in params:
         yield run_one_simu, p, param_dict
     p.deactivate()
     p.remove(force=True)
 
 
-def run_one_simu(p, param_dict):
-    lsys, lstring = p.run(**param_dict)
 
-    assert len(lstring) > 10
-    s=lsys.sceneInterpretation(lstring)
-    assert len(s) > 2
