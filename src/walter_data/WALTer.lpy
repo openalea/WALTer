@@ -2608,7 +2608,7 @@ def End(lstring):
                          "PAR_t" + "\t" + geno + "\t" + "%s" % PAR_t[geno] + "\n" +
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n" +
                          "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n"+
-                         "Param_Ln_final" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_Ln_final[geno] + "\n")
+                         "Param_Ln_final" + "\t" + "%s" %  geno  + "\t" + "%s" % param_Ln_final[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
   fichier_individual= open(pj(out_dir,folder_name, "Individual_heterogeneity.csv"), "w")
