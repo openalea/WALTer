@@ -685,17 +685,25 @@ till_azi_hazard = int(hazard_driver["axis"]) * 90
 
 # Cessation of tillering
 GAI_c_Maxwell = 0.59
+GAI_c_Soissons = 0.78
+GAI_c_Lely = 0.59
 GAI_c_Darwinkel_Maxwell = 0.35
 GAI_c_Gigant_Maxwell = 0.35
-GAI_c_Soissons = 0.78
+GAI_c_Renan = 0.59
+GAI_c_Apache = 0.59
+GAI_c_Caphorn = 0.59
+GAI_c_A208 = 0.59
+GAI_c_A210 = 0.59
+GAI_c_F236 = 0.59
+GAI_c_A398 = 0.59
 
-var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell", "GAI_c_Darwinkel_Maxwell", "GAI_c_Gigant_Maxwell"]
+var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell", "GAI_c_Darwinkel_Maxwell", "GAI_c_Gigant_Maxwell","GAI_c_Lely","GAI_c_Darwinkel_Maxwell","GAI_c_Gigant_Maxwell","GAI_c_Renan","GAI_c_Apache","GAI_c_Caphorn","GAI_c_A208","GAI_c_A210","GAI_c_F236","GAI_c_A398"]
 
 for key, value, in params.iteritems():
   if key in var_registerGAI:
     exec(key+"=value")
 
-GAI_c = {"Maxwell" : GAI_c_Maxwell,  "Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell, "Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Soissons" : GAI_c_Soissons} # Green Area Index threshold above which tillering of a plant stops
+GAI_c = {"Maxwell" : GAI_c_Maxwell,  "Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell, "Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Soissons" : GAI_c_Soissons, "Lely" : GAI_c_Lely,"Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell,"Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Renan" : GAI_c_Renan,"Apache" : GAI_c_Apache,"Caphorn" : GAI_c_Caphorn,"A208" : GAI_c_A208,"A210" : GAI_c_A210,"F236" : GAI_c_F236,"A398" : GAI_c_A398} # Green Area Index threshold above which tillering of a plant stops
 
 dGAIp = 1			# Maximal range of plant detection (meter)
 L_b_S = 2      # Buried length of the first sheath (in cm) | old name : L_burried
@@ -724,17 +732,25 @@ for key, value, in params.iteritems():
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell,  "Darwinkel_Maxwell" : t_beg_reg_Darwinkel_Maxwell, "Gigant_Maxwell" : t_beg_reg_Gigant_Maxwell,"Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
 PAR_t_Maxwell = 280000
+PAR_t_Soissons = 150000
+PAR_t_Lely = 280000
 PAR_t_Darwinkel_Maxwell = 100000
 PAR_t_Gigant_Maxwell = 100000
-PAR_t_Soissons = 150000
+PAR_t_Renan = 280000
+PAR_t_Apache = 280000
+PAR_t_Caphorn = 280000
+PAR_t_A208 = 280000
+PAR_t_A210 = 280000
+PAR_t_F236 = 280000
+PAR_t_A398 = 280000
 
-var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell", "PAR_t_Darwinkel_Maxwell", "PAR_t_Gigant_Maxwell"]
+var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell", "PAR_t_Darwinkel_Maxwell", "PAR_t_Gigant_Maxwell","PAR_t_Lely","PAR_t_Darwinkel_Maxwell","PAR_t_Gigant_Maxwell","PAR_t_Renan","PAR_t_Apache","PAR_t_Caphorn","PAR_t_A208","PAR_t_A210","PAR_t_F236","PAR_t_A398"]
 
 for key, value, in params.iteritems():
   if key in var_registerPARt:
     exec(key+"=value")
 
-PAR_t = {"Maxwell" : PAR_t_Maxwell,  "Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell, "Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Soissons" : PAR_t_Soissons}  # PAR threshold below which a tiller don't survive | old name : PARseuil
+PAR_t = {"Maxwell" : PAR_t_Maxwell,  "Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell, "Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Soissons" : PAR_t_Soissons, "Lely" : PAR_t_Lely,"Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell,"Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Renan" : PAR_t_Renan,"Apache" : PAR_t_Apache,"Caphorn" : PAR_t_Caphorn,"A208" : PAR_t_A208,"A210" : PAR_t_A210,"F236" : PAR_t_F236,"A398" : PAR_t_A398}  # PAR threshold below which a tiller don't survive | old name : PARseuil
 Delta_l = 100     #Duration of radiation integration to determine the survival of a tiller (degree-day) | old name : ray_integration
 
 
