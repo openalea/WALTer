@@ -642,7 +642,20 @@ Delta_flsp = 100 #Thermal time delay between the senescence of the flag blade an
 
 
 # Plant geometry
-Phi_zen_B = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Darwinkel = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Lely = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Soissons = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Renan = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Gigant_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Darwinkel_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Caphorn = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Apache = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_A208 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_A210 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_F236 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_A398 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+
 Phi_azi_B = 185       # Angle between the azimuth of two consecutive blades | old name : bl_azi_shift
 Phi_zen_T = 0         # Angle between the zenith of two consecutive tillers  | old name : till_zen_shift
 Phi_azi_T = 40        # Angle between the azimuth of two consecutive tillers | old name : till_azi_shift
@@ -1785,7 +1798,7 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
 
-var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B_Maxwell","Phi_zen_B_Darwinkel","Phi_zen_B_Lely","Phi_zen_B_Soissons","Phi_zen_B_Renan","Phi_zen_B_Gigant_Maxwell","Phi_zen_B_Darwinkel_Maxwell","Phi_zen_B_Caphorn","Phi_zen_B_Apache","Phi_zen_B_A208","Phi_zen_B_A210","Phi_zen_B_F236","Phi_zen_B_A398","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print 'parms'
 print params
@@ -1803,6 +1816,9 @@ L_B_max = {"Maxwell" : L_B_max_Maxwell, "Darwinkel_Maxwell" : L_B_max_Maxwell, "
 
 
 a_B_w = {"Maxwell" : a_B_w_Maxwell, "Darwinkel_Maxwell" : a_B_w_Maxwell, "Gigant_Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
+
+
+Phi_zen_B = {"Maxwell" : Phi_zen_B_Maxwell ,"Darwinkel" : Phi_zen_B_Darwinkel,"Lely" : Phi_zen_B_Lely,"Soissons" : Phi_zen_B_Soissons,"Renan" : Phi_zen_B_Renan,"Gigant_Maxwell" : Phi_zen_B_Gigant_Maxwell,"Darwinkel_Maxwell" : Phi_zen_B_Darwinkel_Maxwell,"Caphorn" : Phi_zen_B_Caphorn,"Apache" : Phi_zen_B_Apache,"A208" : Phi_zen_B_A208,"A210" : Phi_zen_B_A210,"F236" : Phi_zen_B_F236,"A398" : Phi_zen_B_A398}
 
 tab_top = datetime.date(int(year)-1,9,1)													      # On d�finit la date du d�but du fichier
 double_finger = datetime.date(int(year)-1,1,1)                               #Premier janvier
@@ -2488,7 +2504,6 @@ def End(lstring):
                        "ED_B" + "\t" + "All" + "\t" + "%s" % ED_B + "\n" +
                        "ED_FB"  + "\t" + "All" + "\t" + "%s" % ED_FB + "\n" +
                        "ED_S" + "\t" + "All" + "\t" + "%s" % ED_S + "\n" +
-                       "Phi_zen_B"  + "\t" + "All" + "\t" + "%s" % Phi_zen_B + "\n" +
                        "Phi_azi_B"  + "\t" + "All" + "\t" + "%s" % Phi_azi_B + "\n" +
                        "Phi_zen_T"   + "\t" + "All" + "\t" + "%s" % Phi_zen_T + "\n" +
                        "Phi_azi_T"  + "\t" + "All" + "\t" + "%s" % Phi_azi_T + "\n" +
@@ -2547,7 +2562,8 @@ def End(lstring):
                          "Delta_prot" + "\t" + geno + "\t" + "%s" %  Delta_prot[geno] + "\n" +
                          "PAR_t" + "\t" + geno + "\t" + "%s" % PAR_t[geno] + "\n" +
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n" +
-                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n")
+                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n" + 
+                         "Phi_zen_B" + "\t" + "%s" %  geno  + "\t" + "%s" % Phi_zen_B[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
   fichier_individual= open(pj(out_dir,folder_name, "Individual_heterogeneity.csv"), "w")
@@ -2880,7 +2896,7 @@ Apex(StA):
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
       
       ### End of dictionnaries formatting ###
       
@@ -2981,7 +2997,7 @@ Bud(StBu):
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
       
       ### End of dictionnaries formatting ###
       
@@ -3089,7 +3105,7 @@ Apex(StA):
         dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
         
         hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-        hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+        hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
         
         ### End of dictionnaries formatting ###
         
@@ -3319,7 +3335,7 @@ Bud(StBu):
           dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
           
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-          hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+          hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"] = Phi_azi_B + random.uniform(-blade_azi_hazard, blade_azi_hazard)
           
           ### End of dictionnaries formatting ###
