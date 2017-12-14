@@ -2528,7 +2528,8 @@ def End(lstring):
                        "blade_incl_hazard"  + "\t" + "All" + "\t" + "%s" % blade_incl_hazard + "\n" +
                        "blade_azi_hazard"  + "\t" + "All" + "\t" + "%s" % blade_azi_hazard + "\n" +
                        "till_zen_hazard"  + "\t" + "All" + "\t" + "%s" % till_zen_hazard + "\n" +
-                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n")
+                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" + 
+                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n")
 
   for geno in crop_genotype:
     fichier_params.write("Phl" + "\t" + "%s" % geno + "\t" + "%s" % Phl[geno] + "\n" +
