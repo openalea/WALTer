@@ -360,6 +360,14 @@ dist_intra_rang = crop_scheme["dist_intra_rang"]
 dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
+genotype_proportion = "random"
+
+var_register_genotype_proportion = ["genotype_proportion"]
+
+for key, value, in params.iteritems():
+  if key in var_register_genotype_proportion:
+    exec(key+"=value")
+
 
 geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de g�notypes compris sur la parcelle
 
@@ -1898,6 +1906,12 @@ dist_intra_rang = crop_scheme["dist_intra_rang"]
 dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
+
+if genotype_proportion == "equal":
+  genotype_list = crop_genotype*int(ceil(crop_scheme["nplant_peupl"]/geno_nb))
+  random.shuffle(genotype_list)
+
+
 # Create a unique ID to the simulation according to a specific combination of parameters value
 global folder_name
 global out_dir
@@ -2620,8 +2634,12 @@ Seed:
     #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
     x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
     y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
-    geno = random.choice(crop_genotype)    ## selection geno random
-    genotype_map[num_plante] = geno
+    if genotype_proportion == "random":
+      geno = random.choice(crop_genotype)    ## selection geno random
+      genotype_map[num_plante] = geno
+    elif genotype_proportion == "equal":
+      geno = genotype_list[num_plante-1]
+      genotype_map[num_plante] = geno
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[geno]["mean"],Dse[geno]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
