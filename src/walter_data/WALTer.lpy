@@ -15,7 +15,7 @@ import uuid
 import json
 
 from walter.experimental_conditions import experimental_conditions, liste_expe
-from walter.parameter import parameters
+from walter.parameter import parameters, initialisation
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -27,15 +27,16 @@ try:
   params = params
 except NameError:
   params = {}
-
 user_parameters = parameters()
 user_parameters.update(params)
 for p_name in user_parameters:
   globals().setdefault(p_name, user_parameters[p_name])
 
-hazard_driver = {"plant_azi": hazard_plant_azi, "plant_xy": hazard_plant_xy,
-                 "axis": hazard_axis, "organ": hazard_organ,
-                 "emerg": hazard_emerg}
+# secondary (parameter dependant) parameters
+init_parameters = initialisation(user_parameters)
+for p_name in init_parameters:
+  globals().setdefault(p_name, init_parameters[p_name])
+
 
 # create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
 

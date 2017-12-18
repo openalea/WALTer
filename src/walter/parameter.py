@@ -32,13 +32,17 @@ def parameters():
     return d
 
 
-def init(params):
-    for p_name in params:
-        globals().setdefault(p_name, params[p_name])
+def initialisation(user_parameters):
+    p = user_parameters
 
+    hazard_driver = {"plant_azi": p['hazard_plant_azi'],
+                     "plant_xy": p['hazard_plant_xy'],
+                     "axis": p['hazard_axis'],
+                     "organ": p['hazard_organ'],
+                     "emerg": p['hazard_emerg']}
 
 
     d = locals().copy()
-    d.pop('params')
-    d.update(params)
+    d.pop('p')
+    d.pop('user_parameters')
     return d
