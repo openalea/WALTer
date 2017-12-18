@@ -115,11 +115,22 @@ for key, value, in params.iteritems():
   if key in var_register1:
     exec(key+"=value")
 
-hazard_driver = {"plant" : True, "axis" : True, "organ" : True, "emerg" : True}
-hazard_plant = hazard_driver["plant"]
-hazard_axis = hazard_driver["axis"]
-hazard_organ = hazard_driver["organ"]
-hazard_emerg = hazard_driver["emerg"]
+
+hazard_plant_xy = True
+hazard_plant_azi = True
+hazard_axis = True
+hazard_organ = True
+hazard_emerg = True
+
+var_register_hazard = ["hazard_plant_xy","hazard_plant_azi","hazard_axis","hazard_organ","hazard_emerg"]
+
+for key, value, in params.iteritems():
+  if key in var_register_hazard:
+    exec(key+"=value")
+
+
+hazard_driver = {"plant_azi" : hazard_plant_azi, "plant_xy" : hazard_plant_xy, "axis" : hazard_axis, "organ" : hazard_organ, "emerg" : hazard_emerg}
+
 
 write_lscene = False
 write_lstring = False
@@ -256,7 +267,6 @@ experimental_conditions = {
 "Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
 "Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
 "Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,26),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
 "Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":11},
 "Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
 }
@@ -669,15 +679,17 @@ Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : s
 # hazard_driver dictionnary will trigger if necessary hazard in different cases:
 # if hazard == False : hazard parameter value = 0, if hazard == True, hazard parameter value is set at the value of the parameter
 
-y_position_hazard = int(hazard_driver["plant"]) * 2
-x_position_hazard = int(hazard_driver["plant"]) * 3
-z_position_hazard = int(hazard_driver["plant"]) * 0
+y_position_hazard = int(hazard_driver["plant_xy"]) * 2
+x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+z_position_hazard = int(hazard_driver["plant_xy"]) * 0
 
 blade_incl_hazard = int(hazard_driver["organ"]) * 5
 blade_azi_hazard = int(hazard_driver["organ"]) * 20
 
 till_zen_hazard = int(hazard_driver["axis"]) * 7
 till_azi_hazard = int(hazard_driver["axis"]) * 90
+
+plant_azi_hazard = int(hazard_driver["plant_azi"]) * 360
 
 
 ## SELF-ORGANIZED TILLERING RULES
@@ -1814,7 +1826,9 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
 
+
 var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_plant","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B_Maxwell","Phi_zen_B_Darwinkel","Phi_zen_B_Lely","Phi_zen_B_Soissons","Phi_zen_B_Renan","Phi_zen_B_Gigant_Maxwell","Phi_zen_B_Darwinkel_Maxwell","Phi_zen_B_Caphorn","Phi_zen_B_Apache","Phi_zen_B_A208","Phi_zen_B_A210","Phi_zen_B_F236","Phi_zen_B_A398","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+
 
 print 'parms'
 print params
@@ -2486,10 +2500,11 @@ def End(lstring):
                        "dist_intra_rang" + "\t" + "All" + "\t" + "%s" % dist_intra_rang + "\n" +
                        "dx" + "\t" + "All" + "\t" + "%s" % dx  + "\n" +
                        "dy" + "\t" + "All" + "\t" + "%s" % dy  + "\n" +
-                       "Hazard_plant" + "\t" + "All" + "\t" + "%s" % hazard_plant  + "\n" +
-                       "Hazard_axis" + "\t" + "All" + "\t" + "%s" % hazard_axis  + "\n" +
-                       "Hazard_organ" + "\t" + "All" + "\t" + "%s" % hazard_organ  + "\n" +
-                       "Hazard_emerg" + "\t" + "All" + "\t" + "%s" % hazard_emerg  + "\n" +
+                       "Hazard_plant_xy" + "\t" + "All" + "\t" + "%s" % hazard_driver["plant_xy"]  + "\n" +
+                       "Hazard_plant_azi" + "\t" + "All" + "\t" + "%s" % hazard_driver["plant_azi"]  + "\n" +
+                       "Hazard_axis" + "\t" + "All" + "\t" + "%s" % hazard_driver["axis"]  + "\n" +
+                       "Hazard_organ" + "\t" + "All" + "\t" + "%s" % hazard_driver["organ"]  + "\n" +
+                       "Hazard_emerg" + "\t" + "All" + "\t" + "%s" % hazard_driver["emerg"]  + "\n" +
                        "N_p_s" + "\t" + "All" + "\t" + "%s" % N_p_s + "\n" +
                        "l_c" + "\t" + "%s" % "All" + "\t" + "%s" % l_c + "\n" +
                        "L_b_S" + "\t" + "All" + "\t" + "%s" % L_b_S + "\n" +
@@ -2701,7 +2716,7 @@ Seed:
     dico_cut_dead_blades[num_plante][tiller_init] = []
     
     hazard_dict_axis[num_plante] = {}
-    hazard_dict_axis[num_plante][tiller_init] = {"tiller_azimuth" : Phi_azi_S , "tiller_zenith" : Phi_zen_S}
+    hazard_dict_axis[num_plante][tiller_init] = {"tiller_azimuth" : Phi_azi_S + random.randint(0,plant_azi_hazard) , "tiller_zenith" : Phi_zen_S}
     
     ### about initiated organs
     date_emission[num_plante] = {}
@@ -4111,7 +4126,10 @@ CutPointBud(StCPB):
     #print "zen : ", StCPB.zenith, "azi : ",StCPB.azimuth
   #if StCPB.tiller == (1,) or StCPB.tiller == (1,2):
     #print "axe : ", StCPB.tiller, "zen : ", StCPB.zenith, "azi : ", StCPB.azimuth
-  produce /(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+  if StCPB.tiller == (1,):
+    produce @R/(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+  else:
+    produce /(StCPB.azimuth)+(StCPB.zenith)F(0.01)
 
 endlsystem
 ###### INITIALISATION ######
