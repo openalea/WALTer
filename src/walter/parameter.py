@@ -1,4 +1,6 @@
-def parameters():
+from walter.experimental_conditions import experimental_conditions, liste_expe, get_latitude
+
+def default_parameters():
     # simulation tags
     expe_related = "Sensitivity_Analysis"
     rep = 1
@@ -41,8 +43,35 @@ def initialisation(user_parameters):
                      "organ": p['hazard_organ'],
                      "emerg": p['hazard_emerg']}
 
+    experiment = experimental_conditions(p['expe_related'])
+    crop_genotype = []
+    for geno in experiment["genotype"]:
+        crop_genotype.append(geno)
+    geno_nb = len(crop_genotype)
+    if 'year' not in user_parameters:
+        year = experiment["year"]
+    if 'sowing_date' not in user_parameters:
+        sowing_date = experiment["sowing_date"]
+    if 'dist_inter_rang' not in user_parameters:
+        dist_inter_rang = experiment["dist_inter_rang"]
+    if 'location' not in user_parameters:
+        location = experiment['location']
+    else:
+        location = user_parameters['location']
+    latitude = get_latitude(location)
+
+    # Si SIRIUS n'est pas active, le nombre final de feuilles est fixe a la
+    #  donnee experimentale. S'il n'y a pas de donnee experimental il est a 11
+    #  par defaut.
+    param_Ln_final = None
+    if p['SIRIUS_state'] == "disabled":
+        if p['expe_related'] in liste_expe():
+            param_Ln_final = experiment["Ln_final"]
+        else:
+            param_Ln_final = 11
 
     d = locals().copy()
     d.pop('p')
     d.pop('user_parameters')
+    d.pop('experiment')
     return d

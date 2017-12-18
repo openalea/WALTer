@@ -14,8 +14,8 @@ import os
 import uuid
 import json
 
-from walter.experimental_conditions import experimental_conditions, liste_expe
-from walter.parameter import parameters, initialisation
+from walter.experimental_conditions import experimental_conditions
+from walter.parameter import default_parameters, initialisation
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -27,7 +27,7 @@ try:
   params = params
 except NameError:
   params = {}
-user_parameters = parameters()
+user_parameters = default_parameters()
 user_parameters.update(params)
 for p_name in user_parameters:
   globals().setdefault(p_name, user_parameters[p_name])
@@ -229,15 +229,6 @@ def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_bo
   return crop_scheme
 
 
-# Setting experimental informations
-
-experiment = experimental_conditions(expe_related)
-#liste_expe = experimental_conditions.keys()
-
-
-
-dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9, "Climat_max_AS" : 48.8, "Climat_min_AS" :48.8 ,"Climat_moy_AS" : 48.8}
-
 # Moyennes sur 10/18ans disponibles sur Grignon : { "Grignon_mean10" "Grignon_mean18"}
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
 
@@ -247,7 +238,6 @@ nb_rang = 1
 if crop_ccptn == "classical":
   nb_plt_temp = 1
   nb_rang = 1
-  dist_inter_rang = experiment["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
   dy = nb_rang * dist_inter_rang
@@ -270,7 +260,6 @@ if crop_ccptn == "classical":
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
 elif crop_ccptn == "neo_Darwinkel":
   area_min, area_max = 1, 13
-  dist_inter_rang = experiment["dist_inter_rang"]
   opt_plt_nb = 10
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)
@@ -309,37 +298,12 @@ dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
 
-geno_nb              = len(experiment["genotype"])                              # Nombre de g�notypes compris sur la parcelle
-
-crop_genotype = []
-
-for geno in experiment["genotype"]:
-  crop_genotype.append(geno)
-
 ################################
 
 
 infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximit�
 cohorte_max          = 9
 
-
-
-# Si SIRIUS n'est pas activ�, le nombre final de feuilles est fix� � la donn�e exp�rimentale. S'il n'y a pas de donn�e exp�rimental il est � 11 par d�faut.
-
-#Initialisation
-global param_Ln_final
-
-if SIRIUS_state == "disabled":
-  if expe_related in liste_expe():
-    param_Ln_final = experiment["Ln_final"]
-  else:
-    param_Ln_final = 11
-
-var_register_Ln_final = ["param_Ln_final"]
-
-for key, value, in params.iteritems():
-  if key in var_register_Ln_final:
-    exec(key+"=value")
 
 ####################
 #### PARAMETERS ####
@@ -1722,22 +1686,8 @@ class Peduncle(Organ_Base):
 mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 
 
-#### ENREGISTREMENT DES PARAMETRES
 
 
-location           = experiment["location"]
-year               = experiment["year"]                            #s'il s'agit d'un fichier m�t�o moyenn�, year = 1901
-sowing_date        = experiment["sowing_date"]
-
-dist_inter_rang = experiment["dist_inter_rang"]
-
-var_register2 = ["location"]
-
-for key, value, in params.iteritems():
-  if key in var_register2:
-    exec(key+"=value")
-
-latitude           = dico_latitudes[location]
 
 ##########################
 # LIRE UN FICHIER METEO  #
@@ -1745,7 +1695,7 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
 
-var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["nbj","nb_rang","nb_plantes","area_targeted","infinity_GAIp","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print 'parms'
 print params

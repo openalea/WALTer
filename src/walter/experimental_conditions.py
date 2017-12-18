@@ -1,5 +1,14 @@
 import datetime
 
+dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7,
+                  'Lelystad': 52.5, 'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,
+                  'Alenya': 42.6, 'Bertheloot_2005': 48.8, 'Grignon': 48.8,
+                  'Grignon_mean10': 48.8, 'Grignon_mean18': 48.8,
+                  'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7,
+                  "Nottingham": 52.9, "Climat_max_AS": 48.8,
+                  "Climat_min_AS": 48.8, "Climat_moy_AS": 48.8}
+
+
 experiments = {
     "Sreten": {"sowing_date": datetime.date(1998, 10, 15), "year": "1999",
                "location": "Grignon", "dist_inter_rang": 0.175,
@@ -85,3 +94,6 @@ def experimental_conditions(expe_related='Sensitivity_Analysis'):
 
 def liste_expe():
     return experiments.keys()
+
+def get_latitude(location):
+    return dico_latitudes[location]
