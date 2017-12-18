@@ -14,6 +14,8 @@ import os
 import uuid
 import json
 
+from walter.experimental_conditions import experimental_conditions, liste_expe
+from walter.parameter import parameters
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -26,8 +28,17 @@ try:
 except NameError:
   params = {}
 
+user_parameters = parameters()
+user_parameters.update(params)
+for p_name in user_parameters:
+  globals().setdefault(p_name, user_parameters[p_name])
+
+hazard_driver = {"plant_azi": hazard_plant_azi, "plant_xy": hazard_plant_xy,
+                 "axis": hazard_axis, "organ": hazard_organ,
+                 "emerg": hazard_emerg}
+
 # create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
-lpy_cut_bug = True
+
 if lpy_cut_bug:
   from openalea.lpy import Lsystem
   fake_rule = """
@@ -104,42 +115,14 @@ WALTer_build = 23112017
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
 ##########################################
-expe_related         = "Sensitivity_Analysis"
-densite              = 150
-CARIBU_state         = "enabled"
-rep                  = 1
-
-var_register1 = ["expe_related","densite","CARIBU_state","rep"]
-
-for key, value, in params.iteritems():
-  if key in var_register1:
-    exec(key+"=value")
 
 
-hazard_plant_xy = True
-hazard_plant_azi = True
-hazard_axis = True
-hazard_organ = True
-hazard_emerg = True
-
-var_register_hazard = ["hazard_plant_xy","hazard_plant_azi","hazard_axis","hazard_organ","hazard_emerg"]
-
-for key, value, in params.iteritems():
-  if key in var_register_hazard:
-    exec(key+"=value")
-
-
-hazard_driver = {"plant_azi" : hazard_plant_azi, "plant_xy" : hazard_plant_xy, "axis" : hazard_axis, "organ" : hazard_organ, "emerg" : hazard_emerg}
-
-
-write_lscene = False
-write_lstring = False
 
 which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 print "ce qu'on ecrit:", write_output_file["Lscene"]
 
-write_debug_PAR = False
+
 
 #########################
 
@@ -246,37 +229,11 @@ def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_bo
 
 
 # Setting experimental informations
-experimental_conditions = {
-"Sreten":{"sowing_date" : datetime.date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim1-1":{"sowing_date" : datetime.date(2007,9,25), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim1-2":{"sowing_date" : datetime.date(2007,11,12), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim2-1":{"sowing_date" : datetime.date(2008,9,30), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11.3},
-"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
-"Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":11},
-"Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11},
-"Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Ouitamics-2014":{"sowing_date" : datetime.date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":11},
-"None":{"sowing_date" : datetime.date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":11},
-"Mariem_mean":{"sowing_date" : datetime.date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
-"Darwinkel_Grignon_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":11},
-"Darwinkel_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11.3
-},
-"Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":11},
-"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
-}
 
-liste_expe = experimental_conditions.keys()
+experiment = experimental_conditions(expe_related)
+#liste_expe = experimental_conditions.keys()
 
-## CARIBU
-infinity_CARIBU      = bool(0)              # En booleen 0 : False 1: True
-nb_azimuth = 5
-nb_zenith = 4
+
 
 dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9, "Climat_max_AS" : 48.8, "Climat_min_AS" :48.8 ,"Climat_moy_AS" : 48.8}
 
@@ -284,22 +241,12 @@ dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
 
 ########################################
-
-crop_ccptn = "Mesh_for_nplants"
 area_targeted = 1
 nb_rang = 1
-
-var_register0 = ["crop_ccptn"]
-
-for key, value, in params.iteritems():
-  if key in var_register0:
-    exec(key+"=value")
-
-
 if crop_ccptn == "classical":
   nb_plt_temp = 1
   nb_rang = 1
-  dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
+  dist_inter_rang = experiment["dist_inter_rang"]
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   area = nb_plt_temp/crop_scheme["density"]
   dy = nb_rang * dist_inter_rang
@@ -322,7 +269,7 @@ if crop_ccptn == "classical":
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
 elif crop_ccptn == "neo_Darwinkel":
   area_min, area_max = 1, 13
-  dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
+  dist_inter_rang = experiment["dist_inter_rang"]
   opt_plt_nb = 10
   crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
   adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)
@@ -361,16 +308,16 @@ dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
 
-geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de g�notypes compris sur la parcelle
+geno_nb              = len(experiment["genotype"])                              # Nombre de g�notypes compris sur la parcelle
 
 crop_genotype = []
 
-for geno in experimental_conditions[expe_related]["genotype"]:
+for geno in experiment["genotype"]:
   crop_genotype.append(geno)
 
 ################################
 
-SIRIUS_state         = "disabled"
+
 infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximit�
 cohorte_max          = 9
 
@@ -382,8 +329,8 @@ cohorte_max          = 9
 global param_Ln_final
 
 if SIRIUS_state == "disabled":
-  if expe_related in liste_expe:
-    param_Ln_final = experimental_conditions[expe_related]["Ln_final"]
+  if expe_related in liste_expe():
+    param_Ln_final = experiment["Ln_final"]
   else:
     param_Ln_final = 11
 
@@ -1777,11 +1724,11 @@ mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 #### ENREGISTREMENT DES PARAMETRES
 
 
-location           = experimental_conditions[expe_related]["location"]
-year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier m�t�o moyenn�, year = 1901
-sowing_date        = experimental_conditions[expe_related]["sowing_date"]
+location           = experiment["location"]
+year               = experiment["year"]                            #s'il s'agit d'un fichier m�t�o moyenn�, year = 1901
+sowing_date        = experiment["sowing_date"]
 
-dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
+dist_inter_rang = experiment["dist_inter_rang"]
 
 var_register2 = ["location"]
 
