@@ -834,8 +834,8 @@ real_ts0 = [float("inf")]
 
 ### PANDAS DATAFRAME ###
 
+global GAI_dico_df
 if CARIBU_state == "enabled":
-  global GAI_dico_df
   GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[], "Weakest_axis":[],"PAR_weakest_axis":[]}
 if CARIBU_state == "disabled":
   GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[]}
