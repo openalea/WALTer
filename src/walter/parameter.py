@@ -34,6 +34,10 @@ def default_parameters():
     # SIRIUS
     SIRIUS_state = "disabled"
 
+    # Cessation of tillering
+    dGAIp = 1  # Maximal range of plant detection (meter)
+    L_b_S = 2  # Buried length of the first sheath (in cm) | old name : L_burried
+
     d = locals().copy()
     return d
 
