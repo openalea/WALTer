@@ -1,6 +1,7 @@
 from walter.experimental_conditions import experimental_conditions, get_latitude
 
 def default_parameters():
+    """Setup default parameters for walter simulation"""
     # simulation tags
     expe_related = "Sensitivity_Analysis"
     rep = 1
@@ -43,32 +44,32 @@ def light_update(old, new):
 
 
 def initialisation(user_parameters):
-    _p = user_parameters
+    """Manage expansion of parameters from simulation tags and preccedence rules
+
+    Args:
+        user_parameters: a dict of parameters that take precedence over defaults
+
+    Returns:
+        A set of simulation parameters
+    """
+    parameters = default_parameters()
+    parameters.update(user_parameters)
+
+    # expansion/ completion
+    _p = parameters
+
     # add experimental conditions if not user-defined with possibly
     # user-redefined expe_related
-    _p = light_update(_p, experimental_conditions(_p['expe_related']))
-
-    hazard_driver = {"plant_azi": _p['hazard_plant_azi'],
-                     "plant_xy": _p['hazard_plant_xy'],
-                     "axis": _p['hazard_axis'],
-                     "organ": _p['hazard_organ'],
-                     "emerg": _p['hazard_emerg']}
-
-    crop_genotype = []
-    for geno in _p['genotype']:
-        crop_genotype.append(geno)
-    geno_nb = len(crop_genotype)
-    latitude = get_latitude(_p['location'])
+    parameters = light_update(_p, experimental_conditions(_p['expe_related']))
+    # add derived params / aliases
+    parameters['crop_genotype'] = _p['genotype']
+    parameters['geno_nb'] = len(_p['genotype'])
+    parameters['latitude'] = get_latitude(_p['location'])
 
     # Si SIRIUS n'est pas active, le nombre final de feuilles est fixe a la
     #  donnee experimentale. S'il n'y a pas de donnee experimental il est a 11
     #  par defaut.
-    param_Ln_final = _p.get("Ln_final", 11)
+    parameters['param_Ln_final'] = _p.get("Ln_final", 11)
 
-
-    d = locals().copy()
-    d.pop('_p')
-    d.pop('user_parameters')
-    d.update(_p)
-    return d
+    return parameters
 

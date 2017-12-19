@@ -14,8 +14,8 @@ import os
 import uuid
 import json
 
-from walter.experimental_conditions import experimental_conditions
-from walter.parameter import default_parameters, initialisation
+
+from walter.parameter import initialisation
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -29,10 +29,8 @@ try:
   params = params
 except NameError:
   params = {}
-user_parameters = default_parameters()
-user_parameters.update(params)
-# secondary (parameter dependant) parameters
-parameters = initialisation(user_parameters)
+
+parameters = initialisation(params)
 for p_name in parameters:
   globals().setdefault(p_name, parameters[p_name])
 
@@ -307,7 +305,11 @@ cohorte_max          = 9
 ####################
 #### PARAMETERS ####
 ####################
-
+hazard_driver = {"plant_azi": hazard_plant_azi,
+                 "plant_xy": hazard_plant_xy,
+                 "axis": hazard_axis,
+                 "organ": hazard_organ,
+                 "emerg": hazard_emerg}
 # genotypic parameters are described by python dictionnaries in which the value is associated with the name of the genotype
 
 ### SIRIUS PARAMETERS ###
@@ -2873,7 +2875,7 @@ Bud(StBu):
   
   #Production de phytom�res
   if StBu.time >= Pls[StBu.geno]:
-    if GAI_prox[StBu.num_plante] <= GAI_c[geno] or cohort_number(StBu.tiller) < 8: #TODO peut �tre � enlever sui on est encore dans la graine?
+    if GAI_prox[StBu.num_plante] <= GAI_c[StBu.geno] or cohort_number(StBu.tiller) < 8: #TODO peut �tre � enlever sui on est encore dans la graine?
       StL = Leaf(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu_p = Bud_primord(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu_p.sumtemp = StBu.time%Pls[StBu.geno]
@@ -3476,7 +3478,7 @@ Leaf(StL):
           
           #La transition florale n'est pas pass�e
           if dico_stades[StBl.num_plante][StBl.tiller]["Transiflo"][0] == False:
-            StBl.final_length = previous_length + s_B_1[geno]
+            StBl.final_length = previous_length + s_B_1[StBl.geno]
             StBl.width = blade_width(StBl.final_length, a_B_w[StBl.geno], b_B_w[StBl.geno])
             StS.final_length = sheath_length(StBl.final_length, a_S_L[StS.geno], b_S_L[StS.geno])
             
