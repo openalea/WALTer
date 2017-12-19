@@ -1,3 +1,5 @@
+import datetime
+
 from walter.experimental_conditions import experimental_conditions, get_latitude
 from walter.genotypic_parameters import genotypic_parameters, get_genotypic_parameters
 
@@ -49,12 +51,19 @@ def default_parameters():
 
     # Thermal time
     Tbase = 0.
+    # temps phyllochronique
+    DelayHSToCol = 0.2
 
     # Phenology
     Delta_hf = 1.3  # Delay between heading and flowering (phyllochronic unit) | old name : delta_epi_flo
     Delta_c_GN = 30  # Duration of the critical period determining grain number (days) | old name : duration_critical_period
     Delta_hm = 800  # Delay between heading and maturity (in degree-days) | old name : delta_epi_mat
     Delta_lflf = 1.39  # Delay between the ligulation of the flag leaf and flowering (phyllochronic units) | old name : delta_ligflagleaf_flo
+
+    # Adjusting phyllochron to extreme sowing dates
+    SDSA = 200  # mi-juillet (en DOY)
+    SDWS = 90  # Fin de l'hiver (
+    Rp = 0.003  # decroissement du phyllo
 
     # Organ initiation, emergence and elongation
     # Number of primordia already preformed inside the seed
@@ -151,10 +160,6 @@ def initialisation(user_parameters):
     #  par defaut.
     parameters['param_Ln_final'] = _p.get("Ln_final", 11)
 
-    # syntactic sugars
-    parameters['Delta_Reg'] = _p['Delta_SGtC'] - _p['Delta_SGtR']  # | old name : duration_reg
-
-
     #  genotypic parameters
     genotypic = genotypic_parameters()
     for what in genotypic:
@@ -164,10 +169,27 @@ def initialisation(user_parameters):
         for what in genotypic:
             parameters[what][g] = gp[what]
 
+    # Phyllochron adjustment and phyllochon dependant parameters
+    double_finger = datetime.date(int(_p['year']) - 1, 1, 1)  # Premier janvier
+    sowing_DOY = (_p['sowing_date'] - double_finger).days  # DOY du semis
+    parameters['phyll_adjust'] = parameters['Phl'].copy()
+    if sowing_DOY < _p['SDSA']:
+        for g in _p['genotype']:
+            parameters['phyll_adjust'][g] *= (1 - _p['Rp'] * min(sowing_DOY, _p['SDWS']))
+    #
+    parameters['Pls'] = {g: parameters['phyll_adjust'][g] / 2. for g in
+                         _p['genotype']}
+    parameters['DelayTipToHS'] = {g: parameters['phyll_adjust'][g] * 0.4125 for
+                                  g in _p['genotype']}
+    for what in ('Pls', 'DelayTipToHS'):
+        for g in _p['genotype']:
+            user_p = what + '_' + g
+            if user_p in parameters: # it has been set externally
+                parameters[what][g] = parameters.pop(user_p)
+
     # hazard driver will trigger if necessary hazard in different cases:
     # if hazard == False : hazard parameter value = 0, if hazard == True,
     # hazard parameter value is set at the value of the parameter
-
     for what in ('y_position_hazard','x_position_hazard','z_position_hazard'):
         parameters[what] *= int(_p['hazard_plant_xy'])
     for what in ('blade_incl_hazard', 'blade_azi_hazard'):
@@ -176,6 +198,14 @@ def initialisation(user_parameters):
         parameters[what] *= int(_p['hazard_axis'])
     parameters['plant_azi_hazard'] *= int(_p['hazard_plant_azi'])
 
+    # syntactic sugars
+    parameters['Delta_Reg'] = _p['Delta_SGtC'] - _p['Delta_SGtR']  # | old name : duration_reg
+    parameters['hazard_driver'] = {
+        "plant_azi": _p['hazard_plant_azi'],
+        "plant_xy": _p['hazard_plant_xy'],
+        "axis": _p['hazard_axis'],
+        "organ": _p['hazard_organ'],
+        "emerg": _p['hazard_emerg']}
 
     return parameters
 

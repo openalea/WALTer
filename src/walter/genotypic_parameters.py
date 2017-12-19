@@ -2,6 +2,19 @@
 
 
 def Maxwell():
+    # Phyllochron
+    Phl = 99
+    # SIRIUS PARAMETERS
+    # Differentes valeurs issues de recalibrations (pour Soissons)
+    # He : 0.00906  #Ly : 0.00405  #Lecarpentier :
+    VAI = 0.00906
+    # Differentes valeurs issues de recalibrations (pour Soissons)
+    # #He : 0.012    #Ly : 0.012    #Lecarpentier : 0.012
+    VBEE = 0.012
+    # Differentes valeurs issues de recalibrations (pour Soissons)
+    # #He : 1.34     #Ly : 1.467    #Lecarpentier :
+    SLDL = 1.34
+
     # Final plant height (internodes+peduncle+ear of mainstem)
     Param_PlHeight = 55.6155
     # Tiller emergence
@@ -22,6 +35,9 @@ def Maxwell():
     a_S_L = 0.6919
     b_S_L = -2.6953
     # Blade final length
+    # Final length of the longest blade each the axis (cm)
+    #  old name : length_penultimate_blade
+    L_B_max = 17.4
     # Final length of the first blade of each axis (cm)
     #  old name : first_blade_length
     L_B_1 = 7
@@ -35,6 +51,8 @@ def Maxwell():
     # old name : ratio_flag_blade
     s_B_f = 0.8
     # Coefficient for blade width (cm)
+    # old_name: a_blade_width
+    a_B_w = 0.099
     # old name: b_blade_width
     b_B_w = -0.3
     # Fixed dimensions (ear, peduncle, etc.)
@@ -95,6 +113,11 @@ def Maxwell():
 
 
 def Soissons():
+    Phl = 87
+    VAI = 0.00906
+    VBEE = 0.012
+    SLDL = 1.34
+
     Param_PlHeight = 87.6579
     P_T = 0.88
     P_CT = 0
@@ -103,19 +126,26 @@ def Soissons():
     inc_I = 4.5
     a_I_L = 0.79
     b_I_L = -0.29
+
     a_S_L = 0.6857
     b_S_L = -2.16
+
+    L_B_max = 22.4
     L_B_1 = 7
     s_B_1 = 0.5
     N_B_r = 1
     s_B_f = 0.92
+
+    a_B_w_ = 0.097
     b_B_w = -0.4
+
     d_I = 0.2
     d_P = 0.3
     L_P = 19.8
     d_S = 0.32
     d_E = 0.65
     L_E = 7.38
+
     n0_sen = 4.91
     n1_sen = 3.3
     n2_sen = 4.35
@@ -142,6 +172,14 @@ def Caphorn():
     t1_sen = 671
     t2_sen = 1050
     t3_sen = 1900
+    d = locals().copy()
+    return d
+
+def Renan():
+    Phl = 112
+    VAI = 0.00456
+    VBEE = 0.012
+    SLDL = 1.12
     d = locals().copy()
     return d
 
