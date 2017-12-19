@@ -2,6 +2,9 @@
 
 
 def Maxwell():
+    # delay sowing-emergence
+    Dse_mean = 81
+    Dse_sd = 30
     # Phyllochron
     Phl = 99
     # SIRIUS PARAMETERS
@@ -113,6 +116,8 @@ def Maxwell():
 
 
 def Soissons():
+    Dse_mean = 100
+    Dse_sd = 30
     Phl = 87
     VAI = 0.00906
     VBEE = 0.012
@@ -163,6 +168,7 @@ def Soissons():
     d = locals().copy()
     return d
 
+
 def Caphorn():
     n0_sen = 4.76
     n1_sen = 3.56
@@ -175,13 +181,24 @@ def Caphorn():
     d = locals().copy()
     return d
 
+
 def Renan():
+    Dse_mean = 125
+    Dse_sd = 30
     Phl = 112
     VAI = 0.00456
     VBEE = 0.012
     SLDL = 1.12
     d = locals().copy()
     return d
+
+
+def Thesee():
+    Dse_mean = 125
+    Dse_sd = 30
+    d = locals().copy()
+    return d
+
 
 def Gigant_Maxwell():
     Param_PlHeight = 110

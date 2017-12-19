@@ -169,6 +169,24 @@ def initialisation(user_parameters):
         for what in genotypic:
             parameters[what][g] = gp[what]
 
+    # Dse
+    parameters['Dse'] = {}
+    Dse_mean = parameters.pop('Dse_mean')
+    Dse_sd = parameters.pop('Dse_sd')
+    for g in _p['genotype']:
+        parameters['Dse'][g] = {}
+        user_p = 'Dse_' + g + '_mean'
+        if user_p in parameters:  # it has been set externally
+            parameters['Dse'][g]['mean'] = parameters.pop(user_p)
+        else:
+            parameters['Dse'][g]['mean'] = Dse_mean[g]
+        user_p = 'Dse_' + g + '_sd'
+        if user_p in parameters:  # it has been set externally
+            parameters['Dse'][g]['sd'] = parameters.pop(user_p)
+        else:
+            parameters['Dse'][g]['sd'] = Dse_sd[g]
+
+
     # Phyllochron adjustment and phyllochon dependant parameters
     double_finger = datetime.date(int(_p['year']) - 1, 1, 1)  # Premier janvier
     sowing_DOY = (_p['sowing_date'] - double_finger).days  # DOY du semis
@@ -197,6 +215,8 @@ def initialisation(user_parameters):
     for what in ('till_zen_hazard', 'till_azi_hazard'):
         parameters[what] *= int(_p['hazard_axis'])
     parameters['plant_azi_hazard'] *= int(_p['hazard_plant_azi'])
+    for g in _p['genotype']:
+        parameters['Dse'][g]['sd'] *= int(_p['hazard_emerg'])
 
     # syntactic sugars
     parameters['Delta_Reg'] = _p['Delta_SGtC'] - _p['Delta_SGtR']  # | old name : duration_reg

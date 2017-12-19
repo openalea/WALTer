@@ -288,34 +288,6 @@ dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
 
-################################
-## DEVELOPMENT OF VEGETATIVE ORGANS
-######################################
-
-
-# Floral transition and final leaf number
-
-
-
-Dse_Maxwell_mean = 81
-Dse_Maxwell_sd = int(hazard_driver["emerg"]) * 30
-Dse_Soissons_mean = 100
-Dse_Soissons_sd = int(hazard_driver["emerg"]) * 30
-Dse_Thesee_mean = 125
-Dse_Thesee_sd = int(hazard_driver["emerg"]) * 30
-Dse_Renan_mean = 125
-Dse_Renan_sd = int(hazard_driver["emerg"]) * 30
-
-var_registerDSE = ["Dse_Maxwell_mean","Dse_Soissons_mean","Dse_Thesee_mean","Dse_Renan_mean","Dse_Maxwell_sd","Dse_Soissons_sd","Dse_Thesee_sd","Dse_Renan_sd"]
-
-for key, value, in params.iteritems():
-  if key in var_registerDSE:
-    exec(key+"=value")
-
-Dse = {"Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Gigant_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Darwinkel_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Soissons" : {"mean" : Dse_Soissons_mean, "sd" : Dse_Soissons_sd}, "Thesee" : {"mean" : Dse_Thesee_mean, "sd" : Dse_Thesee_sd}, "Renan" : {"mean" :Dse_Renan_mean , "sd" : Dse_Renan_sd}}
-
-
-
 # Param�tres communs
 #######################
 
