@@ -4,6 +4,7 @@ def default_parameters():
     # simulation tags
     expe_related = "Sensitivity_Analysis"
     rep = 1
+    nbj = 25 + 300  # Duree de la simulation
 
     # main controls
     lpy_cut_bug = True

@@ -7,10 +7,13 @@ dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7,
                   "Nottingham": 52.9}
 
 experiments = {
-    "Sreten": {"sowing_date": datetime.date(1998, 10, 15), "year": "1999",
+    "Sreten": {"sowing_date": datetime.date(1998, 10, 15),
+               "year": "1999",
                "meteo": "Grignon",
-               "location": "Grignon", "dist_inter_rang": 0.175,
-               "genotype": ["Soissons"], "Ln_final": 11},
+               "location": "Grignon",
+               "dist_inter_rang": 0.175,
+               "genotype": ["Soissons"],
+               "Ln_final": 11},
     "Rim1-1": {"sowing_date": datetime.date(2007, 9, 25), "year": "2008",
                "location": "Grignon", "meteo": "Grignon",
                "dist_inter_rang": 0.175,
