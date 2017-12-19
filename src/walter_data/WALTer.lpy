@@ -348,19 +348,7 @@ SLDL_Soissons = 1.34
 SLDL_Renan = 1.12 
 SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Diff�rentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier : 
 
-# Final plant height (internodes+peduncle+ear of mainstem)
-Param_PlHeight_Maxwell = 55.6155
-Param_PlHeight_Soissons = 87.6579
-Param_PlHeight_Gigant_Maxwell = 110
-Param_PlHeight_Darwinkel_Maxwell = 55.6155
 
-var_registerHeight = ["Param_PlHeight_Maxwell","Param_PlHeight_Soissons","Param_PlHeight_Gigant_Maxwell","Param_PlHeight_Darwinkel_Maxwell"]
-  
-for key, value, in params.iteritems():
-  if key in var_registerHeight:
-    exec(key+"=value")
-
-Param_PlHeight = {"Maxwell" : Param_PlHeight_Maxwell, "Gigant_Maxwell" : Param_PlHeight_Gigant_Maxwell, "Darwinkel_Maxwell" : Param_PlHeight_Darwinkel_Maxwell, "Soissons" : Param_PlHeight_Soissons}
 
 
 

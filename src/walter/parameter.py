@@ -1,4 +1,6 @@
 from walter.experimental_conditions import experimental_conditions, get_latitude
+from walter.genotypic_parameters import genotypic_parameters, get_genotypic_parameters
+
 
 def default_parameters():
     """Setup default parameters for walter simulation"""
@@ -70,6 +72,15 @@ def initialisation(user_parameters):
     #  donnee experimentale. S'il n'y a pas de donnee experimental il est a 11
     #  par defaut.
     parameters['param_Ln_final'] = _p.get("Ln_final", 11)
+
+    #  genotypic parameters
+    genotypic = genotypic_parameters()
+    for what in genotypic:
+        parameters[what] = {}
+    for g in _p['genotype']:
+        gp = get_genotypic_parameters(g, user_parameters)
+        for what in genotypic:
+            parameters[what][g] = gp[what]
 
     return parameters
 
