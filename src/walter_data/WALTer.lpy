@@ -22,6 +22,8 @@ data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
+
+
 # setup params if and only if not defined as Lsys args
 try:
   params = params
@@ -29,13 +31,10 @@ except NameError:
   params = {}
 user_parameters = default_parameters()
 user_parameters.update(params)
-for p_name in user_parameters:
-  globals().setdefault(p_name, user_parameters[p_name])
-
 # secondary (parameter dependant) parameters
-init_parameters = initialisation(user_parameters)
-for p_name in init_parameters:
-  globals().setdefault(p_name, init_parameters[p_name])
+parameters = initialisation(user_parameters)
+for p_name in parameters:
+  globals().setdefault(p_name, parameters[p_name])
 
 
 # create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
@@ -1693,7 +1692,7 @@ mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 # LIRE UN FICHIER METEO  #
 ##########################
 
-meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
+meteo_dF = pd.read_csv(pj(inputdir, "meteo", meteo + ".csv"), header=9, sep=";")
 
 var_register = ["nbj","nb_rang","nb_plantes","area_targeted","infinity_GAIp","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 

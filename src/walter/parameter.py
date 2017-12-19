@@ -1,4 +1,4 @@
-from walter.experimental_conditions import experimental_conditions, liste_expe, get_latitude
+from walter.experimental_conditions import experimental_conditions, get_latitude
 
 def default_parameters():
     # simulation tags
@@ -34,44 +34,40 @@ def default_parameters():
     return d
 
 
+def light_update(old, new):
+    """update old with new only for key in new not in old"""
+    items = {k:v for k,v in new.iteritems() if k not in old}
+    old.update(items)
+    return old
+
+
 def initialisation(user_parameters):
-    p = user_parameters
+    _p = user_parameters
+    # add experimental conditions if not user-defined with possibly
+    # user-redefined expe_related
+    _p = light_update(_p, experimental_conditions(_p['expe_related']))
 
-    hazard_driver = {"plant_azi": p['hazard_plant_azi'],
-                     "plant_xy": p['hazard_plant_xy'],
-                     "axis": p['hazard_axis'],
-                     "organ": p['hazard_organ'],
-                     "emerg": p['hazard_emerg']}
+    hazard_driver = {"plant_azi": _p['hazard_plant_azi'],
+                     "plant_xy": _p['hazard_plant_xy'],
+                     "axis": _p['hazard_axis'],
+                     "organ": _p['hazard_organ'],
+                     "emerg": _p['hazard_emerg']}
 
-    experiment = experimental_conditions(p['expe_related'])
     crop_genotype = []
-    for geno in experiment["genotype"]:
+    for geno in _p['genotype']:
         crop_genotype.append(geno)
     geno_nb = len(crop_genotype)
-    if 'year' not in user_parameters:
-        year = experiment["year"]
-    if 'sowing_date' not in user_parameters:
-        sowing_date = experiment["sowing_date"]
-    if 'dist_inter_rang' not in user_parameters:
-        dist_inter_rang = experiment["dist_inter_rang"]
-    if 'location' not in user_parameters:
-        location = experiment['location']
-    else:
-        location = user_parameters['location']
-    latitude = get_latitude(location)
+    latitude = get_latitude(_p['location'])
 
     # Si SIRIUS n'est pas active, le nombre final de feuilles est fixe a la
     #  donnee experimentale. S'il n'y a pas de donnee experimental il est a 11
     #  par defaut.
-    param_Ln_final = None
-    if p['SIRIUS_state'] == "disabled":
-        if p['expe_related'] in liste_expe():
-            param_Ln_final = experiment["Ln_final"]
-        else:
-            param_Ln_final = 11
+    param_Ln_final = _p.get("Ln_final", 11)
+
 
     d = locals().copy()
-    d.pop('p')
+    d.pop('_p')
     d.pop('user_parameters')
-    d.pop('experiment')
+    d.update(_p)
     return d
+
