@@ -298,8 +298,7 @@ dy = crop_scheme["dy"]
 ################################
 
 
-infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximit�
-cohorte_max          = 9
+
 
 
 ####################
@@ -314,19 +313,7 @@ hazard_driver = {"plant_azi": hazard_plant_azi,
 
 ### SIRIUS PARAMETERS ###
 
-# Final leaf number by SIRIUS
-Tvermin             = 0
-Tverint             = 8
-Tvermax             = 17
-Lmax                = 24
-Lmin                = 8
-DLsat               = 15
 
-# Adjusting phyllochrone to leaf number
-Ldecr               = 2
-Lincr               = 8
-phyllo_decr         = 0.75
-phyllo_incr         = 1.25
 
 # Adjusting phyllochron to extreme sowing dates
 SDSA = 200                                      # mi-juillet (en DOY)
@@ -365,19 +352,13 @@ Phl_Renan = 112
 DelayHSToCol = 0.2                                     #temps phyllochronique
 
 
-ED_I = 1.66 # Duration for internode extension (value extracted directly from ADEL-wheat) (phyllochronic time) | old name : gr_duration_internode
-ED_B = 1.6  # Duration for blade extension (phyllochronic time)                                                | old name : gr_duration_blade
-ED_FB = 1 # Duration for the extension of the flag blade(phyllochronic time)                                 | old name : gr_duration_flagblade
-ED_S = 0.4 # Duration for sheath extension (phyllochronic time)                                                 | old name : gr_duration_sheath
-ED_P = 2 # Duration for peduncle extension (phyllochronic time)                                                 | old name : gr_duration_peduncle
 
 
-# Tiller emergence
-Delta_b  = 1            #Delay between the initiation of a bud and the start of its activity (plastochronic unit) | old name : inactive_time_bud
+
 
 # Floral transition and final leaf number
 
-Psi_FT = 0 #Thermal time shift between the floral transition of axes belonging to two consecutive cohorts | old name : transiflo_shift_param
+
 
 Dse_Maxwell_mean = 81
 Dse_Maxwell_sd = int(hazard_driver["emerg"]) * 30
@@ -396,13 +377,7 @@ for key, value, in params.iteritems():
 
 Dse = {"Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Gigant_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Darwinkel_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Soissons" : {"mean" : Dse_Soissons_mean, "sd" : Dse_Soissons_sd}, "Thesee" : {"mean" : Dse_Thesee_mean, "sd" : Dse_Thesee_sd}, "Renan" : {"mean" :Dse_Renan_mean , "sd" : Dse_Renan_sd}}
 
-N_p_s = 4 #Number of primordia already preformed inside the seed | old name : nb_primord_seed
 
-# Phenology
-Delta_hf = 1.3        # Delay between heading and flowering (phyllochronic unit) | old name : delta_epi_flo
-Delta_c_GN = 30       # Duration of the critical period determining grain number (days) | old name : duration_critical_period
-Delta_hm = 800        # Delay between heading and maturity (in degree-days) | old name : delta_epi_mat
-Delta_lflf = 1.39     # Delay between the ligulation of the flag leaf and flowering (phyllochronic units) | old name : delta_ligflagleaf_flo
 
 
 # Organ final dimensions
@@ -412,7 +387,7 @@ Delta_lflf = 1.39     # Delay between the ligulation of the flag leaf and flower
 NENC = 98
 
 ## Blade final length
-l_c = 0.5                                               #length of the coleoptil at the emergence                    | old name : coleoptil_length
+
 L_B_max_Maxwell = 17.4
 L_B_max_Soissons = 22.4
 
@@ -420,46 +395,18 @@ L_B_max_Soissons = 22.4
 a_B_w_Maxwell = 0.099
 a_B_w_Soissons = 0.097
 
-# Organ death
-Delta_flsp = 100 #Thermal time delay between the senescence of the flag blade and the beginning of peduncle senescence (en degree-days) | old name : delta_senflagleaf_to_senped
 
 
-# Plant geometry
-Phi_zen_B = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_azi_B = 185       # Angle between the azimuth of two consecutive blades | old name : bl_azi_shift
-Phi_zen_T = 0         # Angle between the zenith of two consecutive tillers  | old name : till_zen_shift
-Phi_azi_T = 40        # Angle between the azimuth of two consecutive tillers | old name : till_azi_shift
-
-Phi_zen_E = 0         # Angle between ear inclination and Y axis | old name : ear_zen_shift
-Phi_azi_S = 0         # Angle between seed azimuth and X axis | old name : seed_azi_shift
-Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : seed_zen_shift
 
 # Hazard parameters
 
-# hazard_driver dictionnary will trigger if necessary hazard in different cases:
-# if hazard == False : hazard parameter value = 0, if hazard == True, hazard parameter value is set at the value of the parameter
 
-y_position_hazard = int(hazard_driver["plant_xy"]) * 2
-x_position_hazard = int(hazard_driver["plant_xy"]) * 3
-z_position_hazard = int(hazard_driver["plant_xy"]) * 0
-
-blade_incl_hazard = int(hazard_driver["organ"]) * 5
-blade_azi_hazard = int(hazard_driver["organ"]) * 20
-
-till_zen_hazard = int(hazard_driver["axis"]) * 7
-till_azi_hazard = int(hazard_driver["axis"]) * 90
-
-plant_azi_hazard = int(hazard_driver["plant_azi"]) * 360
 
 
 ## SELF-ORGANIZED TILLERING RULES
 ##################################
 
-# Tiller death
-Delta_l = 100     #Duration of radiation integration to determine the survival of a tiller (degree-day) | old name : ray_integration
-Delta_SGtC = 600                   # Thermal time between the moment a tiller stops growing and its entire removal | old name : delta_stopgr_to_cut
-Delta_SGtR = 200                   # Thermal time between the moment a tiller stops growing and the beginning of the reverse growth of leaves | old name : delta_stopgr_to_reg
-Delta_Reg = Delta_SGtC - Delta_SGtR # | old name : duration_reg
+
 
 # Param�tres communs
 #######################
@@ -470,7 +417,7 @@ PAS               = 24
 ##
 
 time_step         = 1.                                   # Temps qui s'�coule   (jour)
-Tbase             = 0.                                 
+
 
 
 liste_talles = [(1,2),(1,3)]#,(1,4),(1,5),(1,6),(1,7)]
@@ -1488,7 +1435,7 @@ mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 
 meteo_dF = pd.read_csv(pj(inputdir, "meteo", meteo + ".csv"), header=9, sep=";")
 
-var_register = ["nb_rang","nb_plantes","area_targeted","infinity_GAIp","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["nb_rang","nb_plantes","area_targeted","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print 'parms'
 print params
