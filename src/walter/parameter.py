@@ -1,7 +1,8 @@
 import datetime
 
 from walter.experimental_conditions import experimental_conditions, get_latitude
-from walter.genotypic_parameters import genotypic_parameters, get_genotypic_parameters
+from walter.genotypic_parameters import (genotypic_parameters,
+                                         get_genotypic_parameters)
 
 
 def default_parameters():
@@ -10,7 +11,8 @@ def default_parameters():
     expe_related = "Sensitivity_Analysis"
     rep = 1
     nbj = 25 + 300  # Duree de la simulation
-
+    PAS = 24
+    time_step = 1.
     # main controls
     lpy_cut_bug = True
     write_lscene = False
@@ -25,7 +27,17 @@ def default_parameters():
 
     # plot parameters
     densite = 150
+    nb_rang = 1
     crop_ccptn = "Mesh_for_nplants"
+    dist_border_x = 0.20 * 100  # inside a rang
+    dist_border_y = 0.20 * 100  # rang
+    # probably these terms are synonymous :TODO simplify using only one term?
+    nb_plt_utiles = 5 # only used for Mesh_for_nplants
+    nb_plt_temp = 1 # only used for classical
+    opt_plt_nb = 10 # only used for neo_Darwinkel
+    #
+    area_targeted = 1 # only used for Darwinkel_original
+    area_min, area_max = 1, 13 # only used for neo_Darwinkel
 
     ## CARIBU
     CARIBU_state = "enabled"
@@ -142,19 +154,35 @@ def initialisation(user_parameters):
         A set of simulation parameters
     """
     parameters = default_parameters()
+    _p = parameters
+
+    # these defaults were defined differentially depending on crop conception :
+    # is this realy usefull ?
+    if 'dist_border_x' not in user_parameters:
+        if _p['crop_ccptn'] == 'classical':
+            parameters['dist_border_x'] = 0.
+        if _p['crop_ccptn'] == 'Darwinkel_original':
+            parameters['dist_border_x'] = 0.15 * 100
+    if 'dist_border_y' not in user_parameters:
+        if _p['crop_ccptn'] == 'classical':
+            parameters['dist_border_y'] = 0.
+        if _p['crop_ccptn'] == 'Darwinkel_original':
+            parameters['dist_border_x'] = 0.15 * 100
+        if _p['crop_ccptn'] == 'neo_Darwinkel':
+            parameters['dist_border_x'] = 0.15 * 100
+
+    # update with user-defined parameters
     parameters.update(user_parameters)
 
     # expansion/ completion
-    _p = parameters
 
-    # add experimental conditions if not user-defined with possibly
-    # user-redefined expe_related
+    # expand experimental conditions defined with expe_related only if not
+    # user-defined explicitely
     parameters = light_update(_p, experimental_conditions(_p['expe_related']))
     # add derived params / aliases
     parameters['crop_genotype'] = _p['genotype']
     parameters['geno_nb'] = len(_p['genotype'])
     parameters['latitude'] = get_latitude(_p['location'])
-
     # Si SIRIUS n'est pas active, le nombre final de feuilles est fixe a la
     #  donnee experimentale. S'il n'y a pas de donnee experimental il est a 11
     #  par defaut.
@@ -185,7 +213,6 @@ def initialisation(user_parameters):
             parameters['Dse'][g]['sd'] = parameters.pop(user_p)
         else:
             parameters['Dse'][g]['sd'] = Dse_sd[g]
-
 
     # Phyllochron adjustment and phyllochon dependant parameters
     double_finger = datetime.date(int(_p['year']) - 1, 1, 1)  # Premier janvier
