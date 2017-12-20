@@ -111,6 +111,27 @@ def design_crop_Darwinkel(area=1, density=150):
     crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
     return crop_scheme
 
+
+def crop_conception(crop_ccptn='Mesh_for_n_plants', densite=150, nb_rang=1,
+                    dist_inter_rang=.135, nb_plt_utiles=1, dist_border_x=0.,
+                    dist_border_y=0, area_targeted=1, area_min=1, area_max=13,
+                    opt_plt_nb=10, nb_plt_temp=1):
+    if crop_ccptn == 'classical':
+        crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite,
+                                            dist_inter_rang)
+    elif crop_ccptn == 'Mesh_for_nplants':
+        crop_scheme = design_crop_mesh_for_nplants(densite, nb_plt_utiles,
+                                                   dist_border_x, dist_border_y)
+    elif crop_ccptn == 'Darwinkel_original':
+        crop_scheme = design_crop_Darwinkel(area_targeted, densite)
+    elif crop_ccptn == 'neo_Darwinkel':
+        crop_scheme = adapting_crop_area(densite, area_min, area_max,
+                                         dist_inter_rang, opt_plt_nb)
+    else:
+        raise ValueError('unknown crop_ccptn: ' + crop_ccptn)
+    return crop_scheme
+
+
 #def crop_conception2(densite, dx, dy, dist_inter_rang, area_max):
 #  if dx*dy > area_max:
 #    print "ATTENTION LES DIMENSIONS DE LA PARCELLE SONT TROP GRANDES!"

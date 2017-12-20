@@ -14,10 +14,7 @@ import os
 import uuid
 import json
 
-from walter.crop_conception import (design_crop_classical,
-                                    design_crop_Darwinkel,
-                                    design_crop_mesh_for_nplants,
-                                    adapting_crop_area)
+from walter.crop_conception import crop_conception
 from walter.parameter import initialisation
 
 pj = os.path.join
@@ -1105,18 +1102,16 @@ date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Dat
 DOY = int(date_current_day.strftime('%j'))
 
 # crop conception
-if crop_ccptn == 'classical':
-  crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
-elif crop_ccptn == 'Mesh_for_nplants':
-  crop_scheme = design_crop_mesh_for_nplants(densite, nb_plt_utiles, dist_border_x, dist_border_y)
-elif crop_ccptn == 'Darwinkel_original':
-  crop_scheme = design_crop_Darwinkel(area_targeted, densite)
-elif crop_ccptn == 'neo_Darwinkel':
-  crop_scheme = adapting_crop_area(densite, area_min, area_max, dist_inter_rang, opt_plt_nb)
-else:
-  raise ValueError('unknown crop_ccptn: ' + _p['crop_ccptn'])
-
+crop_scheme = crop_conception(crop_ccptn=crop_ccptn, densite=densite,
+                              nb_rang=nb_rang, dist_inter_rang=dist_inter_rang,
+                              nb_plt_utiles=nb_plt_utiles,
+                              dist_border_x=dist_border_x,
+                              dist_border_y=dist_border_y,
+                              area_targeted=area_targeted, area_min=area_min,
+                              area_max=area_max, opt_plt_nb=opt_plt_nb,
+                              nb_plt_temp=nb_plt_temp)
 plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
+
 nb_rangs = crop_scheme["nb_rang"]
 nb_plantes = crop_scheme["nplant_peupl"]
 dist_inter_rang = crop_scheme["dist_inter_rang"]
