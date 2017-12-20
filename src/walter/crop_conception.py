@@ -182,36 +182,3 @@ def design_crop_Darwinkel(area=1, density=150):
 #     crop_scheme["dist_intra_rang"]) * 100) + (
 #                                    crop_scheme["dist_intra_rang"]) * 100) / 2
 #     return crop_scheme
-
-def new_crop_conception(crop_ccptn='classical', nb_plt_temp=1, nb_rang=1, densite=150, dist_inter_rang = 0.135):
-    if crop_ccptn == 'classical':
-        crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
-        plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
-        dist_border_x = 0. * 100  # inside a rang
-        dist_border_y = 0. * 100  # rang
-    elif crop_ccptn == "Mesh_for_nplants":
-        nb_plt_utiles = 50
-        dist_border_x = 0.20 * 100  # inside a rang
-        dist_border_y = 0.20 * 100  # rang
-        crop_scheme = design_crop_mesh_for_nplants (densite, nb_plt_utiles, dist_border_x, dist_border_y)
-        plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
-        print "dist_border_x : ", dist_border_x, "dist_border_y : ", dist_border_y
-    elif crop_ccptn == "neo_Darwinkel":
-        area_min, area_max = 1, 13
-        opt_plt_nb = 10
-        crop_scheme = adapting_crop_area(densite, area_min, area_max,
-                           dist_inter_rang, opt_plt_nb)
-        dist_border_x = 0.2 * 100  # inside a rang
-        dist_border_y = 0.15 * 100  # rang
-        plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
-    elif crop_ccptn == "Darwinkel_original":
-        area_targeted = 1
-        dist_border_x = 0.15 * 100  # inside a rang
-        dist_border_y = 0.15 * 100  # rang
-        # border_prop = 0.8
-        crop_scheme = design_crop_Darwinkel(area_targeted, densite)
-        # dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
-        # dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
-        plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
-        print "dist_border_x : ", dist_border_x, "dist_border_y : ", dist_border_y
-
