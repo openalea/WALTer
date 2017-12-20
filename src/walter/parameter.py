@@ -197,7 +197,7 @@ def initialisation(user_parameters):
         for what in genotypic:
             parameters[what][g] = gp[what]
 
-    # Dse
+    # Dse: special handling due to naming convention
     parameters['Dse'] = {}
     Dse_mean = parameters.pop('Dse_mean')
     Dse_sd = parameters.pop('Dse_sd')
