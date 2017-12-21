@@ -35,7 +35,7 @@ def EndEach(lstring, lscene):
     print 'Scanning lstring after fake rule:'
     for sid in lscene.todict():
       print 'sid: ' + str(sid)
-      if sid in range(len(lstring)):
+      if sid in range(len(new_lstring)):
         print new_lstring[sid].name
       else:
         print 'sid ' + str(sid) + ' found in lscene, but not in lstring'
