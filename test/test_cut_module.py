@@ -19,6 +19,7 @@ def test_cut_bug():
     new_lstring = fake_lsys.iterate()
     lscene = lsys.sceneInterpretation(lstring)
     for sid in lscene.todict():
+        assert sid in range(len(lstring))
         # suucceed if correction is needed
         assert new_lstring[sid].name == 'Internode'
         #  succeed if lpy bug has been fixed
