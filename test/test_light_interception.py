@@ -1,28 +1,65 @@
 from walter import project
-from openalea.lpy import Lsystem
-from alinea.caribu.CaribuScene import CaribuScene
+import pandas
 
-fake_rule = """
-Fake:
-  produce Fake"""
-fake_lsys = Lsystem()
-fake_lsys.addRule(fake_rule)
+def test_zero_light():
+
+        #assert : all tillers receive light (value > 0 for Sum_PAR in the PAR_per_axes.csv output file)
+
+    p = project.Project(name='zero_light')
+    params = p.csv_parameters('sim_scheme_test.csv')[0]
+    params.update(dict(nb_plt_temp=50, nb_rang=10, nbj=156))
+    outs = p.which_outputs
+    p.which_outputs = outs
+    lsys, lstring = p.run(**params)
+    PAR_per_axes_dico = lsys.context().locals()['PAR_per_axes_dico']
+    df = pandas.DataFrame(PAR_per_axes_dico)
+    PAR = df.groupby('Num_plante').agg('sum')['Sum_PAR'].values
+    assert all(PAR > 0)
+    with open(p.dirname/'ID_simul.txt') as f:
+        id = f.read()
+    dfout = pandas.read_csv(p.dirname/'output'/id/'PAR_per_axes.csv', sep='\t')
+    PARout = df.groupby('Num_plante').agg('sum')['Sum_PAR'].values
+    assert all(PARout > 0)
+
+    p.deactivate()
+    p.remove(force=True)
 
 
-def force_cut(lstring):
-    fake_lsys.axiom = lstring
-    return fake_lsys.iterate()
 
-def test_zero_light_dyn():
-    p = project.Project(name='simu_test1')
-    lsys, lstring = p.run(crop_ccptn='classical',
-                          nb_plt_utiles=0,
-                          nb_plt_temp=50,
-                          nb_rang=10,
-                          dist_border_x=10,
-                          dist_border_y=10,
-                          nbj=50,
-                          beginning_CARIBU=2900)
+def test_shift_in_light():
+
+    def run_one_simu(p, param_dict):
+        lsys, lstring = p.run(**param_dict)
+
+        #assert : the difference between the light intercepted by one plant on one day and the light intercepted by that same plant the next day (PAR_per_axes.csv output file ; value for Sum_PAR) is always less than 1000% (or x10)
+
+    p = project.Project(name='shift_in_light')
+    params = p.csv_parameters('sim_scheme_test.csv')
+
+    outs = p.which_outputs
+    p.which_outputs = outs
+    for param_dict in params:
+        yield run_one_simu, p, param_dict
+    p.deactivate()
+    p.remove(force=True)
+
+
+def debug_stuff():
+    # some lines that can be run after lsys, lstring = p.run(**pars)
+    # to examine how caribu run
+    from openalea.lpy import Lsystem
+    from alinea.caribu.CaribuScene import CaribuScene
+
+    fake_rule = """
+    Fake:
+      produce Fake"""
+    fake_lsys = Lsystem()
+    fake_lsys.addRule(fake_rule)
+
+    def force_cut(lstring):
+        fake_lsys.axiom = lstring
+        return fake_lsys.iterate()
+
     lstring = force_cut(lstring)
     lscene = lsys.sceneInterpretation(lstring)
     c_scene = CaribuScene(scene=lscene, scene_unit="m")
@@ -35,7 +72,7 @@ def test_zero_light_dyn():
     Tempcum = lsys.context().locals()['Tempcum']
     Temperature = lsys.context().locals()['Temperature']
 
-    #emulate endeach
+    # emulate endeach
     if Temperature > 0 and res_sky:
         for num_plt in axis_census.keys():
             for axis in axis_census[num_plt].keys():
@@ -65,47 +102,5 @@ def test_zero_light_dyn():
                 else:
                     dico_PAR_per_axis[lstring[id][0].num_plante][
                         lstring[id][0].tiller][round(Tempcum, 1)] += \
-                    lstring[id][0].PAR / Temperature / tiller_surface[
-                        (lstring[id][0].num_plante, lstring[id][0].tiller)]
-    print dico_PAR_per_axis
-
-
-    p.deactivate()
-    p.remove(force=True)
-
-
-def test_zero_light():
-
-    def run_one_simu(p, param_dict):
-        lsys, lstring = p.run(**param_dict)
-
-        #assert : all tillers receive light (value > 0 for Sum_PAR in the PAR_per_axes.csv output file)
-
-    p = project.Project(name='zero_light')
-    params = p.csv_parameters('sim_scheme_test.csv')
-
-    outs = p.which_outputs
-    p.which_outputs = outs
-    for param_dict in params:
-        yield run_one_simu, p, param_dict
-    p.deactivate()
-    p.remove(force=True)
-
-
-
-def test_shift_in_light():
-
-    def run_one_simu(p, param_dict):
-        lsys, lstring = p.run(**param_dict)
-
-        #assert : the difference between the light intercepted by one plant on one day and the light intercepted by that same plant the next day (PAR_per_axes.csv output file ; value for Sum_PAR) is always less than 1000% (or x10)
-
-    p = project.Project(name='shift_in_light')
-    params = p.csv_parameters('sim_scheme_test.csv')
-
-    outs = p.which_outputs
-    p.which_outputs = outs
-    for param_dict in params:
-        yield run_one_simu, p, param_dict
-    p.deactivate()
-    p.remove(force=True)
+                        lstring[id][0].PAR / Temperature / tiller_surface[
+                            (lstring[id][0].num_plante, lstring[id][0].tiller)]
