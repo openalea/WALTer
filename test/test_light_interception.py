@@ -28,18 +28,22 @@ def test_zero_light():
 
 def test_shift_in_light():
 
-    def run_one_simu(p, param_dict):
-        lsys, lstring = p.run(**param_dict)
 
-        #assert : the difference between the light intercepted by one plant on one day and the light intercepted by that same plant the next day (PAR_per_axes.csv output file ; value for Sum_PAR) is always less than 1000% (or x10)
-
+    #assert : the difference between the light intercepted by one plant on
+    # one day and the light intercepted by that same plant the next day
+    # (PAR_per_axes.csv output file ; value for Sum_PAR) is always less
+    # than 1000% (or x10)
     p = project.Project(name='shift_in_light')
-    params = p.csv_parameters('sim_scheme_test.csv')
-
+    params = p.csv_parameters('sim_scheme_test.csv')[0]
+    params.update(dict(nbj=165))
     outs = p.which_outputs
     p.which_outputs = outs
-    for param_dict in params:
-        yield run_one_simu, p, param_dict
+    lsys, lstring = p.run(**params)
+    PAR_per_axes_dico = lsys.context().locals()['PAR_per_axes_dico']
+    df = pandas.DataFrame(PAR_per_axes_dico)
+    one_axe = df[df.Num_plante==1][df.Num_talle==(1,)]
+    relative_variation = (one_axe.Sum_PAR.diff().abs() / one_axe.Sum_PAR)[1:] * 100
+    assert all(relative_variation < 100)
     p.deactivate()
     p.remove(force=True)
 
