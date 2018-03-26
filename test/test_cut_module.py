@@ -21,6 +21,6 @@ def test_cut_bug():
     for sid in lscene.todict():
         assert sid in range(len(lstring))
         # suucceed if correction is needed
-        assert new_lstring[sid].name == 'Internode'
+        # assert new_lstring[sid].name == 'Internode'
         #  succeed if lpy bug has been fixed
-        # assert lstring[sid].name == 'Internode'
+        assert lstring[sid].name == 'Internode'
