@@ -2132,7 +2132,7 @@ def StartEach(lstring):
   except:
     current_temperature = Temperature
 
-  global current_PAR
+  global current_PAR # Daily integrated Incoming radiation in  micromolPAR.m-2
   try:
     _current_PAR = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['PAR']
     current_PAR = _current_PAR[_current_PAR.last_valid_index()]
@@ -2293,6 +2293,8 @@ def EndEach(lstring, lscene):
           res_sky= None
           try:
             _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)
+          # The outputs are in micromolPAR.m-2 for Ei and Ea, and m2 for area
+          # TODO: check these outputs are those expected or should be converted
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
@@ -2325,7 +2327,8 @@ def EndEach(lstring, lscene):
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
                   Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
-                  
+
+                  # TODO: check these outputs are those expected or should be converted
                   if res_sky["Ei"][id] < 0:
                     new_[0].PAR = 0
                   else:
