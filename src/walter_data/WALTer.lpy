@@ -45,8 +45,8 @@ if lpy_cut_bug:
 
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
-from alinea.caribu.sky_tools import GenSky,  GetLight, Gensun, GetLightsSun
-from alinea.caribu.CaribuScene import CaribuScene
+
+from walter.light import caribu_scene
 
 # CPL
 from collections import defaultdict
@@ -2288,32 +2288,8 @@ def EndEach(lstring, lscene):
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
           print "The date : ", str(datetime.datetime.now())
-          xmin = crop_scheme["dist_intra_rang"] * 100. / 2
-          ymin = crop_scheme["dist_inter_rang"] * 100. / 2
-          xmax = xmin + crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] * 100
-          ymax = ymin + crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] * 100
-          
-          # Mapping table no longer needed for caribu tag > 1.4
 
-          # Definition ciel
-          #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
-          #On selectionne uniquement la valeur de PAR pour le current day
-          
-          #sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
-          sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
-          sky = GetLight.GetLight(sky)
-          sky = sky.split()
-          sky_tup = []
-          
-          
-          for i in range(nb_azimuth*nb_zenith):
-            sky_tup.append((float(sky[4*i]),(float(sky[4*i+1]), float(sky[4*i+2]), float(sky[4*i+3]))))
-
-          pattern=None
-          if infinity_CARIBU:
-            pattern = (xmin, ymin, xmax, ymax)
-
-          c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup, pattern = pattern )
+          c_scene = caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith)
           res_sky= None
           try:
             _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)

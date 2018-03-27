@@ -1,5 +1,7 @@
 from walter import project
+from walter.light import get_light, scene_pattern
 import pandas
+
 
 def test_zero_light():
 
@@ -25,7 +27,6 @@ def test_zero_light():
     p.remove(force=True)
 
 
-
 def test_shift_in_light():
 
 
@@ -49,6 +50,22 @@ def test_shift_in_light():
     p.remove(force=True)
 
 
+def test_infinite():
+    p = project.Project(name='shift_in_light')
+    params = p.csv_parameters('sim_scheme_test.csv')[0]
+    params.update(dict(nb_plt_utiles=1,
+                          dist_border_x=0,
+                          dist_border_y=0,
+                          nbj=53,
+                          infinity_CARIBU=1,
+                          beginning_CARIBU=290))
+    lsys, lstring = p.run(**params)
+    crop_scheme = lsys.context().locals()['crop_scheme']
+    pattern = scene_pattern(crop_scheme)
+    assert pattern[0] > 1
+
+
+
 def debug_stuff():
     # some lines that can be run after lsys, lstring = p.run(**pars)
     # to examine how caribu run
@@ -67,8 +84,11 @@ def debug_stuff():
 
     lstring = force_cut(lstring)
     lscene = lsys.sceneInterpretation(lstring)
-    light = get_light(lsys)
-    c_scene = CaribuScene(scene=lscene, scene_unit="m", light=light)
+    current_PAR = lsys.context().locals()['current_PAR']
+    nb_azimuth = lsys.context().locals()['nb_azimuth']
+    nb_zenith = lsys.context().locals()['nb_zenith']
+    light = get_light(current_PAR, nb_azimuth, nb_zenith)
+    c_scene = CaribuScene(scene=lscene, scene_unit="cm", light=light)
     _, res_sky = c_scene.run(simplify=True)
     axis_census = lsys.context().locals()['axis_census']
     Debug_PAR_dico_df = lsys.context().locals()['Debug_PAR_dico_df']
@@ -110,20 +130,3 @@ def debug_stuff():
                         lstring[id][0].tiller][round(Tempcum, 1)] += \
                         lstring[id][0].PAR / Temperature / tiller_surface[
                             (lstring[id][0].num_plante, lstring[id][0].tiller)]
-
-
-def get_light(lsys):
-    from alinea.caribu.sky_tools import GenSky, GetLight
-    current_PAR = lsys.context().locals()['current_PAR']
-    nb_azimuth = lsys.context().locals()['nb_azimuth']
-    nb_zenith = lsys.context().locals()['nb_zenith']
-    sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
-    sky = GetLight.GetLight(sky)
-    sky = sky.split()
-    sky_tup = []
-
-    for i in range(nb_azimuth * nb_zenith):
-        sky_tup.append((float(sky[4*i]), (
-        float(sky[4*i + 1]), float(sky[4*i + 2]), float(sky[4*i + 3]))))
-
-    return sky_tup
