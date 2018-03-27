@@ -40,4 +40,22 @@ def test_simu2():
     p.remove(force=True)
 
 
+def test_simu3():
+
+    def run_one_simu(p, param_dict):
+        lsys, lstring = p.run(**param_dict)
+
+        assert len(lstring) > 10
+        s = lsys.sceneInterpretation(lstring)
+        assert len(s) > 2
+
+    p = project.Project(name='simu_test3')
+    params = p.csv_parameters('sim_scheme_test.csv')
+
+    outs = p.which_outputs
+    p.which_outputs = outs
+    for param_dict in params:
+        yield run_one_simu, p, param_dict
+    p.deactivate()
+    p.remove(force=True)
 
