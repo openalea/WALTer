@@ -51,7 +51,7 @@ def test_shift_in_light():
 
 
 def test_infinite():
-    p = project.Project(name='shift_in_light')
+    p = project.Project(name='infinite_canopy')
     params = p.csv_parameters('sim_scheme_test.csv')[0]
     params.update(dict(nb_plt_utiles=1,
                           dist_border_x=0,
@@ -63,7 +63,8 @@ def test_infinite():
     crop_scheme = lsys.context().locals()['crop_scheme']
     pattern = scene_pattern(crop_scheme)
     assert pattern[0] > 1
-
+    p.deactivate()
+    p.remove(force=True)
 
 
 def debug_stuff():
@@ -88,7 +89,7 @@ def debug_stuff():
     nb_azimuth = lsys.context().locals()['nb_azimuth']
     nb_zenith = lsys.context().locals()['nb_zenith']
     light = get_light(current_PAR, nb_azimuth, nb_zenith)
-    c_scene = CaribuScene(scene=lscene, scene_unit="cm", light=light)
+    c_scene = CaribuScene(scene=lscene, scene_unit="m", light=light)
     _, res_sky = c_scene.run(simplify=True)
     axis_census = lsys.context().locals()['axis_census']
     Debug_PAR_dico_df = lsys.context().locals()['Debug_PAR_dico_df']
