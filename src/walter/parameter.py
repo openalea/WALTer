@@ -186,10 +186,14 @@ def initialisation(user_parameters):
     parameters['crop_genotype'] = _p['genotype']
     parameters['geno_nb'] = len(_p['genotype'])
     parameters['latitude'] = get_latitude(_p['location'])
-    # Si SIRIUS n'est pas active, le nombre final de feuilles est fixe a la
-    #  donnee experimentale. S'il n'y a pas de donnee experimental il est a 11
-    #  par defaut.
-    parameters['param_Ln_final'] = _p.get("Ln_final", 11)
+
+    # Si SIRIUS n'est pas active et si le parametre utilisateur n'est pas fixe,
+    #  le nombre final de feuilles est fixe a la donnee experimentale definie dans
+    # experimental_condition.
+    #  Si le parametre utilisateur existe pour le genotype, il a priorite sur
+    # la donnee experimentale
+    # TODO : check this rule is realy what the user wants
+    parameters['param_Ln_final'] = _p.get("Ln_final", {})
 
     #  genotypic parameters
     genotypic = genotypic_parameters()
@@ -199,6 +203,8 @@ def initialisation(user_parameters):
         gp = get_genotypic_parameters(g, user_parameters)
         for what in genotypic:
             parameters[what][g] = gp[what]
+        if 'Ln_final_' + g in user_parameters:
+            parameters['param_Ln_final'][g] = user_parameters['Ln_final_' + g]
 
     # Dse: special handling due to naming convention
     parameters['Dse'] = {}
