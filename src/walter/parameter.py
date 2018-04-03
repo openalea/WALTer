@@ -29,6 +29,9 @@ def default_parameters():
     densite = 150
     nb_rang = 1
     crop_ccptn = "Mesh_for_nplants"
+    # "random" : random choice among genotype list (defined in crop_conception)
+    # "equal" : iterate over a recycled genotype list
+    genotype_proportion = "random"
     dist_border_x = 0.20 * 100  # inside a rang
     dist_border_y = 0.20 * 100  # rang
     # probably these terms are synonymous :TODO simplify using only one term?
