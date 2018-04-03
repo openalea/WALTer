@@ -18,6 +18,8 @@ def Maxwell():
     # #He : 1.34     #Ly : 1.467    #Lecarpentier :
     SLDL = 1.34
 
+    # Angle between blade inclination and Y axis | old name : bl_incl_shift
+    Phi_zen_B = 40
     # Final plant height (internodes+peduncle+ear of mainstem)
     Param_PlHeight = 55.6155
     # Tiller emergence
@@ -117,17 +119,9 @@ def Maxwell():
 
 def Soissons():
     Dse_mean = 100
-    Dse_sd = 30
     Phl = 87
-    VAI = 0.00906
-    VBEE = 0.012
-    SLDL = 1.34
 
     Param_PlHeight = 87.6579
-    P_T = 0.88
-    P_CT = 0
-    shp_I = "squared"
-    N_I_el = 5
     inc_I = 4.5
     a_I_L = 0.79
     b_I_L = -0.29
@@ -165,7 +159,9 @@ def Soissons():
     PAR_t = 150000
     Delta_prot = 50
 
-    d = locals().copy()
+    new = locals().copy()
+    d = Maxwell()
+    d.update(new)
     return d
 
 
@@ -178,7 +174,10 @@ def Caphorn():
     t1_sen = 671
     t2_sen = 1050
     t3_sen = 1900
-    d = locals().copy()
+
+    new = locals().copy()
+    d = Maxwell()
+    d.update(new)
     return d
 
 
@@ -189,14 +188,20 @@ def Renan():
     VAI = 0.00456
     VBEE = 0.012
     SLDL = 1.12
-    d = locals().copy()
+
+    new = locals().copy()
+    d = Maxwell()
+    d.update(new)
     return d
 
 
 def Thesee():
     Dse_mean = 125
     Dse_sd = 30
-    d = locals().copy()
+
+    new = locals().copy()
+    d = Maxwell()
+    d.update(new)
     return d
 
 
@@ -234,8 +239,13 @@ def Darwinkel_Maxwell():
 
 
 def get_genotypic_parameters(name='Maxwell', user_parameters={}):
-    if name == 'Maxwell':
+    if name in (
+    'Maxwell', 'Darwinkel', 'Lely', 'Apache', 'A208', 'A210', 'F236', 'A398'):
         p = Maxwell()
+    elif name == 'Renan':
+        p = Renan()
+    elif name == 'Caphorn':
+        p = Caphorn()
     elif name == 'Soissons':
         p = Soissons()
     elif name == 'Gigant_Maxwell':
