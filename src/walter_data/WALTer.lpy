@@ -191,7 +191,10 @@ real_ts0 = [float("inf")]
 ### PANDAS DATAFRAME ###
 
 global GAI_dico_df
-GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[], "Weakest_axis":[],"PAR_weakest_axis":[]}
+if CARIBU_state == "enabled":
+  GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[], "Weakest_axis":[],"PAR_weakest_axis":[]}
+if CARIBU_state == "disabled":
+  GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[]}
 
 global Apex_Sirius_dico_df
 Apex_Sirius_dico_df = {"Elapsed_time" :[],"Temperature" :[],"Temp_cum" :[], "Daylength" :[], "Num_plante" :[], "Genotype" :[], "PN"  :[], "LN"  :[], "Sumtemp"   :[], "Vern_rate" :[], "Vern_prog" :[], "Vern_flag" :[], "Debut_ppd_flag" :[], "Fin_ppd_flag" :[], "Ln_pot" :[], "Var_L_min" :[],"Ln_app" :[], "Ln_final" :[]}
@@ -1119,6 +1122,12 @@ dist_intra_rang = crop_scheme["dist_intra_rang"]
 dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
 
+
+if genotype_proportion == "equal":
+  genotype_list = crop_genotype*int(ceil(crop_scheme["nplant_peupl"]/geno_nb))
+  random.shuffle(genotype_list)
+
+
 # Create a unique ID to the simulation according to a specific combination of parameters value
 global folder_name
 global out_dir
@@ -1420,8 +1429,7 @@ def EndEach(lstring, lscene):
           
           
           for i in range(nb_azimuth*nb_zenith):
-            sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
-            i+=4 
+            sky_tup.append((float(sky[4*i]),(float(sky[4*i+1]), float(sky[4*i+2]), float(sky[4*i+3]))))
           
           c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
           res_sky= None
@@ -1696,7 +1704,6 @@ def End(lstring):
                        "l_c" + "\t" + "%s" % "All" + "\t" + "%s" % l_c + "\n" +
                        "L_b_S" + "\t" + "All" + "\t" + "%s" % L_b_S + "\n" +
                        "Psi_FT" + "\t" + "All" + "\t" + "%s" % Psi_FT + "\n" +
-                       "Ln_final"  + "\t" + "All" + "\t" + "%s" % param_Ln_final + "\n" +
                        "Tbase" + "\t" + "All" + "\t" + "%s" % Tbase + "\n" +
                        "T_vern_min" + "\t" + "All" + "\t" + "%s" % Tvermin + "\n" +
                        "T_vern_opt" + "\t" + "All" + "\t" + "%s" % Tverint + "\n" +
@@ -1722,7 +1729,6 @@ def End(lstring):
                        "ED_B" + "\t" + "All" + "\t" + "%s" % ED_B + "\n" +
                        "ED_FB"  + "\t" + "All" + "\t" + "%s" % ED_FB + "\n" +
                        "ED_S" + "\t" + "All" + "\t" + "%s" % ED_S + "\n" +
-                       "Phi_zen_B"  + "\t" + "All" + "\t" + "%s" % Phi_zen_B + "\n" +
                        "Phi_azi_B"  + "\t" + "All" + "\t" + "%s" % Phi_azi_B + "\n" +
                        "Phi_zen_T"   + "\t" + "All" + "\t" + "%s" % Phi_zen_T + "\n" +
                        "Phi_azi_T"  + "\t" + "All" + "\t" + "%s" % Phi_azi_T + "\n" +
@@ -1735,7 +1741,8 @@ def End(lstring):
                        "blade_incl_hazard"  + "\t" + "All" + "\t" + "%s" % blade_incl_hazard + "\n" +
                        "blade_azi_hazard"  + "\t" + "All" + "\t" + "%s" % blade_azi_hazard + "\n" +
                        "till_zen_hazard"  + "\t" + "All" + "\t" + "%s" % till_zen_hazard + "\n" +
-                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n")
+                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" + 
+                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n")
 
   for geno in crop_genotype:
     fichier_params.write("Phl" + "\t" + "%s" % geno + "\t" + "%s" % Phl[geno] + "\n" +
@@ -1781,7 +1788,9 @@ def End(lstring):
                          "Delta_prot" + "\t" + geno + "\t" + "%s" %  Delta_prot[geno] + "\n" +
                          "PAR_t" + "\t" + geno + "\t" + "%s" % PAR_t[geno] + "\n" +
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n" +
-                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n")
+                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n" + 
+                         "Phi_zen_B" + "\t" + "%s" %  geno  + "\t" + "%s" % Phi_zen_B[geno] + "\n"+
+                         "Param_Ln_final" + "\t" + "%s" %  geno  + "\t" + "%s" % param_Ln_final[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
   fichier_individual= open(pj(out_dir,folder_name, "Individual_heterogeneity.csv"), "w")
@@ -1841,8 +1850,12 @@ Seed:
     #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
     x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
     y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
-    geno = random.choice(crop_genotype)    ## selection geno random
-    genotype_map[num_plante] = geno
+    if genotype_proportion == "random":
+      geno = random.choice(crop_genotype)    ## selection geno random
+      genotype_map[num_plante] = geno
+    elif genotype_proportion == "equal":
+      geno = genotype_list[num_plante-1]
+      genotype_map[num_plante] = geno
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[geno]["mean"],Dse[geno]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
@@ -1982,7 +1995,7 @@ Seed:
     beginning_CARIBU = params['beginning_CARIBU']
   else:
     beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
-  ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
+  ending_CARIBU = (leaf_emerg_date(ceil(max(param_Ln_final.values())),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
 
@@ -1992,7 +2005,7 @@ group 2:
 
 Apex(StA):
   if SIRIUS_state == "disabled":
-    StA.Ln_final = int(param_Ln_final)+int(random.random() + param_Ln_final%1)
+    StA.Ln_final = int(param_Ln_final[StA.geno])+int(random.random() + param_Ln_final[StA.geno]%1)
     dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
     t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust[StA.geno] #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
@@ -2114,7 +2127,7 @@ Apex(StA):
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
       
       ### End of dictionnaries formatting ###
       
@@ -2215,7 +2228,7 @@ Bud(StBu):
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
       
       ### End of dictionnaries formatting ###
       
@@ -2323,7 +2336,7 @@ Apex(StA):
         dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
         
         hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-        hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+        hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
         
         ### End of dictionnaries formatting ###
         
@@ -2553,7 +2566,7 @@ Bud(StBu):
           dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
           
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-          hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+          hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"] = Phi_azi_B + random.uniform(-blade_azi_hazard, blade_azi_hazard)
           
           ### End of dictionnaries formatting ###
