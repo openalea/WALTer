@@ -14,7 +14,6 @@ def default_parameters():
     PAS = 24
     time_step = 1.
     # main controls
-    lpy_cut_bug = True
     write_lscene = False
     write_lstring = False
     write_debug_PAR = False

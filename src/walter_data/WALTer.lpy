@@ -36,7 +36,7 @@ for p_name in parameters:
 
 
 # create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
-
+lpy_cut_bug = False
 if lpy_cut_bug:
   from openalea.lpy import Lsystem
   fake_rule = """
