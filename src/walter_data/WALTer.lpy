@@ -748,7 +748,12 @@ Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : s
 # if hazard == False : hazard parameter value = 0, if hazard == True, hazard parameter value is set at the value of the parameter
 
 y_position_hazard = int(hazard_driver["plant_xy"]) * 2
-x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+
+if crop_ccptn == "Mesh_for_nplants" or crop_ccptn == "Darwinkel_original":
+  x_position_hazard = int(hazard_driver["plant_xy"]) * 2
+else:
+  x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+
 z_position_hazard = int(hazard_driver["plant_xy"]) * 0
 
 blade_incl_hazard = int(hazard_driver["organ"]) * 5
