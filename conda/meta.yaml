@@ -27,8 +27,9 @@ requirements:
     - numpy
     - scipy
     - matplotlib
-    - openalea.mtg
     - pandas
+    - path.py
+    - openalea.mtg
     - alinea.caribu
     - boost >=1.66
     - openalea.lpy
@@ -40,12 +41,12 @@ test:
     - walter
     - walter.data_access
     - walter_data
-
-  #commands:
-  #  - eartrack --help
+  source_files:
+    - test/
+    - test/test_*.py
   commands:
-    - cd test && nosetests [unix]
-    - cd test & nosetests  [win]
+    - nosetests -v
+
 
 about:
   home: https://github.com/openalea-incubator/WALTer
