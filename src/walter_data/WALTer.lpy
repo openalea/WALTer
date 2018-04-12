@@ -748,7 +748,12 @@ Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : s
 # if hazard == False : hazard parameter value = 0, if hazard == True, hazard parameter value is set at the value of the parameter
 
 y_position_hazard = int(hazard_driver["plant_xy"]) * 2
-x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+
+if crop_ccptn == "Mesh_for_nplants" or crop_ccptn == "Darwinkel_original":
+  x_position_hazard = int(hazard_driver["plant_xy"]) * 2
+else:
+  x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+
 z_position_hazard = int(hazard_driver["plant_xy"]) * 0
 
 blade_incl_hazard = int(hazard_driver["organ"]) * 5
@@ -973,7 +978,7 @@ Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_tal
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
-  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[]}
+  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[]}
 
 
 #######################
@@ -2360,6 +2365,7 @@ def EndEach(lstring, lscene):
                 PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                 PAR_per_axes_dico["Num_plante"].append(num_plt)
                 PAR_per_axes_dico["Num_talle"].append(axis)
+                PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
                 tt = round(Tempcum, 1)
                 PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
 
