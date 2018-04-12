@@ -30,7 +30,7 @@ def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
     """Create a caribu scene from walter lscene
 
     Args:
-        lscene: walter sceene (units: cm)
+        lscene: walter scene (units: cm)
         crop_scheme:
         current_PAR: incident light (micromolPAR.m-2)
         nb_azimuth:
