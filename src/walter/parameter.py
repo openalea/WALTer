@@ -172,6 +172,10 @@ def initialisation(user_parameters):
             parameters['dist_border_x'] = 0.15 * 100
         if _p['crop_ccptn'] == 'neo_Darwinkel':
             parameters['dist_border_x'] = 0.15 * 100
+    # new strategy after PR #42
+    if 'x_position_hazard' not in user_parameters:
+        if _p['crop_ccptn'] == 'Darwinkel_original' or _p['crop_ccptn'] == 'Mesh_for_nplants':
+            parameters['x_position_hazard'] = 2
 
     # update with user-defined parameters
     parameters.update(user_parameters)
