@@ -232,7 +232,7 @@ Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_tal
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
-  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[]}
+  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[]}
 
 
 #######################
@@ -1479,6 +1479,7 @@ def EndEach(lstring, lscene):
                 PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                 PAR_per_axes_dico["Num_plante"].append(num_plt)
                 PAR_per_axes_dico["Num_talle"].append(axis)
+                PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
                 tt = round(Tempcum, 1)
                 PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
 
