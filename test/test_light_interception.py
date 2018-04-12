@@ -42,10 +42,15 @@ def test_shift_in_light():
     lsys, lstring = p.run(**params)
     PAR_per_axes_dico = lsys.context().locals()['PAR_per_axes_dico']
     df = pandas.DataFrame(PAR_per_axes_dico)
-    one_axe = df[df.Num_plante==1][df.Num_talle==(1,)]
-    relative_variation = (one_axe.Sum_PAR.diff().abs() / one_axe.Sum_PAR)[1:] * 100
-    # to be corrected for day to day PAR variation
-    assert all(relative_variation < 200)
+    df['relative_Inc_PAR'] = df['Inc_PAR'] / df['Inc_PAR'].mean()
+    df['relative_Sum_PAR'] = df['Sum_PAR'] / df['relative_Inc_PAR']
+
+    def _mean_variation(x):
+        variation = (x.relative_Sum_PAR.diff().abs() / x.relative_Sum_PAR)[1:] * 100
+        return variation.mean()
+
+    relative_variation = df.groupby(['Num_plante', 'Num_talle']).apply(_mean_variation)
+    assert all(relative_variation < 50)
     p.deactivate()
     p.remove(force=True)
 
