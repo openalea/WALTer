@@ -36,7 +36,6 @@ def test_shift_in_light():
     # than 1000% (or x10)
     p = project.Project(name='shift_in_light')
     params = p.csv_parameters('sim_scheme_test.csv')[0]
-    params.update(dict(nbj=165))
     outs = p.which_outputs
     p.which_outputs = outs
     lsys, lstring = p.run(**params)
