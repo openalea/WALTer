@@ -12,6 +12,11 @@ from subprocess import Popen
 from path import Path
 import pandas as pd
 
+# ID management
+import json
+import uuid
+from collections import OrderedDict
+
 from openalea.lpy import Lsystem
 
 from walter import data_access
@@ -57,9 +62,11 @@ class Project(object):
         self._outputs = {}
 
     def activate(self):
+        """ Change directory to the project one. """
         set_dir(self.dirname)
 
     def deactivate(self):
+        """ Change dir to the user one. """
         set_dir(OLD_DIR)
 
     def clean(self):
@@ -123,6 +130,47 @@ class Project(object):
 
         return param_list
 
+
+    def generate_index_table(self, parameters):
+        """ Generate a file named index-table.json.
+
+        The file contains a dict with :
+          - as key an ID ('id_'+str(uuid.uuid4()))
+          - as value a dict of a set of parameters (parameters[i])
+
+        If the file already exists, do not regenerate it (due to recursive call).
+        Else generate it plus another file named from_json_to_humanbeing.txt
+
+        """
+
+        self.activate()
+
+        itable = 'index-table.json'
+
+        if os.path.isfile(itable):
+            return True
+
+        # Generate the dict ID_params
+        ID_params = OrderedDict()
+
+        for param in parameters:
+            # compute a new ID
+            ID = 'id_'+str(uuid.uuid4())
+            ID_params[ID] = param
+
+        itable_file = open(itable, "w")
+        json.dump(ID_params, itable_file)
+
+        # We can now generate from_json_to_humanbeing.txt
+        json_2_human = open("from_json_to_humanbeing.txt", "a")
+        for ID in ID_params:
+            params = ID_params[ID]
+            for key, val in params.iteritems():
+                json_2_human.write("%s \t %s \t %s \n" % (ID, key, val))
+            json_2_human.write("\n")
+        json_2_human.close()
+
+        return True
 
 class Simulation(object):
     """ Run one or several simulation """
@@ -290,6 +338,12 @@ WALTer generates a project directory and run simulations inside this directory.
 
 
     param_list = prj.csv_parameters(sim_scheme)
+
+    # Management of IDs
+    # Generate a file index-table.json and an from_json_to_humanbeing.txt file
+
+    status = prj.generate_index_table(param_list)
+
 
     if len(param_list) == 1:
         prj.run(**(param_list[0]))
