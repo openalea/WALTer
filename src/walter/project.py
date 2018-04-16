@@ -348,6 +348,8 @@ WALTer generates a project directory and run simulations inside this directory.
     if len(param_list) == 1:
         prj.run(**(param_list[0]))
     else:
+
+        print 'Multiple processes'
         tmp = prj.dirname/'tmp'
         if not tmp.exists():
             tmp.mkdir()
