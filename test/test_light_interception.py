@@ -44,6 +44,7 @@ def test_shift_in_light():
     df['relative_Inc_PAR'] = df['Inc_PAR'] / df['Inc_PAR'].mean()
     df['relative_Sum_PAR'] = df['Sum_PAR'] / df['relative_Inc_PAR']
 
+
     def _max_variation(x):
         variation = (x.relative_Sum_PAR.diff().abs() / x.relative_Sum_PAR)[1:] * 100
         return variation.max()
@@ -53,6 +54,7 @@ def test_shift_in_light():
         'Num_plante').apply(_max_variation)
 
     assert all(relative_variation < 100)
+
     p.deactivate()
     p.remove(force=True)
 
