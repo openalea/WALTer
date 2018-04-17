@@ -26,20 +26,6 @@ try:
 except NameError:
   params = {}
 
-# create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
-lpy_cut_bug = False
-if lpy_cut_bug:
-  from openalea.lpy import Lsystem
-  fake_rule = """
-  Fake:
-    produce Fake"""
-  fake_lsys = Lsystem()
-  fake_lsys.addRule(fake_rule)
-
-  def force_cut(lstring):
-    fake_lsys.axiom = lstring
-    return fake_lsys.iterate()
-
 
 ### Importations de fichiers annexes ###
 
@@ -2153,10 +2139,7 @@ def StartEach(lstring):
 
 
 def EndEach(lstring, lscene):
-  global lpy_cut_bug
-  if lpy_cut_bug:
-    # Force removal of cut branches to have a consistent indexing between lscene and lstring (see test_cut_module.py)
-    lstring = force_cut(lstring)
+
   # CALCUL DU GAI (� partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
     Hcol_max[num_plt] = dict.fromkeys(Hcol_max[num_plt].keys(), 0)
