@@ -30,9 +30,9 @@ def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
     """Create a caribu scene from walter lscene
 
     Args:
-        lscene:
+        lscene: walter scene (units: cm)
         crop_scheme:
-        current_PAR:
+        current_PAR: incident light (micromolPAR.m-2)
         nb_azimuth:
         nb_zenith:
 
@@ -41,8 +41,5 @@ def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
     """
     sky = get_light(current_PAR, nb_azimuth, nb_zenith)
     pattern = scene_pattern(crop_scheme)
-
-    # Actual scene unit are in cm. m is used to leave simulation outputs unchanged
-    # TODO : better / check / define these units to avoid such strange hack
-    return CaribuScene(scene=lscene, scene_unit="m", light=sky,
+    return CaribuScene(scene=lscene, scene_unit="cm", light=sky,
                        pattern=pattern)
