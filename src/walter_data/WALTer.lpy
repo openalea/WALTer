@@ -108,8 +108,9 @@ expe_related         = "Sensitivity_Analysis"
 densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
+write_debug_PAR = False
 
-var_register1 = ["expe_related","densite","CARIBU_state","rep"]
+var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR"]
 
 for key, value, in params.iteritems():
   if key in var_register1:
@@ -139,7 +140,6 @@ which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 print "ce qu'on ecrit:", write_output_file["Lscene"]
 
-write_debug_PAR = False
 
 #########################
 
@@ -289,7 +289,7 @@ crop_ccptn = "Mesh_for_nplants"
 area_targeted = 1
 nb_rang = 1
 
-var_register0 = ["crop_ccptn"]
+var_register0 = ["crop_ccptn", "infinity_CARIBU"]
 
 for key, value, in params.iteritems():
   if key in var_register0:
@@ -973,7 +973,7 @@ global Peraxes_dico_df
 Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
 
 global Debug_PAR_dico_df
-Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[]}
+Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[], "id": [], "tiller_surface": [],"Inc_PAR": []}
 
 
 if write_output_file["PAR_per_axes"]:
@@ -2356,9 +2356,10 @@ def EndEach(lstring, lscene):
                     Debug_PAR_dico_df["Num_organe"].append(lstring[id][0].n)
                     Debug_PAR_dico_df["Organ_surface"].append(lstring[id][0].organ_surface)
                     Debug_PAR_dico_df["Organ_PAR"].append(lstring[id][0].PAR)
-                    
-                    
-          
+                    Debug_PAR_dico_df["id"].append(id)
+                    Debug_PAR_dico_df["tiller_surface"].append(tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)]*1e-4)
+                    Debug_PAR_dico_df["Inc_PAR"].append(current_PAR)
+
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():

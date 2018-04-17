@@ -76,6 +76,22 @@ def test_infinite():
     p.remove(force=True)
 
 
+def check_light_balance():
+    """test if total par intercepted is above or below incident par"""
+    p = project.Project(name='light_balance')
+    params = p.csv_parameters('sim_scheme_test.csv')[0]
+    params.update(dict(write_debug_PAR=True,infinity_CARIBU=0))
+    outs = p.which_outputs
+    p.which_outputs = outs
+    lsys, lstring = p.run(**params)
+    crop_scheme = lsys.context().locals()['crop_scheme']
+    df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
+    control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
+    balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
+    p.deactivate()
+    p.remove(force=True)
+
+
 # debug helper
 
 def get_res_sky(lsys, lstring):
