@@ -108,8 +108,9 @@ expe_related         = "Sensitivity_Analysis"
 densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
+ID = "output_debug"
 
-var_register1 = ["expe_related","densite","CARIBU_state","rep"]
+var_register1 = ["expe_related","densite","CARIBU_state","rep","ID"]
 
 for key, value, in params.iteritems():
   if key in var_register1:
@@ -2015,67 +2016,13 @@ if genotype_proportion == "equal":
 global folder_name
 global out_dir
 
-if len(params) == 0:
-  folder_name = "output_debug"
-  out_dir = pj(data_dir, "output")
-else:
-  # If the json file already exists
-  if os.path.isfile("index-table.json"):
-    # The use of the byteify function kill encoding problems from json importation between unicode and strings 
-    
-    ID_params = byteify(json.load(open("index-table.json")))
-    already_known_ID = False
-    
-    for id in ID_params.keys():
-      
-      # If the combination of parameters has already been encountered previously and stored in the json file
-      if sorted(ID_params[id].values()) == sorted(params.values()):
-        already_known_ID = True
-      
-    #If the ID of the simulation is already known
-    if already_known_ID:
-      ID = id
-    
-    #If the ID of the simulation is not known
-    elif not already_known_ID:
-      # We choose a random ID
-      ID = "id-"+str(uuid.uuid4())
-      ID_params = {}
-      ID_params[ID] = params
-      
-      json_2_human = open("from_json_to_humanbeing.txt", "a")
-      
-      for key, val in params.iteritems():
-        json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-      json_2_human.write("\n")
-      json_2_human.close()
-      
-      json.dump(ID_params, open("index-table.json", "w"))
-      
-      
-  # If the json file doesnot exists
-  elif not os.path.isfile("index-table.json"):
-    # We choose a random ID
-    ID = "id-"+str(uuid.uuid4())
-    ID_params = {}
-    ID_params[ID] = params
-    
-    json_2_human = open("from_json_to_humanbeing.txt", "a")
-    
-    for key, val in params.iteritems():
-      json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-    json_2_human.write("\n")
-    json_2_human.close()
-      
-    json.dump(ID_params, open("index-table.json", "w"))
-    
-  folder_name = ID
-  out_dir = pj(data_dir, "output")
-  print "ID : ",ID
-  #Write the ID of the current simulation in an external file to catch it later un another script
-  ID_simul = open("ID_simul.txt","w")
-  ID_simul.write(ID)
-  ID_simul.close()
+
+folder_name = ID
+out_dir = pj(data_dir, "output")
+
+
+
+print "ID : ",ID
 
 try:
   if not os.path.exists(out_dir):

@@ -161,16 +161,26 @@ class Project(object):
         itable_file = open(itable, "w")
         json.dump(ID_params, itable_file)
 
-        # We can now generate from_json_to_humanbeing.txt
-        json_2_human = open("from_json_to_humanbeing.txt", "a")
-        for ID in ID_params:
-            params = ID_params[ID]
-            for key, val in params.iteritems():
-                json_2_human.write("%s \t %s \t %s \n" % (ID, key, val))
-            json_2_human.write("\n")
-        json_2_human.close()
+        # generate combi_parameters.csv
+        combi = []
+        for k,v in ID_params.iteritems():
+            d = {'ID': k}
+            d.update(v)
+            combi.append(d)
+        combi_param = pd.DataFrame(combi)
+        combi_param.to_csv(path_or_buf=self.dirname / 'combi_params.csv', sep='\t', index=False)
 
-        return True
+
+        # We can now generate from_json_to_humanbeing.txt
+        # json_2_human = open("from_json_to_humanbeing.txt", "a")
+        # for ID in ID_params:
+        #     params = ID_params[ID]
+        #     for key, val in params.iteritems():
+        #         json_2_human.write("%s \t %s \t %s \n" % (ID, key, val))
+        #     json_2_human.write("\n")
+        # json_2_human.close()
+
+        return ID_params
 
 class Simulation(object):
     """ Run one or several simulation """
@@ -305,6 +315,10 @@ WALTer generates a project directory and run simulations inside this directory.
 
        cd simu_walter
        walter -i sim_scheme.csv
+       
+3. To run simulations and delete it after, type: 
+
+       walter -i sim_scheme.csv -p [name_test] --test_only #[IN-WORK] 
 
 """
 
@@ -313,6 +327,7 @@ WALTer generates a project directory and run simulations inside this directory.
                         help="Select input simulation scheme")
     parser.add_argument("-p", type=str,
                         help="Name of the project where simulations will be run")
+    parser.add_argument("-t_o", "--test_only", help="Delete the project after simulation", action="store_true")
 
     args = parser.parse_args()
 
@@ -327,6 +342,10 @@ WALTer generates a project directory and run simulations inside this directory.
     if args.p:
         project = args.p
         print(project)
+    if args.test_only:
+        print ("test_only")
+
+
 
     prj = Project(project)
 
@@ -344,9 +363,11 @@ WALTer generates a project directory and run simulations inside this directory.
 
     status = prj.generate_index_table(param_list)
 
+    done = False
 
     if len(param_list) == 1:
         prj.run(**(param_list[0]))
+        done = True
     else:
 
         print 'Multiple processes'
@@ -359,11 +380,17 @@ WALTer generates a project directory and run simulations inside this directory.
             df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
             scheme_name = str(tmp/'sim_scheme_%d.csv'%(i+1))
             df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
-
-            pid = Popen(["walter", "-i", scheme_name]).pid#, env={"PATH": "/Users/pradal/miniconda2/envs/adel2/bin"})
+            pid = Popen(["walter", "-i", scheme_name])
+            #, env={"PATH": "/Users/pradal/miniconda2/envs/adel2/bin"})
             #os.system("walter -i %s"%scheme_name)
             pids.append(pid)
+        for pid in pids : 
+            pid.wait() 
+        
+        done = True
 
+    if args.test_only and done:
+       prj.dirname.rmtree()
 
 
 
