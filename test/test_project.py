@@ -27,5 +27,7 @@ def test_read_parameters():
     fn = 'sim_scheme_test.csv'
     p = project.Project()
     params = p.csv_parameters('sim_scheme_test.csv')
+    params = p.generate_index_table(params)
+    params = p.csv_parameters('combi_params.csv')[0]
     assert len(params) == 1
     p.remove(force=True)

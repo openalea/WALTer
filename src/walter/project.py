@@ -130,6 +130,11 @@ class Project(object):
 
         return param_list
 
+    def get_id(self, indice=0, **params ):
+        """ Get the id of each simulation,
+            if there are several simulations at the same time, you must know which id (identifier) you want by giving the index"""
+
+        return params['ID'][indice]
 
     def generate_index_table(self, parameters):
         """ Generate a file named index-table.json.
@@ -141,6 +146,7 @@ class Project(object):
         If the file already exists, do not regenerate it (due to recursive call).
         Else generate it plus another file named from_json_to_humanbeing.txt
 
+        :param parameters: list of dict
         """
 
         self.activate()
@@ -148,7 +154,7 @@ class Project(object):
         itable = 'index-table.json'
 
         if os.path.isfile(itable):
-            return True
+           return True
 
         # Generate the dict ID_params
         ID_params = OrderedDict()
@@ -163,12 +169,14 @@ class Project(object):
 
         # generate combi_parameters.csv
         combi = []
-        for k,v in ID_params.iteritems():
+        for k, v in ID_params.iteritems():
             d = {'ID': k}
             d.update(v)
             combi.append(d)
+
+
         combi_param = pd.DataFrame(combi)
-        combi_param.to_csv(path_or_buf=self.dirname / 'combi_params.csv', sep='\t', index=False)
+        combi_param.to_csv(path_or_buf=self.dirname /'combi_params.csv', sep='\t', index=False)
 
 
         # We can now generate from_json_to_humanbeing.txt
