@@ -2886,7 +2886,7 @@ Apex(StA):
     global DOY
     
     for day in range(1,300):
-      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
+      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date of the current day for a given elapsed_time
       _current_temperature = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['TM']
       current_temperature = _current_temperature[_current_temperature.last_valid_index()]
       _Tempcum += max(Tbase,current_temperature)
@@ -2924,12 +2924,12 @@ Apex(StA):
           StA.ln = phyllo_incr * StA.sumtemp /phyll_adjust(StA.geno)
         
         StA.pn = 2 * StA.ln + 4
-        # Vernalisation
+        # Vernalization
         if StA.vrn == False:
           StA.vern_rate = vrate(current_temperature,StA.geno)
           StA.vern_prog += StA.vern_rate
           StA.vern_rate = 0
-          if StA.vern_prog >= 1 or StA.pn > Lmax: #la vernalisation progresse
+          if StA.vern_prog >= 1 or StA.pn > Lmax: #the vernalization is progressing
             StA.vrn = True
             StA.var_Lmin = max(StA.var_Lmin, StA.pn)
           else:
@@ -2937,7 +2937,7 @@ Apex(StA):
             if StA.pn >= StA.Ln_pot:
               StA.vrn = True
               StA.var_Lmin = max((StA.Ln_pot + StA.pn)/2.0, StA.var_Lmin)
-        # Photoperiode
+        # Photoperiod
         if StA.vrn == True and StA.ln > 1.5:
           if StA.photop_flag == False:
             StA.debut_ppd = True
@@ -2947,7 +2947,7 @@ Apex(StA):
             else:
               StA.Ln_app = StA.var_Lmin + SLDL[StA.geno] * (DLsat - duree_du_jour(latitude,DOY))
               #Sortie finale de la s�rie de tests
-              if 0.5 * StA.Ln_app <= StA.ln: # Sert � d�terminer le nombre de feuilles visibles EDIT (c'est plut�t le nombre de primordia emis)
+              if 0.5 * StA.Ln_app <= StA.ln: # Used to determine the number of visible leaves EDIT (It's rather the number of emitted primordia)
                 StA.photop_flag = True
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
@@ -2958,7 +2958,7 @@ Apex(StA):
                 t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
                 t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
     _Tempcum = 0
-    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
+    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date of the current day for a given elapsed_time
     DOY = int(date_current_day.strftime('%j'))
     useGroup(3)
 
