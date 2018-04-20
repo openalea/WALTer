@@ -2806,8 +2806,8 @@ Apex(StA):
   if SIRIUS_state == "disabled":
     StA.Ln_final = int(param_Ln_final[StA.geno])+int(random.random() + param_Ln_final[StA.geno]%1)
     dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
-    t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
-    t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
+    t_beg_reg_ind = t_beg_reg[StA.geno] - (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"]) #The parameter t_beg_reg[StA.geno] has been set for a plant with 11 leaves. If the individual considered has more leaves or less leaves, t_beg_reg_ind must be adjusted.
+    t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno)
     useGroup(3)
   
   elif SIRIUS_state == "enabled":
@@ -2885,8 +2885,8 @@ Apex(StA):
                 StA.Ln_final = int(StA.Ln_app)+int(random.random()+StA.Ln_app%1)
                 dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
                 
-                t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
-                t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
+                t_beg_reg_ind = t_beg_reg[StA.geno] - (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"]) #The parameter t_beg_reg[StA.geno] has been set for a plant with 11 leaves. If the individual considered has more leaves or less leaves, t_beg_reg_ind must be adjusted.
+                t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno)
     _Tempcum = 0
     date_current_day = sowing_date + datetime.timedelta(2) 	        # Date of the current day for a given elapsed_time
     DOY = int(date_current_day.strftime('%j'))
