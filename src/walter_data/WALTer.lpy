@@ -1282,12 +1282,12 @@ def SSI_tiller(Tht, tiller, Ln_final, phyllo, n1, n3, ts1, ts3, Dse, DelayTipToH
     a = 0
     b = 0
   elif tHS0 <= Tht < real_ts1:
-    s0 = 0 #Nombre de feuilles mortes � t0
+    s0 = 0 #Number of dead leaves at t0
     a = (s1 - s0)/(real_ts1 - real_ts0[0])
     b = s1 - a*real_ts1
   #Deuxieme phase de senescence
   elif real_ts1 <= Tht <= real_ts3:
-    s3 = Ln_final                #Nombre de feuilles mortes � t2
+    s3 = Ln_final                #Number of dead leaves at t2
     a = (s3 - s1)/(real_ts3 - real_ts1)
     b = s3 - a*real_ts3
   elif Tht > real_ts3:
@@ -2790,10 +2790,11 @@ Seed:
   shortest_phyllo = min(all_phyllo.keys())
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
+  earliest_t_beg_reg = min(t_beg_reg.values()) - (11 - floor(min(param_Ln_final.values())))
   if 'beginning_CARIBU' in params:
     beginning_CARIBU = params['beginning_CARIBU']
   else:
-    beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
+    beginning_CARIBU = (leaf_emerg_date(earliest_t_beg_reg, (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
   ending_CARIBU = (leaf_emerg_date(ceil(max(param_Ln_final.values())),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
