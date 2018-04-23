@@ -4212,9 +4212,9 @@ CutPointBud(StCPB):
   #StCPB.zenith = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
   StCPB.azimuth = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_azimuth"]
   if StCPB.tiller == (1,):
-    produce @R/(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+    produce @R/(StCPB.azimuth)+(StCPB.zenith)
   else:
-    produce /(StCPB.azimuth)+(StCPB.zenith)F(0.01)
+    produce /(StCPB.azimuth)+(StCPB.zenith)
 
 endlsystem
 ###### INITIALISATION ######
