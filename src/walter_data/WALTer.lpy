@@ -4052,10 +4052,9 @@ interpretation:
 #  produce ;(4)lorient@g(Scaled(Vector3(1,1,StL.length),Leaf))
 
 Sheath(StS):
+  my_color = 6
   if StS.photosynthetic == True:
-    produce ;(2)_(StS.diameter/2)F(StS.length)
-  else:
-    produce ;(6)_(StS.diameter/2)F(StS.length)
+    my_color = 2
   if StS.visible_length > 1e-6:
     # To represent only the longest blade and thus to avoid nested cylinders
     produce ;(my_color)_(StS.diameter/2)F(StS.visible_length)
@@ -4195,7 +4194,7 @@ Peduncle(StP):
 
 Internode(StI):
   if StI.photosynthetic == True:
-    produce ;(3)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
+    my_color = 3
   else:
     my_color = 5
   
