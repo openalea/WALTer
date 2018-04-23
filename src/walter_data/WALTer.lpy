@@ -4088,7 +4088,6 @@ Blade(StBl):
             produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno],0.25,StBl.visible_length),Blade_geo))
           else:
             produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno]-0.05,0.25,StBl.visible_length),Blade_geo))
-
         # Si la ligule du limbe est apparente
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
