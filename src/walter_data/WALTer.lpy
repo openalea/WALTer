@@ -4199,7 +4199,7 @@ Internode(StI):
     my_color = 5
   
   if StI.visible_length > 1e-6:
-    produce ;(my_color)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
+    produce ;(my_color)_(StI.diameter/2)F(StI.visible_length)\(StI.azimuth)
   else:
     produce \(StI.azimuth)
 
