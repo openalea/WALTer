@@ -12,12 +12,15 @@ def test_main():
                           dist_border_y=0,
                           nbj=30,
                           beginning_CARIBU=290)
-
+	
     assert len(lstring) > 10
     s=lsys.sceneInterpretation(lstring)
     assert len(s) == 1
 
     p.deactivate()
     p.remove(force=True)
+
+
+
 
 

@@ -17,7 +17,6 @@ import json
 
 pj = os.path.join
 data_dir = os.getcwd()
-
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
@@ -28,7 +27,7 @@ except NameError:
   params = {}
 
 # create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
-lpy_cut_bug = True
+lpy_cut_bug = False
 if lpy_cut_bug:
   from openalea.lpy import Lsystem
   fake_rule = """
@@ -46,8 +45,8 @@ if lpy_cut_bug:
 
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
-from alinea.caribu.sky_tools import GenSky,  GetLight, Gensun, GetLightsSun
-from alinea.caribu.CaribuScene import CaribuScene
+
+from walter.light import caribu_scene
 
 # CPL
 from collections import defaultdict
@@ -109,8 +108,9 @@ expe_related         = "Sensitivity_Analysis"
 densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
+write_debug_PAR = False
 
-var_register1 = ["expe_related","densite","CARIBU_state","rep"]
+var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR"]
 
 for key, value, in params.iteritems():
   if key in var_register1:
@@ -140,7 +140,6 @@ which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 print "ce qu'on ecrit:", write_output_file["Lscene"]
 
-write_debug_PAR = False
 
 #########################
 
@@ -248,34 +247,34 @@ def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_bo
 
 # Setting experimental informations
 experimental_conditions = {
-"Sreten":{"sowing_date" : datetime.date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim1-1":{"sowing_date" : datetime.date(2007,9,25), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim1-2":{"sowing_date" : datetime.date(2007,11,12), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim2-1":{"sowing_date" : datetime.date(2008,9,30), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11.3},
-"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
-"Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":11},
-"Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11},
-"Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":11},
-"Ouitamics-2014":{"sowing_date" : datetime.date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":11},
-"None":{"sowing_date" : datetime.date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":11},
-"Mariem_mean":{"sowing_date" : datetime.date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11},
-"Darwinkel_Grignon_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":11},
-"Darwinkel_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":11.3
+"Sreten":{"sowing_date" : datetime.date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim1-1":{"sowing_date" : datetime.date(2007,9,25), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim1-2":{"sowing_date" : datetime.date(2007,11,12), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim2-1":{"sowing_date" : datetime.date(2008,9,30), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11.3}},
+"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
+"Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":{"Lely":11}},
+"Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Ouitamics-2014":{"sowing_date" : datetime.date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":{"Soissons":11,"Apache":11, "Renan":11, "Caphorn":11, "A208":11, "A210":11, "F236":11, "A398":11}},
+"None":{"sowing_date" : datetime.date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":{"Soissons":11,"Maxwell":11}},
+"Mariem_mean":{"sowing_date" : datetime.date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11}},
+"Darwinkel_Grignon_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Darwinkel_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11.3}
 },
-"Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":11},
-"Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":11},
-"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":11.3},
+"Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
+"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
 }
 
 liste_expe = experimental_conditions.keys()
 
 ## CARIBU
-infinity_CARIBU      = bool(0)              # En booleen 0 : False 1: True
+infinity_CARIBU = 0              # En booleen 0 : False 1: True
 nb_azimuth = 5
 nb_zenith = 4
 
@@ -290,7 +289,7 @@ crop_ccptn = "Mesh_for_nplants"
 area_targeted = 1
 nb_rang = 1
 
-var_register0 = ["crop_ccptn"]
+var_register0 = ["crop_ccptn", "infinity_CARIBU"]
 
 for key, value, in params.iteritems():
   if key in var_register0:
@@ -344,9 +343,9 @@ elif crop_ccptn == "Darwinkel_original":
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 1
-  dist_border_x = 0.0*100 #inside a rang
-  dist_border_y = 0.0*100 #rang 
+  nb_plt_utiles = 50
+  dist_border_x = 0.20*100 #inside a rang
+  dist_border_y = 0.20*100 #rang 
   crop_scheme = {"density" : densite}
   design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -360,6 +359,14 @@ dist_inter_rang = crop_scheme["dist_inter_rang"]
 dist_intra_rang = crop_scheme["dist_intra_rang"]
 dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
+
+genotype_proportion = "random"
+
+var_register_genotype_proportion = ["genotype_proportion"]
+
+for key, value, in params.iteritems():
+  if key in var_register_genotype_proportion:
+    exec(key+"=value")
 
 
 geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de g�notypes compris sur la parcelle
@@ -386,13 +393,74 @@ if SIRIUS_state == "disabled":
   if expe_related in liste_expe:
     param_Ln_final = experimental_conditions[expe_related]["Ln_final"]
   else:
-    param_Ln_final = 11
+    param_Ln_final = {}
 
-var_register_Ln_final = ["param_Ln_final"]
+var_register_Ln_final = ["Ln_final_Maxwell","Ln_final_Soissons","Ln_final_Lely","Ln_final_Gigant_Maxwell","Ln_final_Darwinkel_Maxwell","Ln_final_Apache","Ln_final_Renan","Ln_final_Caphorn","Ln_final_A208","Ln_final_A210","Ln_final_F236","Ln_final_A398"]
 
 for key, value, in params.iteritems():
   if key in var_register_Ln_final:
     exec(key+"=value")
+
+try:
+  param_Ln_final["Maxwell"] = Ln_final_Maxwell
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Soissons"] = Ln_final_Soissons
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Lely"] = Ln_final_Lely
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Gigant_Maxwell"] = Ln_final_Gigant_Maxwell
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Darwinkel_Maxwell"] = Ln_final_Darwinkel_Maxwell
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Apache"] = Ln_final_Apache
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Renan"] = Ln_final_Renan
+except NameError:
+  pass
+
+try:
+  param_Ln_final["Caphorn"] = Ln_final_Caphorn
+except NameError:
+  pass
+
+try:
+  param_Ln_final["A208"] = Ln_final_A208
+except NameError:
+  pass
+
+try:
+  param_Ln_final["A210"] = Ln_final_A210
+except NameError:
+  pass
+
+try:
+  param_Ln_final["F236"] = Ln_final_F236
+except NameError:
+  pass
+
+try:
+  param_Ln_final["A398"] = Ln_final_A398
+except NameError:
+  pass
+
 
 ####################
 #### PARAMETERS ####
@@ -653,7 +721,19 @@ Delta_flsp = 100 #Thermal time delay between the senescence of the flag blade an
 
 
 # Plant geometry
-Phi_zen_B = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Lely = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Soissons = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Renan = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Gigant_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Darwinkel_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Caphorn = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Apache = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_A208 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_A210 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_F236 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_A398 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+
 Phi_azi_B = 185       # Angle between the azimuth of two consecutive blades | old name : bl_azi_shift
 Phi_zen_T = 0         # Angle between the zenith of two consecutive tillers  | old name : till_zen_shift
 Phi_azi_T = 40        # Angle between the azimuth of two consecutive tillers | old name : till_azi_shift
@@ -668,7 +748,12 @@ Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : s
 # if hazard == False : hazard parameter value = 0, if hazard == True, hazard parameter value is set at the value of the parameter
 
 y_position_hazard = int(hazard_driver["plant_xy"]) * 2
-x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+
+if crop_ccptn == "Mesh_for_nplants" or crop_ccptn == "Darwinkel_original":
+  x_position_hazard = int(hazard_driver["plant_xy"]) * 2
+else:
+  x_position_hazard = int(hazard_driver["plant_xy"]) * 3
+
 z_position_hazard = int(hazard_driver["plant_xy"]) * 0
 
 blade_incl_hazard = int(hazard_driver["organ"]) * 5
@@ -685,17 +770,25 @@ plant_azi_hazard = int(hazard_driver["plant_azi"]) * 360
 
 # Cessation of tillering
 GAI_c_Maxwell = 0.59
+GAI_c_Soissons = 0.78
+GAI_c_Lely = 0.59
 GAI_c_Darwinkel_Maxwell = 0.35
 GAI_c_Gigant_Maxwell = 0.35
-GAI_c_Soissons = 0.78
+GAI_c_Renan = 0.59
+GAI_c_Apache = 0.59
+GAI_c_Caphorn = 0.59
+GAI_c_A208 = 0.59
+GAI_c_A210 = 0.59
+GAI_c_F236 = 0.59
+GAI_c_A398 = 0.59
 
-var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell", "GAI_c_Darwinkel_Maxwell", "GAI_c_Gigant_Maxwell"]
+var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell", "GAI_c_Darwinkel_Maxwell", "GAI_c_Gigant_Maxwell","GAI_c_Lely","GAI_c_Darwinkel_Maxwell","GAI_c_Gigant_Maxwell","GAI_c_Renan","GAI_c_Apache","GAI_c_Caphorn","GAI_c_A208","GAI_c_A210","GAI_c_F236","GAI_c_A398"]
 
 for key, value, in params.iteritems():
   if key in var_registerGAI:
     exec(key+"=value")
 
-GAI_c = {"Maxwell" : GAI_c_Maxwell,  "Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell, "Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Soissons" : GAI_c_Soissons} # Green Area Index threshold above which tillering of a plant stops
+GAI_c = {"Maxwell" : GAI_c_Maxwell,  "Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell, "Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Soissons" : GAI_c_Soissons, "Lely" : GAI_c_Lely,"Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell,"Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Renan" : GAI_c_Renan,"Apache" : GAI_c_Apache,"Caphorn" : GAI_c_Caphorn,"A208" : GAI_c_A208,"A210" : GAI_c_A210,"F236" : GAI_c_F236,"A398" : GAI_c_A398} # Green Area Index threshold above which tillering of a plant stops
 
 dGAIp = 1			# Maximal range of plant detection (meter)
 L_b_S = 2      # Buried length of the first sheath (in cm) | old name : L_burried
@@ -724,17 +817,25 @@ for key, value, in params.iteritems():
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell,  "Darwinkel_Maxwell" : t_beg_reg_Darwinkel_Maxwell, "Gigant_Maxwell" : t_beg_reg_Gigant_Maxwell,"Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
 PAR_t_Maxwell = 280000
+PAR_t_Soissons = 150000
+PAR_t_Lely = 280000
 PAR_t_Darwinkel_Maxwell = 100000
 PAR_t_Gigant_Maxwell = 100000
-PAR_t_Soissons = 150000
+PAR_t_Renan = 280000
+PAR_t_Apache = 280000
+PAR_t_Caphorn = 280000
+PAR_t_A208 = 280000
+PAR_t_A210 = 280000
+PAR_t_F236 = 280000
+PAR_t_A398 = 280000
 
-var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell", "PAR_t_Darwinkel_Maxwell", "PAR_t_Gigant_Maxwell"]
+var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell", "PAR_t_Darwinkel_Maxwell", "PAR_t_Gigant_Maxwell","PAR_t_Lely","PAR_t_Darwinkel_Maxwell","PAR_t_Gigant_Maxwell","PAR_t_Renan","PAR_t_Apache","PAR_t_Caphorn","PAR_t_A208","PAR_t_A210","PAR_t_F236","PAR_t_A398"]
 
 for key, value, in params.iteritems():
   if key in var_registerPARt:
     exec(key+"=value")
 
-PAR_t = {"Maxwell" : PAR_t_Maxwell,  "Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell, "Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Soissons" : PAR_t_Soissons}  # PAR threshold below which a tiller don't survive | old name : PARseuil
+PAR_t = {"Maxwell" : PAR_t_Maxwell,  "Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell, "Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Soissons" : PAR_t_Soissons, "Lely" : PAR_t_Lely,"Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell,"Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Renan" : PAR_t_Renan,"Apache" : PAR_t_Apache,"Caphorn" : PAR_t_Caphorn,"A208" : PAR_t_A208,"A210" : PAR_t_A210,"F236" : PAR_t_F236,"A398" : PAR_t_A398}  # PAR threshold below which a tiller don't survive | old name : PARseuil
 Delta_l = 100     #Duration of radiation integration to determine the survival of a tiller (degree-day) | old name : ray_integration
 
 
@@ -764,7 +865,7 @@ PAS               = 24
 
 ##
 
-nbj               = 22 + 300                             # Dur�e de la simulation
+nbj               = 25 + 300                             # Dur�e de la simulation
 time_step         = 1.                                   # Temps qui s'�coule   (jour)
 Tbase             = 0.                                 
 
@@ -836,7 +937,10 @@ real_ts0 = [float("inf")]
 ### PANDAS DATAFRAME ###
 
 global GAI_dico_df
-GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[], "Weakest_axis":[],"PAR_weakest_axis":[]}
+if CARIBU_state == "enabled":
+  GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[], "Weakest_axis":[],"PAR_weakest_axis":[]}
+if CARIBU_state == "disabled":
+  GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[]}
 
 global Apex_Sirius_dico_df
 Apex_Sirius_dico_df = {"Elapsed_time" :[],"Temperature" :[],"Temp_cum" :[], "Daylength" :[], "Num_plante" :[], "Genotype" :[], "PN"  :[], "LN"  :[], "Sumtemp"   :[], "Vern_rate" :[], "Vern_prog" :[], "Vern_flag" :[], "Debut_ppd_flag" :[], "Fin_ppd_flag" :[], "Ln_pot" :[], "Var_L_min" :[],"Ln_app" :[], "Ln_final" :[]}
@@ -869,12 +973,12 @@ global Peraxes_dico_df
 Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
 
 global Debug_PAR_dico_df
-Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[]}
+Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[], "id": [], "tiller_surface": [],"Inc_PAR": []}
 
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
-  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[]}
+  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[]}
 
 
 #######################
@@ -1800,7 +1904,7 @@ latitude           = dico_latitudes[location]
 
 meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
 
-var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","hazard_axis","hazard_organ","hazard_emerg","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
+var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B_Maxwell","Phi_zen_B_Lely","Phi_zen_B_Soissons","Phi_zen_B_Renan","Phi_zen_B_Gigant_Maxwell","Phi_zen_B_Darwinkel_Maxwell","Phi_zen_B_Caphorn","Phi_zen_B_Apache","Phi_zen_B_A208","Phi_zen_B_A210","Phi_zen_B_F236","Phi_zen_B_A398","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 print 'parms'
 print params
@@ -1818,6 +1922,8 @@ L_B_max = {"Maxwell" : L_B_max_Maxwell, "Darwinkel_Maxwell" : L_B_max_Maxwell, "
 
 
 a_B_w = {"Maxwell" : a_B_w_Maxwell, "Darwinkel_Maxwell" : a_B_w_Maxwell, "Gigant_Maxwell" : a_B_w_Maxwell, "Soissons" : a_B_w_Soissons} # Coefficient for blade width                              | old name : a_blade_width
+
+Phi_zen_B = {"Maxwell" : Phi_zen_B_Maxwell ,"Lely" : Phi_zen_B_Lely,"Soissons" : Phi_zen_B_Soissons,"Renan" : Phi_zen_B_Renan,"Gigant_Maxwell" : Phi_zen_B_Gigant_Maxwell,"Darwinkel_Maxwell" : Phi_zen_B_Darwinkel_Maxwell,"Caphorn" : Phi_zen_B_Caphorn,"Apache" : Phi_zen_B_Apache,"A208" : Phi_zen_B_A208,"A210" : Phi_zen_B_A210,"F236" : Phi_zen_B_F236,"A398" : Phi_zen_B_A398}
 
 tab_top = datetime.date(int(year)-1,9,1)													      # On d�finit la date du d�but du fichier
 double_finger = datetime.date(int(year)-1,1,1)                               #Premier janvier
@@ -1900,6 +2006,12 @@ dist_inter_rang = crop_scheme["dist_inter_rang"]
 dist_intra_rang = crop_scheme["dist_intra_rang"]
 dx = crop_scheme["dx"]
 dy = crop_scheme["dy"]
+
+
+if genotype_proportion == "equal":
+  genotype_list = crop_genotype*int(ceil(crop_scheme["nplant_peupl"]/geno_nb))
+  random.shuffle(genotype_list)
+
 
 # Create a unique ID to the simulation according to a specific combination of parameters value
 global folder_name
@@ -2027,7 +2139,7 @@ def StartEach(lstring):
   except:
     current_temperature = Temperature
 
-  global current_PAR
+  global current_PAR # Daily integrated Incoming radiation in  micromolPAR.m-2
   try:
     _current_PAR = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['PAR']
     current_PAR = _current_PAR[_current_PAR.last_valid_index()]
@@ -2183,32 +2295,13 @@ def EndEach(lstring, lscene):
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
           print "The date : ", str(datetime.datetime.now())
-          xmin = crop_scheme["dist_intra_rang"]/2
-          ymin = crop_scheme["dist_inter_rang"]/2
-          xmax = crop_scheme["nb_plante_par_rang"] * crop_scheme["dist_intra_rang"] + crop_scheme["dist_intra_rang"]/2
-          ymax = crop_scheme["nb_rang"] * crop_scheme["dist_inter_rang"] + crop_scheme["dist_inter_rang"]/2            
-          
-          # Mapping table no longer needed for caribu tag > 1.4
 
-          # Definition ciel
-          #gensky : (global energy, skytype (soc or uoc), nb azimuth, nb zen)
-          #On selectionne uniquement la valeur de PAR pour le current day
-          
-          #sky = GenSky.GenSky()(1, 'soc', nb_azimuth, nb_zenith)
-          sky = GenSky.GenSky()(current_PAR, 'soc', nb_azimuth, nb_zenith)
-          sky = GetLight.GetLight(sky)
-          sky = sky.split()
-          sky_tup = []
-          
-          
-          for i in range(nb_azimuth*nb_zenith):
-            sky_tup.append((float(sky[i]),(float(sky[i+1]), float(sky[i+2]), float(sky[i+3]))))
-            i+=4 
-          
-          c_scene = CaribuScene(scene = lscene, scene_unit="m", light = sky_tup)
+          c_scene = caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith)
           res_sky= None
           try:
-            _, res_sky = c_scene.run(simplify=True)
+            _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)
+          # The outputs are in micromolPAR.m-2 for Ei and Ea, and m2 for area
+          # TODO: check these outputs are those expected or should be converted
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
@@ -2240,8 +2333,9 @@ def EndEach(lstring, lscene):
                  (new_.name in ("Sheath", "Internode", "Peduncle")) or
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
-                  Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
-                  
+
+
+                  # TODO: check these outputs are those expected or should be converted
                   if res_sky["Ei"][id] < 0:
                     new_[0].PAR = 0
                   else:
@@ -2253,8 +2347,9 @@ def EndEach(lstring, lscene):
                   if tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, am�liorer cette rustine
                     dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += 0
                   else:
-                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)]
+                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/(tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] *1e-4)
                   if write_debug_PAR == True :
+                    Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
                     Debug_PAR_dico_df["Elapsed_time"].append(elapsed_time)
                     Debug_PAR_dico_df["Temp_cum"].append(Temperature)
                     Debug_PAR_dico_df["Organ_type"].append(lstring[id].name)
@@ -2263,9 +2358,10 @@ def EndEach(lstring, lscene):
                     Debug_PAR_dico_df["Num_organe"].append(lstring[id][0].n)
                     Debug_PAR_dico_df["Organ_surface"].append(lstring[id][0].organ_surface)
                     Debug_PAR_dico_df["Organ_PAR"].append(lstring[id][0].PAR)
-                    
-                    
-          
+                    Debug_PAR_dico_df["id"].append(id)
+                    Debug_PAR_dico_df["tiller_surface"].append(tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)]*1e-4)
+                    Debug_PAR_dico_df["Inc_PAR"].append(current_PAR)
+
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
@@ -2273,6 +2369,7 @@ def EndEach(lstring, lscene):
                 PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                 PAR_per_axes_dico["Num_plante"].append(num_plt)
                 PAR_per_axes_dico["Num_talle"].append(axis)
+                PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
                 tt = round(Tempcum, 1)
                 PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
 
@@ -2360,12 +2457,13 @@ def EndEach(lstring, lscene):
   
   
 
-def End(lstring, lscene):
+def End(lstring):
   
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
-  
+  print "Aloha"
+
   if write_output_file["Apex_Sirius"] == True:
     _Apex_Sirius_df = pd.DataFrame(Apex_Sirius_dico_df)
     dF_labels = ["Elapsed_time","Temperature", "Temp_cum", "Daylength", "Num_plante", "Genotype", "PN", "LN", "Sumtemp", "Vern_rate", "Vern_prog", "Vern_flag", "Debut_ppd_flag", "Fin_ppd_flag", "Ln_pot", "Var_L_min","Ln_app", "Ln_final"]
@@ -2477,7 +2575,6 @@ def End(lstring, lscene):
                        "l_c" + "\t" + "%s" % "All" + "\t" + "%s" % l_c + "\n" +
                        "L_b_S" + "\t" + "All" + "\t" + "%s" % L_b_S + "\n" +
                        "Psi_FT" + "\t" + "All" + "\t" + "%s" % Psi_FT + "\n" +
-                       "Ln_final"  + "\t" + "All" + "\t" + "%s" % param_Ln_final + "\n" +
                        "Tbase" + "\t" + "All" + "\t" + "%s" % Tbase + "\n" +
                        "T_vern_min" + "\t" + "All" + "\t" + "%s" % Tvermin + "\n" +
                        "T_vern_opt" + "\t" + "All" + "\t" + "%s" % Tverint + "\n" +
@@ -2503,7 +2600,6 @@ def End(lstring, lscene):
                        "ED_B" + "\t" + "All" + "\t" + "%s" % ED_B + "\n" +
                        "ED_FB"  + "\t" + "All" + "\t" + "%s" % ED_FB + "\n" +
                        "ED_S" + "\t" + "All" + "\t" + "%s" % ED_S + "\n" +
-                       "Phi_zen_B"  + "\t" + "All" + "\t" + "%s" % Phi_zen_B + "\n" +
                        "Phi_azi_B"  + "\t" + "All" + "\t" + "%s" % Phi_azi_B + "\n" +
                        "Phi_zen_T"   + "\t" + "All" + "\t" + "%s" % Phi_zen_T + "\n" +
                        "Phi_azi_T"  + "\t" + "All" + "\t" + "%s" % Phi_azi_T + "\n" +
@@ -2516,7 +2612,8 @@ def End(lstring, lscene):
                        "blade_incl_hazard"  + "\t" + "All" + "\t" + "%s" % blade_incl_hazard + "\n" +
                        "blade_azi_hazard"  + "\t" + "All" + "\t" + "%s" % blade_azi_hazard + "\n" +
                        "till_zen_hazard"  + "\t" + "All" + "\t" + "%s" % till_zen_hazard + "\n" +
-                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n")
+                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" + 
+                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n")
 
   for geno in crop_genotype:
     fichier_params.write("Phl" + "\t" + "%s" % geno + "\t" + "%s" % Phl[geno] + "\n" +
@@ -2562,7 +2659,9 @@ def End(lstring, lscene):
                          "Delta_prot" + "\t" + geno + "\t" + "%s" %  Delta_prot[geno] + "\n" +
                          "PAR_t" + "\t" + geno + "\t" + "%s" % PAR_t[geno] + "\n" +
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n" +
-                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n")
+                         "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n" + 
+                         "Phi_zen_B" + "\t" + "%s" %  geno  + "\t" + "%s" % Phi_zen_B[geno] + "\n"+
+                         "Param_Ln_final" + "\t" + "%s" %  geno  + "\t" + "%s" % param_Ln_final[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
   fichier_individual= open(pj(out_dir,folder_name, "Individual_heterogeneity.csv"), "w")
@@ -2622,8 +2721,12 @@ Seed:
     #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
     x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
     y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
-    geno = random.choice(crop_genotype)    ## selection geno random
-    genotype_map[num_plante] = geno
+    if genotype_proportion == "random":
+      geno = random.choice(crop_genotype)    ## selection geno random
+      genotype_map[num_plante] = geno
+    elif genotype_proportion == "equal":
+      geno = genotype_list[num_plante-1]
+      genotype_map[num_plante] = geno
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[geno]["mean"],Dse[geno]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
@@ -2763,7 +2866,7 @@ Seed:
     beginning_CARIBU = params['beginning_CARIBU']
   else:
     beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
-  ending_CARIBU = (leaf_emerg_date(ceil(param_Ln_final),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
+  ending_CARIBU = (leaf_emerg_date(ceil(max(param_Ln_final.values())),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
 
@@ -2773,7 +2876,7 @@ group 2:
 
 Apex(StA):
   if SIRIUS_state == "disabled":
-    StA.Ln_final = int(param_Ln_final)+int(random.random() + param_Ln_final%1)
+    StA.Ln_final = int(param_Ln_final[StA.geno])+int(random.random() + param_Ln_final[StA.geno]%1)
     dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
     t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
     t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
@@ -2895,7 +2998,7 @@ Apex(StA):
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
       
       ### End of dictionnaries formatting ###
       
@@ -2996,7 +3099,7 @@ Bud(StBu):
       dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
       
       hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+      hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
       
       ### End of dictionnaries formatting ###
       
@@ -3104,7 +3207,7 @@ Apex(StA):
         dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
         
         hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-        hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+        hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
         
         ### End of dictionnaries formatting ###
         
@@ -3334,7 +3437,7 @@ Bud(StBu):
           dead_sheath_length[StL.num_plante][StL.tiller][StL.n] = 0
           
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n] = {}
-          hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B + random.uniform(-blade_incl_hazard, blade_incl_hazard)
+          hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_inclination"] = Phi_zen_B[StL.geno] + random.uniform(-blade_incl_hazard, blade_incl_hazard)
           hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"] = Phi_azi_B + random.uniform(-blade_azi_hazard, blade_azi_hazard)
           
           ### End of dictionnaries formatting ###
@@ -3941,8 +4044,6 @@ Ear(StE):
 
 interpretation:
 
-
-
 #Apex(StA):
 #  produce ;(7)^(45)@O(0.01)
 
@@ -3951,11 +4052,10 @@ interpretation:
 #  produce ;(4)lorient@g(Scaled(Vector3(1,1,StL.length),Leaf))
 
 Sheath(StS):
-
   if StS.photosynthetic == True:
-    my_color = 2
+    produce ;(2)_(StS.diameter/2)F(StS.length)
   else:
-    my_color = 6
+    produce ;(6)_(StS.diameter/2)F(StS.length)
   if StS.visible_length > 1e-6:
     # To represent only the longest blade and thus to avoid nested cylinders
     produce ;(my_color)_(StS.diameter/2)F(StS.visible_length)
@@ -4062,6 +4162,7 @@ Blade(StBl):
 #
 Ear(StE):
   StE.zenith = Phi_zen_E
+  #if dico_stades[StE.num_plante][StE.tiller]["End_internode_elongation"] == True and Tempcum < dico_stades[StE.num_plante][StE.tiller]["Flo"][1]:
   if StE.photosynthetic == True:
     if delta_H[StE.num_plante][StE.tiller] > 0:
       visible_length = min(delta_H[StE.num_plante][StE.tiller], L_E[StE.geno])
@@ -4094,7 +4195,7 @@ Peduncle(StP):
 
 Internode(StI):
   if StI.photosynthetic == True:
-    my_color = 3
+    produce ;(3)_(StI.diameter/2)F(StI.length)\(StI.azimuth)
   else:
     my_color = 5
   
@@ -4104,12 +4205,12 @@ Internode(StI):
     produce \(StI.azimuth)
 
 
-
 CutPointBud(StCPB):
   if Tempcum < leaf_emerg_date(1, StCPB.tiller, StCPB.geno, StCPB.num_plante) + (ED_B + ED_S) * phyll_adjust(StCPB.geno):
     StCPB.zenith = 0
   else:
     StCPB.zenith = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
+  #StCPB.zenith = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_zenith"]
   StCPB.azimuth = hazard_dict_axis[StCPB.num_plante][StCPB.tiller]["tiller_azimuth"]
   if StCPB.tiller == (1,):
     produce @R/(StCPB.azimuth)+(StCPB.zenith)F(0.01)

@@ -20,18 +20,25 @@ def StartEach(lstring):
 def EndEach(lstring, lscene):
   print "iter : ",iter
   if lscene:
+    print 'all sid in lscene should be Internode:'
     for sid in lscene.todict():
       print 'sid: ' + str(sid)
-      print lstring[sid].name
+      if sid in range(len(lstring)):
+        print lstring[sid].name
+      else:
+        print 'sid ' + str(sid) + ' found in lscene, but not in lstring'
   fake_lsys = Lsystem()
   fake_lsys.addRule(fake_rule)
   fake_lsys.axiom = lstring
   new_lstring = fake_lsys.iterate()
   if lscene:
+    print 'Scanning lstring after fake rule:'
     for sid in lscene.todict():
       print 'sid: ' + str(sid)
-      print new_lstring[sid].name
-
+      if sid in range(len(new_lstring)):
+        print new_lstring[sid].name
+      else:
+        print 'sid ' + str(sid) + ' found in lscene, but not in lstring'
 
 Axiom: Apex
 
