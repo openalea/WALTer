@@ -3004,10 +3004,10 @@ Apex(StA):
       
       blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
       
-      StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
+      StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
       #print "angle", StI.tiller, "n", StI.n, StI.azimuth
-      
-      nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)Apex(StA)
+      # internode is placed after leaf to follow visibility order
+      nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)Apex(StA)
       StA.n += 1
     else:
       produce Apex(StA)
@@ -3104,8 +3104,9 @@ Bud(StBu):
       ### End of dictionnaries formatting ###
       
       blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
-      StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
-      nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)Bud(StBu)
+      StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
+      # internode is placed after leaf to follow visibility order
+      nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)Bud(StBu)
       StBu.n += 1
     else:
       dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True
@@ -3213,8 +3214,9 @@ Apex(StA):
         
         blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
         
-        StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
-        nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)Apex(StA)
+        StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
+        # internode is placed after leaf to follow visibility order
+        nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)Apex(StA)
         
         StA.n += 1
       else:
@@ -3444,8 +3446,9 @@ Bud(StBu):
           
           blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
           
-          StI.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
-          nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)
+          StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
+          # internode is placed after leaf to follow visibility order
+          nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)
           StBu.n += 1
         
         else:
@@ -3740,7 +3743,7 @@ Leaf(StL):
         
         #Ajout du point de coupe pour repr�senter la s�nescence des limbes
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
-        produce Sheath(StS)[CutPointBlade(StCPBl)Blade(StBl)]
+        produce \(StL.azimuth)Sheath(StS)[CutPointBlade(StCPBl)Blade(StBl)]
       else:
         produce Leaf(StL)
 
@@ -4180,14 +4183,11 @@ Peduncle(StP):
   visible_length = 0
   if delta_H[StP.num_plante][StP.tiller] > L_E[StP.geno]:
     visible_length = delta_H[StP.num_plante][StP.tiller] - L_E[StP.geno]
-  hidden_length = max(0, StP.length - visible_length)
   color = 5
   if StP.photosynthetic == True:
     color = 7
   if visible_length > 1e-6:
-    produce f(hidden_length);(color)_(StP.diameter/2)F(visible_length)
-  else:
-    produce f(hidden_length)
+    produce ;(color)_(StP.diameter/2)F(visible_length)
     
 
 
@@ -4198,9 +4198,7 @@ Internode(StI):
     my_color = 5
   
   if StI.visible_length > 1e-6:
-    produce ;(my_color)_(StI.diameter/2)F(StI.visible_length)\(StI.azimuth)
-  else:
-    produce \(StI.azimuth)
+    produce ;(my_color)_(StI.diameter/2)F(StI.visible_length)
 
 
 CutPointBud(StCPB):
