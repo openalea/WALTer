@@ -975,6 +975,9 @@ Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[]
 global Debug_PAR_dico_df
 Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[], "id": [], "tiller_surface": [],"Inc_PAR": []}
 
+global PAR_per_organ
+PAR_per_organ = {"Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_surface":[], "tiller_surface": []}
+
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
@@ -2325,6 +2328,7 @@ def EndEach(lstring, lscene):
 #            res_sky = None
           
           if Temperature > 0 and res_sky:
+            PAR_per_organ = {"Num_plante": [], "Num_talle": [], "Organ_PAR": [], "Organ_surface": [], "tiller_surface": []}
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
                 dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
@@ -2336,8 +2340,6 @@ def EndEach(lstring, lscene):
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
 
-
-                  # TODO: check these outputs are those expected or should be converted
                   if res_sky["Ei"][id] < 0:
                     new_[0].PAR = 0
                   else:
@@ -2346,11 +2348,13 @@ def EndEach(lstring, lscene):
                   new_[0].organ_surface = res_sky["area"][id]
                   dico_PAR[new_.name][new_[0].num_plante][new_[0].tiller][new_[0].n] = new_[0].PAR
 
-                  if tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, am�liorer cette rustine
-                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += 0
-                  else:
-                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/(tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] *1e-4)
-                  if write_debug_PAR == True :
+                  PAR_per_organ["Num_talle"].append(lstring[id][0].tiller)
+                  PAR_per_organ["Num_plante"].append(lstring[id][0].num_plante)
+                  PAR_per_organ["Organ_surface"].append(lstring[id][0].organ_surface)
+                  PAR_per_organ["Organ_PAR"].append(lstring[id][0].PAR)
+                  PAR_per_organ["tiller_surface"].append(tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)] * 1e-4)
+
+                  if write_debug_PAR == True:
                     Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
                     Debug_PAR_dico_df["Elapsed_time"].append(elapsed_time)
                     Debug_PAR_dico_df["Temp_cum"].append(Temperature)
@@ -2364,16 +2368,20 @@ def EndEach(lstring, lscene):
                     Debug_PAR_dico_df["tiller_surface"].append(tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)]*1e-4)
                     Debug_PAR_dico_df["Inc_PAR"].append(current_PAR)
 
-          if write_output_file["PAR_per_axes"] == True:
-            for num_plt in axis_census.keys():
-              for axis in axis_census[num_plt].keys():
-                PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
-                PAR_per_axes_dico["Temp_cum"].append(Tempcum)
-                PAR_per_axes_dico["Num_plante"].append(num_plt)
-                PAR_per_axes_dico["Num_talle"].append(axis)
-                PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
-                tt = round(Tempcum, 1)
-                PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
+            par_per_axe = pd.DataFrame(PAR_per_organ).groupby(['Num_plante', 'Num_talle']).agg({'Organ_PAR': 'sum','Organ_surface': 'sum', 'tiller_surface':'mean'})
+            for (nump, numt), row in par_per_axe.iterrows():
+              dico_PAR_per_axis[nump][numt][round(Tempcum, 1)] = row.Organ_PAR / Temperature / row.Organ_surface
+
+            if write_output_file["PAR_per_axes"] == True:
+              for num_plt in axis_census.keys():
+                for axis in axis_census[num_plt].keys():
+                  PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
+                  PAR_per_axes_dico["Temp_cum"].append(Tempcum)
+                  PAR_per_axes_dico["Num_plante"].append(num_plt)
+                  PAR_per_axes_dico["Num_talle"].append(axis)
+                  PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
+                  tt = round(Tempcum, 1)
+                  PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
 
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
