@@ -1860,6 +1860,7 @@ class Ear(Organ_Base):
     self.age = 0
     self.PAR = 0
     self.length = 0
+    self.visible_length = 0
     self.emerged = False
     self.sumtemp = 0
     self.photosynthetic = True
@@ -1870,6 +1871,7 @@ class Peduncle(Organ_Base):
     self.age = 0
     self.sumtemp = 0
     self.length = 0
+    self.visible_length = 0
     self.diameter = 0
     self.area = 0
     self.PAR = 0
@@ -3006,8 +3008,7 @@ Apex(StA):
       
       StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
       #print "angle", StI.tiller, "n", StI.n, StI.azimuth
-      # internode is placed after leaf to follow visibility order
-      nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)Apex(StA)
+      nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)Apex(StA)
       StA.n += 1
     else:
       produce Apex(StA)
@@ -3105,8 +3106,7 @@ Bud(StBu):
       
       blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
       StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
-      # internode is placed after leaf to follow visibility order
-      nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)Bud(StBu)
+      nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)Bud(StBu)
       StBu.n += 1
     else:
       dico_cut_fantom_axes[StBu.num_plante][StBu.tiller] = True
@@ -3215,8 +3215,7 @@ Apex(StA):
         blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
         
         StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
-        # internode is placed after leaf to follow visibility order
-        nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)Apex(StA)
+        nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)Apex(StA)
         
         StA.n += 1
       else:
@@ -3447,8 +3446,7 @@ Bud(StBu):
           blade_phyllotaxy(StL.n, StL.tiller, StL.num_plante, N_I_el[StL.geno], Phi_azi_B, blade_azi_hazard)
           
           StL.azimuth = hazard_dict_organ[StL.num_plante][StL.tiller][StL.n]["blade_azimuth"]
-          # internode is placed after leaf to follow visibility order
-          nproduce [Bud_primord(StBu_p)]Leaf(StL)Internode(StI)
+          nproduce [Bud_primord(StBu_p)]Internode(StI)Leaf(StL)
           StBu.n += 1
         
         else:
@@ -3986,7 +3984,8 @@ Peduncle(StP):
       else:
         StP.length = StP.final_length
   StP.area = StP.diameter * pi * StP.length
-  
+  h_whorl = max([Sh_max[StP.num_plante][StP.tiller][x] for x in range(0,max(Sh_max[StP.num_plante][StP.tiller].keys()) + 1)])
+  StP.visible_length = max(0, StP.length - h_whorl)
   if Tempcum >= dico_stades[StP.num_plante][StP.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StP.photosynthetic == True:
     StP.photosynthetic = False
   
@@ -4008,7 +4007,7 @@ Peduncle(StP):
     
   produce Peduncle(StP)
 
-Ear(StE):
+Peduncle(StP) < Ear(StE):
   # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
   if StE.tiller in axis_census[StE.num_plante] and axis_census[StE.num_plante][StE.tiller]["Stop_growth_flag"] == True:
     pass
@@ -4023,6 +4022,8 @@ Ear(StE):
       StE.length = StE.final_length
   
   StE.area = StE.length * pi * StE.diameter
+  h_whorl = max([Sh_max[StE.num_plante][StE.tiller][x] for x in range(0,max(Sh_max[StE.num_plante][StE.tiller].keys()) + 1)])
+  StE.visible_length = min(StE.length, max(0, StP.length + StE.length - h_whorl))
   
   if Tempcum >= dico_stades[StE.num_plante][StE.tiller]["Senescence_flag_leaf"][1] + Delta_flsp and StE.photosynthetic == True:
     StE.photosynthetic = False
@@ -4165,29 +4166,24 @@ Ear(StE):
   StE.zenith = Phi_zen_E
   #if dico_stades[StE.num_plante][StE.tiller]["End_internode_elongation"] == True and Tempcum < dico_stades[StE.num_plante][StE.tiller]["Flo"][1]:
   if StE.photosynthetic == True:
-    if delta_H[StE.num_plante][StE.tiller] > 0:
-      visible_length = min(delta_H[StE.num_plante][StE.tiller], L_E[StE.geno])
-      if StE.geno == 1:
-        ear_color = 2
-      else:
-        ear_color = 4
-      nproduce ;(ear_color)&(StE.zenith)_(StE.diameter/2)F(visible_length)
-  elif StE.photosynthetic == False:
     if StE.geno == 1:
-      dead_ear_color = 6
+      ear_color = 2
     else:
-      dead_ear_color = 7
-    nproduce ;(dead_ear_color)&(StE.zenith)_(StE.diameter/2)F(L_E[StE.geno])
+      ear_color = 4
+  else:
+    if StE.geno == 1:
+      ear_color = 6
+    else:
+      ear_color = 7
+  if StE.visible_length > 1e-6:
+    produce ;(ear_color)&(StE.zenith)_(StE.diameter/2)F(StE.visible_length)
 
 Peduncle(StP):
-  visible_length = 0
-  if delta_H[StP.num_plante][StP.tiller] > L_E[StP.geno]:
-    visible_length = delta_H[StP.num_plante][StP.tiller] - L_E[StP.geno]
   color = 5
   if StP.photosynthetic == True:
     color = 7
-  if visible_length > 1e-6:
-    produce ;(color)_(StP.diameter/2)F(visible_length)
+  if StP.visible_length > 1e-6:
+    produce ;(color)_(StP.diameter/2)F(StP.visible_length)
     
 
 
