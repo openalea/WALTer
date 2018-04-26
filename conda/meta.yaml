@@ -1,3 +1,4 @@
+
 {% set version = "2.0.0" %}
 
 package:
@@ -26,15 +27,26 @@ requirements:
     - numpy
     - scipy
     - matplotlib
+    - pandas
+    - path.py
+    - openalea.mtg
+    - alinea.caribu
+    - boost >=1.66
+    - openalea.lpy
 
 test:
+  requires:
+    - nose
   imports:
     - walter
     - walter.data_access
     - walter_data
+  source_files:
+    - test/
+    - test/test_*.py
+  commands:
+    - nosetests -v
 
-  #commands:
-  #  - eartrack --help
 
 about:
   home: https://github.com/openalea-incubator/WALTer
