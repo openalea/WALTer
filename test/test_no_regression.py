@@ -10,7 +10,7 @@ def test_same_result_zerolight():
 
     p = project.Project(name='same') # Create the simulation directory
     params = p.csv_parameters('sim_scheme_test.csv')[0] # recovery of parameters
-    params.update(dict(nbj=165)) #Adding parameters to vary
+    params.update(dict(nbj=325)) #Adding parameters to vary
     outs = p.which_outputs #Create the output file if it doesn't exists
     p.which_outputs = outs #Assign the output file to the test output to save the results
     lsys, lstring = p.run(**params)
