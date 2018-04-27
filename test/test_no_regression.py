@@ -35,8 +35,9 @@ def test_same_result():
             print(' \n The ' + my_file + ' file is non-existent ')
 
 
-    #p.deactivate()
-    #p.remove(force=True)
+    p.deactivate()
+    p.remove(force=True)
 
 if __name__=="__main__":
     test_same_result()
+
