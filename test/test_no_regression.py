@@ -38,6 +38,3 @@ def test_same_result():
     p.deactivate()
     p.remove(force=True)
 
-if __name__=="__main__":
-    test_same_result()
-
