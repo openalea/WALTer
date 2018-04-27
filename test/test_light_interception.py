@@ -9,7 +9,7 @@ def test_zero_light():
 
     p = project.Project(name='zero_light')
     params = p.csv_parameters('sim_scheme_test.csv')[0]
-    params.update(dict(nb_plt_temp=50, nb_rang=10, nbj=156))
+    params.update(dict(nb_plt_temp=50, nb_rang=10, nbj=325))
     outs = p.which_outputs
     p.which_outputs = outs
     lsys, lstring = p.run(**params)
@@ -181,5 +181,4 @@ def debug_dico_PAR_per_axis(lsys, lstring, res_sky=None):
                                                                                           lstring[id][0].num_plante,
                                                                                           lstring[id][0].tiller)]
     return dico_PAR_per_axis
-
 

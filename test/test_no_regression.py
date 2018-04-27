@@ -5,7 +5,7 @@ from walter.data_access import get_data_dir
 from pathlib2 import Path
 import numpy.testing as np
 
-def test_same_result_zerolight():
+def test_same_result():
     #assert : verify if the same wheat field have the same results for the same chosen parameters.
 
     p = project.Project(name='same') # Create the simulation directory
@@ -29,11 +29,14 @@ def test_same_result_zerolight():
         my_file = Path(result_directory + i)
         if my_file.is_file():
             dfout = pandas.read_csv(my_file, sep='\t')
-            print(' \n Le fichier testé est : '+ i + '\n')
+            print(' \n The tested file is : '+ i + '\n')
             np.assert_array_equal(dfout, reference[i]) # Comparison Reference and Simulation
         else:
-            print(' \n Le fichier ' + my_file + ' est inexistant ')
+            print(' \n The ' + my_file + ' file is non-existent ')
 
 
-    p.deactivate()
-    p.remove(force=True)
+    #p.deactivate()
+    #p.remove(force=True)
+
+if __name__=="__main__":
+    test_same_result()
