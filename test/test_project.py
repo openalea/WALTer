@@ -2,6 +2,7 @@ from walter import project
 import os
 from path import Path
 
+
 def test_project1():
     cwd = Path(os.getcwd()).abspath()
 
@@ -28,6 +29,11 @@ def test_read_parameters():
     p = project.Project()
     params = p.csv_parameters('sim_scheme_test.csv')
     params = p.generate_index_table(params)
-    params = p.csv_parameters('combi_params.csv')[0]
+    ids = params.keys()
+    params = p.combi_parameters('combi_params.csv')
     assert len(params) == 1
+    # test conservation of id for identical inputs
+    params = p.csv_parameters('sim_scheme_test.csv')
+    params = p.generate_index_table(params)
+    assert params.keys() == ids
     p.remove(force=True)

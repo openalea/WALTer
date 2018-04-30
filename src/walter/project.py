@@ -3,8 +3,7 @@ Questions: Do we need to separate Project and Simulation classes?
 
 """
 
-import sys, os
-from os.path import join as pj
+import os
 import tempfile
 import argparse
 from subprocess import Popen
@@ -36,6 +35,19 @@ def set_dir(d):
 DIR = cwd()
 OLD_DIR = DIR
 
+
+############################ REGLER DES PROBLEMES D'ENCODAGE ##############################
+
+def byteify(input):
+    if isinstance(input, dict):
+        return {byteify(key): byteify(value)
+                for key, value in input.iteritems()}
+    elif isinstance(input, list):
+        return [byteify(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input
 
 class Project(object):
     """ TODO
@@ -132,6 +144,15 @@ class Project(object):
 
         return param_list
 
+    def combi_parameters(self, csv_filename):
+
+        self.activate()
+
+        df=pd.read_csv(csv_filename, sep='\t')
+        param_list = df.to_dict(orient='records') # a list of dict
+        return param_list
+
+
     def get_id(self, indice=0, **params ):
         """ Get the id of each simulation,
             if there are several simulations at the same time, you must know which id (identifier) you want by giving the index"""
@@ -156,15 +177,25 @@ class Project(object):
         itable = 'index-table.json'
 
         if os.path.isfile(itable):
-           return True
-
-        # Generate the dict ID_params
-        ID_params = OrderedDict()
+            # The use of the byteify function kill encoding problems from json importation between unicode and strings
+            ID_params = OrderedDict(byteify(json.load(open(itable))))
+        else:
+            # Generate the dict ID_params
+            ID_params = OrderedDict()
 
         for param in parameters:
-            # compute a new ID
-            ID = 'id_'+str(uuid.uuid4())
-            ID_params[ID] = param
+            already_known_ID = False
+            for idp in ID_params:
+                # If the combination of parameters has already been encountered previously and stored in the json file
+                if sorted(ID_params[idp].values()) == sorted(param.values()):
+                    already_known_ID = True
+            # If the ID of the simulation is already known
+            if already_known_ID:
+                ID = idp
+            else:
+                # compute a new ID
+                ID = 'id-'+str(uuid.uuid4())
+                ID_params[ID] = param
 
         itable_file = open(itable, "w")
         json.dump(ID_params, itable_file)
@@ -309,7 +340,6 @@ def run(**kwds):
 def main():
     """
     """
-
     input_folder = Path(os.getcwd()).abspath()
 
     usage = """
