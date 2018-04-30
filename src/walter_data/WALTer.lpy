@@ -2885,24 +2885,7 @@ Apex(StA):
         DOY = 1
       else:
         DOY += 1
-      Apex_Sirius_dico_df['Elapsed_time'].append(day)
-      Apex_Sirius_dico_df['Temperature'].append(current_temperature)
-      Apex_Sirius_dico_df['Temp_cum'].append(_Tempcum)
-      Apex_Sirius_dico_df['Daylength'].append(duree_du_jour(latitude,DOY))
-      Apex_Sirius_dico_df['Num_plante'].append(StA.num_plante)
-      Apex_Sirius_dico_df['Genotype'].append(StA.geno)
-      Apex_Sirius_dico_df['PN'].append(StA.pn)
-      Apex_Sirius_dico_df['LN'].append(StA.ln)
-      Apex_Sirius_dico_df['Sumtemp'].append(StA.sumtemp)
-      Apex_Sirius_dico_df['Vern_rate'].append(StA.vern_rate)
-      Apex_Sirius_dico_df['Vern_prog'].append(StA.vern_prog)
-      Apex_Sirius_dico_df['Vern_flag'].append(StA.vrn)
-      Apex_Sirius_dico_df['Debut_ppd_flag'].append(StA.debut_ppd)
-      Apex_Sirius_dico_df['Fin_ppd_flag'].append(StA.photop_flag)
-      Apex_Sirius_dico_df['Ln_pot'].append(StA.Ln_pot)
-      Apex_Sirius_dico_df['Var_L_min'].append(StA.var_Lmin)
-      Apex_Sirius_dico_df['Ln_app'].append(StA.Ln_app)
-      Apex_Sirius_dico_df['Ln_final'].append(StA.Ln_final)
+
       if _Tempcum >= Dse_heterogeneous[StA.num_plante]:
         StA.sumtemp += max(Tbase,current_temperature)
         
@@ -2947,6 +2930,26 @@ Apex(StA):
                 
                 t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
                 t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
+
+      Apex_Sirius_dico_df['Elapsed_time'].append(day)
+      Apex_Sirius_dico_df['Temperature'].append(current_temperature)
+      Apex_Sirius_dico_df['Temp_cum'].append(_Tempcum)
+      Apex_Sirius_dico_df['Daylength'].append(duree_du_jour(latitude, DOY))
+      Apex_Sirius_dico_df['Num_plante'].append(StA.num_plante)
+      Apex_Sirius_dico_df['Genotype'].append(StA.geno)
+      Apex_Sirius_dico_df['PN'].append(StA.pn)
+      Apex_Sirius_dico_df['LN'].append(StA.ln)
+      Apex_Sirius_dico_df['Sumtemp'].append(StA.sumtemp)
+      Apex_Sirius_dico_df['Vern_rate'].append(StA.vern_rate)
+      Apex_Sirius_dico_df['Vern_prog'].append(StA.vern_prog)
+      Apex_Sirius_dico_df['Vern_flag'].append(StA.vrn)
+      Apex_Sirius_dico_df['Debut_ppd_flag'].append(StA.debut_ppd)
+      Apex_Sirius_dico_df['Fin_ppd_flag'].append(StA.photop_flag)
+      Apex_Sirius_dico_df['Ln_pot'].append(StA.Ln_pot)
+      Apex_Sirius_dico_df['Var_L_min'].append(StA.var_Lmin)
+      Apex_Sirius_dico_df['Ln_app'].append(StA.Ln_app)
+      Apex_Sirius_dico_df['Ln_final'].append(StA.Ln_final)
+
     _Tempcum = 0
     date_current_day = sowing_date + datetime.timedelta(2) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
     DOY = int(date_current_day.strftime('%j'))
@@ -3206,29 +3209,20 @@ Apex(StA):
         
         StA.n += 1
       else:
-        #Ecriture dans fichiers
-        Apex_dico_df['Elapsed_time'].append(elapsed_time)
-        Apex_dico_df['Temperature'].append(Temperature)
-        Apex_dico_df['Temp_cum'].append(Tempcum)
-        Apex_dico_df['Time_count'].append(StA.time)
-        Apex_dico_df['Sum_temp'].append(StA.sumtemp)
-        Apex_dico_df['Current_PAR'].append(current_PAR)
-        Apex_dico_df['Num_plante'].append(StA.num_plante)
-        Apex_dico_df['Genotype'].append(StA.geno)
-        Apex_dico_df['Num_talle'].append(str(StA.tiller))
-        Apex_dico_df['Num_cohorte'].append(cohort_number(StA.tiller))
-        Apex_dico_df['Nb_phyto_emi'].append(StA.n)
+
         if Tempcum  >= Dse_heterogeneous[StA.num_plante]:
           Apex_dico_df['Nb_emerged_leaf'].append(max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
         else:
           Apex_dico_df['Nb_emerged_leaf'].append(0)
-        Apex_dico_df['Transiflo_flag'].append(StA.transiflo)
-        Apex_dico_df['STOP_init_flag'].append(StA.STOP_init)
-        Apex_dico_df['Transiflo_DOY'].append(dico_stades[StA.num_plante][StA.tiller]["Transiflo"][2])
-        Apex_dico_df['Ln_final'].append(StA.Ln_final)
-        produce Apex(StA)
+
+        nproduce Apex(StA)
         
   #Ecriture dans fichiers
+  if Tempcum  >= Dse_heterogeneous[StA.num_plante]:
+    Apex_dico_df['Nb_emerged_leaf'].append(max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
+  else:
+    Apex_dico_df['Nb_emerged_leaf'].append(0)
+
   Apex_dico_df['Elapsed_time'].append(elapsed_time)
   Apex_dico_df['Temperature'].append(Temperature)
   Apex_dico_df['Temp_cum'].append(Tempcum)
@@ -3240,10 +3234,6 @@ Apex(StA):
   Apex_dico_df['Num_talle'].append(str(StA.tiller))
   Apex_dico_df['Num_cohorte'].append(cohort_number(StA.tiller))
   Apex_dico_df['Nb_phyto_emi'].append(StA.n)
-  if Tempcum  >= Dse_heterogeneous[StA.num_plante]:
-    Apex_dico_df['Nb_emerged_leaf'].append(max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
-  else:
-    Apex_dico_df['Nb_emerged_leaf'].append(0)
   Apex_dico_df['Transiflo_flag'].append(StA.transiflo)
   Apex_dico_df['STOP_init_flag'].append(StA.STOP_init)
   Apex_dico_df['Transiflo_DOY'].append(dico_stades[StA.num_plante][StA.tiller]["Transiflo"][2])
@@ -3513,6 +3503,7 @@ Bud(StBu):
             StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], 100)
           else:
             StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle m�re
+
           # Enregistrement des informations
           if write_output_file["Proba"]:
             Proba_dico_df["Elapsed_time"].append(elapsed_time)
@@ -3897,20 +3888,7 @@ Internode(StI):
         else:
           if Tempcum >= leaves_senesc_date_tiller(min(StI.n +1, StI.Ln_final), StI.tiller,  StI.Ln_final, phyll_adjust(StI.geno), n0_sen[StI.geno], n1_sen[StI.geno], n2_sen[StI.geno], n3_sen[StI.geno], t1_sen[StI.geno], t2_sen[StI.geno], t3_sen[StI.geno], Dse_heterogeneous[StI.num_plante], DelayTipToHS[StI.geno]) and StI.photosynthetic == True:
             StI.photosynthetic = False
-      if write_output_file["Internode"]:
-        Internode_dico_df['Elapsed_time'].append(elapsed_time)
-        Internode_dico_df['Temp_cum'].append(Tempcum)
-        Internode_dico_df['Temperature'].append(Temperature)
-        Internode_dico_df['Num_plante'].append(StI.num_plante)
-        Internode_dico_df['Genotype'].append(StI.geno )
-        Internode_dico_df['Num_talle'].append(str(StI.tiller))
-        Internode_dico_df['Num_cohorte'].append(cohort_number(StI.tiller))
-        Internode_dico_df['Num_rang'].append(StI.n)
-        Internode_dico_df['Internode_length'].append(StI.length)
-        Internode_dico_df['Internode_final_length'].append(StI.final_length)
-        Internode_dico_df['Internode_surface'].append(StI.area)
-        Internode_dico_df['Internode_PAR'].append(StI.PAR)
-        Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
+
       
     else:
       StI.age += time_step
@@ -3939,7 +3917,7 @@ Internode(StI):
           if Tempcum >= leaves_senesc_date_tiller(min(StI.n +1, StI.Ln_final), StI.tiller,  StI.Ln_final, phyll_adjust(StI.geno), n0_sen[StI.geno], n1_sen[StI.geno], n2_sen[StI.geno], n3_sen[StI.geno], t1_sen[StI.geno], t2_sen[StI.geno], t3_sen[StI.geno], Dse_heterogeneous[StI.num_plante], DelayTipToHS[StI.geno]) and StI.photosynthetic == True:
             StI.photosynthetic = False
       
-      if write_output_file["Internode"]:
+    if write_output_file["Internode"]:
         Internode_dico_df['Elapsed_time'].append(elapsed_time)
         Internode_dico_df['Temp_cum'].append(Tempcum)
         Internode_dico_df['Temperature'].append(Temperature)
