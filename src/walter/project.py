@@ -25,6 +25,7 @@ from walter import data_access
 def cwd():
     return Path(os.getcwd()).abspath()
 
+
 def set_dir(d):
     global DIR
     _cwd = Path(d).abspath()
@@ -34,6 +35,7 @@ def set_dir(d):
 
 DIR = cwd()
 OLD_DIR = DIR
+
 
 class Project(object):
     """ TODO

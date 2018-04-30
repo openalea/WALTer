@@ -26,20 +26,6 @@ try:
 except NameError:
   params = {}
 
-# create a fake lsystem for forcing cuting branchs in end eac (see tes_cut_module.py)
-lpy_cut_bug = False
-if lpy_cut_bug:
-  from openalea.lpy import Lsystem
-  fake_rule = """
-  Fake:
-    produce Fake"""
-  fake_lsys = Lsystem()
-  fake_lsys.addRule(fake_rule)
-
-  def force_cut(lstring):
-    fake_lsys.axiom = lstring
-    return fake_lsys.iterate()
-
 
 ### Importations de fichiers annexes ###
 
@@ -140,7 +126,6 @@ which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 print "ce qu'on ecrit:", write_output_file["Lscene"]
 
-write_debug_PAR = False
 
 #########################
 
@@ -290,7 +275,7 @@ crop_ccptn = "Mesh_for_nplants"
 area_targeted = 1
 nb_rang = 1
 
-var_register0 = ["crop_ccptn"]
+var_register0 = ["crop_ccptn", "infinity_CARIBU"]
 
 for key, value, in params.iteritems():
   if key in var_register0:
@@ -974,12 +959,12 @@ global Peraxes_dico_df
 Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
 
 global Debug_PAR_dico_df
-Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[]}
+Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[], "id": [], "tiller_surface": [],"Inc_PAR": []}
 
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
-  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[]}
+  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[], "Abs_int_PAR":[]}
 
 
 #######################
@@ -1040,6 +1025,7 @@ delta_H                           = {}
 
 future_dead_axes              = {}
 dico_PAR_per_axis             = {}
+dico_absolute_PAR_per_axis    = {}
 dico_cut_fantom_axes          = {}
 dico_cut_dead_blades          = {}
 young_tiller                  = {}
@@ -2084,7 +2070,7 @@ def StartEach(lstring):
   except:
     current_temperature = Temperature
 
-  global current_PAR
+  global current_PAR # Daily integrated Incoming radiation in  micromolPAR.m-2
   try:
     _current_PAR = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['PAR']
     current_PAR = _current_PAR[_current_PAR.last_valid_index()]
@@ -2100,10 +2086,7 @@ def StartEach(lstring):
 
 
 def EndEach(lstring, lscene):
-  global lpy_cut_bug
-  if lpy_cut_bug:
-    # Force removal of cut branches to have a consistent indexing between lscene and lstring (see test_cut_module.py)
-    lstring = force_cut(lstring)
+
   # CALCUL DU GAI (� partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
     Hcol_max[num_plt] = dict.fromkeys(Hcol_max[num_plt].keys(), 0)
@@ -2245,6 +2228,8 @@ def EndEach(lstring, lscene):
           res_sky= None
           try:
             _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)
+          # The outputs are in micromolPAR.m-2 for Ei and Ea, and m2 for area
+          # TODO: check these outputs are those expected or should be converted
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
@@ -2269,6 +2254,7 @@ def EndEach(lstring, lscene):
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
                 dico_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
+                dico_absolute_PAR_per_axis[num_plt][axis][round(Tempcum, 1)] = 0
             for id in res_sky['Ei'].keys():
               #if id not in new_lstring: continue
               new_ = lstring[id]
@@ -2276,8 +2262,9 @@ def EndEach(lstring, lscene):
                  (new_.name in ("Sheath", "Internode", "Peduncle")) or
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
-                  Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
-                  
+
+
+                  # TODO: check these outputs are those expected or should be converted
                   if res_sky["Ei"][id] < 0:
                     new_[0].PAR = 0
                   else:
@@ -2288,9 +2275,12 @@ def EndEach(lstring, lscene):
 
                   if tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] < 0.00001:#TODO quand on aura le temps, am�liorer cette rustine
                     dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += 0
+                    dico_absolute_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += 0
                   else:
-                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)]
+                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/(tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] *1e-4)
+                    dico_absolute_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR
                   if write_debug_PAR == True :
+                    Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
                     Debug_PAR_dico_df["Elapsed_time"].append(elapsed_time)
                     Debug_PAR_dico_df["Temp_cum"].append(Temperature)
                     Debug_PAR_dico_df["Organ_type"].append(lstring[id].name)
@@ -2299,9 +2289,10 @@ def EndEach(lstring, lscene):
                     Debug_PAR_dico_df["Num_organe"].append(lstring[id][0].n)
                     Debug_PAR_dico_df["Organ_surface"].append(lstring[id][0].organ_surface)
                     Debug_PAR_dico_df["Organ_PAR"].append(lstring[id][0].PAR)
-                    
-                    
-          
+                    Debug_PAR_dico_df["id"].append(id)
+                    Debug_PAR_dico_df["tiller_surface"].append(tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)]*1e-4)
+                    Debug_PAR_dico_df["Inc_PAR"].append(current_PAR)
+
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
@@ -2312,6 +2303,7 @@ def EndEach(lstring, lscene):
                 PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
                 tt = round(Tempcum, 1)
                 PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
+                PAR_per_axes_dico["Abs_int_PAR"].append(dico_absolute_PAR_per_axis[num_plt][axis].get(tt,0.))
 
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
@@ -2721,7 +2713,9 @@ Seed:
     dico_PAR["Peduncle"][num_plante][tiller_init] = {}
     dico_PAR["Ear"][num_plante][tiller_init] = {}
     dico_PAR_per_axis[num_plante] = {}
+    dico_absolute_PAR_per_axis[num_plante] = {}
     dico_PAR_per_axis[num_plante][tiller_init] = {}
+    dico_absolute_PAR_per_axis[num_plante][tiller_init] = {}
     
     dico_cut_dead_blades[num_plante] = {}
     dico_cut_dead_blades[num_plante][tiller_init] = []
@@ -3435,6 +3429,7 @@ Bud(StBu):
             dico_PAR["Peduncle"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Ear"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR_per_axis[StBu.num_plante][StBu.tiller] = {}
+            dico_absolute_PAR_per_axis[StBu.num_plante][StBu.tiller] = {}
             
             ### End of dictionnaries formatting ###
             StA = Apex(StBu.num_plante, StBu.geno,StBu.tiller,StBu.n,StBu.time)
@@ -3492,6 +3487,7 @@ Bud(StBu):
             dico_PAR["Peduncle"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR["Ear"][StBu.num_plante][StBu.tiller] = {}
             dico_PAR_per_axis[StBu.num_plante][StBu.tiller] = {}
+            dico_absolute_PAR_per_axis[StBu.num_plante][StBu.tiller] = {}
             
             ### End of dictionnaries formatting ###
             StA = Apex(StBu.num_plante, StBu.geno,StBu.tiller,StBu.n,StBu.time)
@@ -3556,6 +3552,7 @@ Bud_R(StBuR):
         dico_PAR["Peduncle"][StBuR.num_plante][StBuR.tiller] = {}
         dico_PAR["Ear"][StBuR.num_plante][StBuR.tiller] = {}
         dico_PAR_per_axis[StBuR.num_plante][StBuR.tiller] = {}
+        dico_absolute_PAR_per_axis[StBuR.num_plante][StBuR.tiller] = {}
         dico_cut_dead_blades[StBuR.num_plante][StBuR.tiller] = []
         
         ### End of dictionnaries formatting ###
