@@ -21,22 +21,15 @@ from openalea.lpy import Lsystem
 from walter import data_access
 
 
+def walter_data():
+    d = data_access.get_data_dir()
+    data_dir = Path(d).abspath()
+    return data_dir
+
+
 def cwd():
     return Path(os.getcwd()).abspath()
 
-
-def set_dir(d):
-    global DIR
-    _cwd = Path(d).abspath()
-    DIR = _cwd
-
-    change_dir()
-
-DIR = cwd()
-OLD_DIR = DIR
-
-
-############################ REGLER DES PROBLEMES D'ENCODAGE ##############################
 
 def byteify(input):
     if isinstance(input, dict):
@@ -49,39 +42,60 @@ def byteify(input):
     else:
         return input
 
+
 class Project(object):
     """ TODO
     """
 
     def __init__(self, name=''):
+
+        self.call_dir = Path(os.getcwd()).abspath()
+
         if not name:
             # TODO: Add the date time rather than temp string
             name = tempfile.mkdtemp(dir='.', prefix='simu_')
-        dirname = Path(name)
 
+        dirname = Path(name)
         if not dirname.exists():
             dirname.mkdir()
-
         self.dirname = dirname.abspath()
         self.name = str(self.dirname.name)
 
-        # remove global variables into class fields
-        # self.set_dir()
-        set_dir(self.dirname)
+        self.copy_input()
+        self.generate_output()
 
-        copy_input() # move to self._copy_input()
-        generate_output()
-        which_output()
+        csv = 'which_output_files.csv'
+        if not (self.dirname / csv).exists():
+            (walter_data() / csv).copy(self.dirname)
 
         self._outputs = {}
 
+    def copy_input(self):
+        """ Copy the input dir from WALTer if it is not present.
+        """
+        data = walter_data()
+        input_src = data / 'input'
+        input_dest = self.dirname / 'input'
+        if not input_dest.exists():
+            input_src.copytree(input_dest, symlinks=True)
+            # TODO add log: copy input
+
+        return True
+
+    def generate_output(self):
+        """ Generate output dir if not present.
+        """
+        output = self.dirname / 'output'
+        if not output.exists():
+            output.mkdir()
+
     def activate(self):
         """ Change directory to the project one. """
-        set_dir(self.dirname)
+        os.chdir(self.dirname)
 
     def deactivate(self):
         """ Change dir to the user one. """
-        set_dir(OLD_DIR)
+        os.chdir(self.call_dir)
 
     def clean(self):
         pass
@@ -100,7 +114,6 @@ class Project(object):
 
         return self._outputs
 
-
     @which_outputs.setter
     def which_outputs(self, outputs):
         self._outputs = outputs
@@ -108,8 +121,6 @@ class Project(object):
         # Write the which_output_files
         df = pd.DataFrame.from_dict(data=[outputs], orient='columns')
         df.to_csv(path_or_buf=self.dirname/'which_output_files.csv', sep='\t', index=False)
-
-
 
     def run(self, **kwds):
         """ Run WALTer locally.
@@ -176,6 +187,7 @@ class Project(object):
 
         itable = 'index-table.json'
 
+        # allkey = set().union(*alldict)
         if os.path.isfile(itable):
             # The use of the byteify function kill encoding problems from json importation between unicode and strings
             ID_params = OrderedDict(byteify(json.load(open(itable))))
@@ -222,6 +234,7 @@ class Project(object):
         # json_2_human.close()
 
         return ID_params
+
 
 class Simulation(object):
     """ Run one or several simulation """
@@ -275,45 +288,6 @@ class Simulation(object):
     def save_parameters(self, csv_filename = 'sim_scheme.csv'):
         """ save the parameters into a csv file. """
         pass # TODO
-
-
-def change_dir(init=False):
-    if not init:
-        os.chdir(DIR)
-    else:
-        os.chdir(OLD_DIR)
-
-def walter_data():
-    d = data_access.get_data_dir()
-    data_dir = Path(d).abspath()
-    return data_dir
-
-def copy_input():
-    """ Copy the input dir from WALTer if it is not present.
-    """
-    data = walter_data()
-    input_src = data/'input'
-    input_dest = DIR / 'input'
-    if not input_dest.exists():
-        input_src.copytree(input_dest, symlinks=True)
-        # TODO add log: copy input
-
-    return True
-
-def generate_output():
-    """ Generate output dir if not present.
-    """
-    output = DIR / 'output'
-    if not output.exists():
-        output.mkdir()
-
-def which_output():
-    data = walter_data()
-    csv = 'which_output_files.csv'
-    if not (DIR /csv).exists():
-        (data/csv).copy(DIR)
-
-
 
 
 def run(**kwds):
