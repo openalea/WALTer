@@ -94,8 +94,9 @@ densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
 ID = "output_debug"
+write_debug_PAR = False
 
-var_register1 = ["expe_related","densite","CARIBU_state","rep","ID"]
+var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR", "ID"]
 
 for key, value, in params.iteritems():
   if key in var_register1:
