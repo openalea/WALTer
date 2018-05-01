@@ -19,11 +19,17 @@ data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
-# setup params if and only if not defined as Lsys args
+# setup params/ID if and only if params not defined as Lsys args
 try:
   params = params
 except NameError:
   params = {}
+  ID = 'walter_defaults'
+
+try:
+  ID = ID
+except NameError:
+  ID = 'debug'
 
 
 ### Importations de fichiers annexes ###
@@ -93,10 +99,9 @@ expe_related         = "Sensitivity_Analysis"
 densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
-ID = "output_debug"
 write_debug_PAR = False
 
-var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR", "ID"]
+var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR"]
 
 for key, value, in params.iteritems():
   if key in var_register1:

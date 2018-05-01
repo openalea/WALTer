@@ -31,16 +31,33 @@ def cwd():
     return Path(os.getcwd()).abspath()
 
 
-def byteify(input):
-    if isinstance(input, dict):
-        return {byteify(key): byteify(value)
-                for key, value in input.iteritems()}
-    elif isinstance(input, list):
-        return [byteify(element) for element in input]
-    elif isinstance(input, unicode):
-        return input.encode('utf-8')
-    else:
-        return input
+def read_parameters(path):
+    df = pd.read_csv(path, sep='\t')
+    param_list = df.to_dict(orient='records')  # a list of dict
+    return param_list
+
+
+def read_itable(path):
+
+    def _byteify(input):
+        if isinstance(input, dict):
+            return {_byteify(key): _byteify(value)
+                    for key, value in input.iteritems()}
+        elif isinstance(input, list):
+            return [_byteify(element) for element in input]
+        elif isinstance(input, unicode):
+            return input.encode('utf-8')
+        else:
+            return input
+
+    # The use of the byteify function kill encoding problems from json importation between unicode and strings
+    with open(path) as itable:
+        return _byteify(json.load(itable))
+
+
+def write_itable(itable, path):
+    with open(path, "w") as out:
+        json.dump(itable, out)
 
 
 class Project(object):
@@ -67,8 +84,14 @@ class Project(object):
         csv = 'which_output_files.csv'
         if not (self.dirname / csv).exists():
             (walter_data() / csv).copy(self.dirname)
+        self._outputs = {}  # needed for first call to which_output
 
-        self._outputs = {}
+        itable = 'index-table.json'
+        if (self.dirname / itable).exists():
+            self.itable = OrderedDict(read_itable(itable))
+        else:
+            self.itable = OrderedDict()
+        self._combi_params = {}
 
     def copy_input(self):
         """ Copy the input dir from WALTer if it is not present.
@@ -122,7 +145,61 @@ class Project(object):
         df = pd.DataFrame.from_dict(data=[outputs], orient='columns')
         df.to_csv(path_or_buf=self.dirname/'which_output_files.csv', sep='\t', index=False)
 
-    def run(self, **kwds):
+    @property
+    def combi_params(self):
+        if (self.dirname/'combi_params.csv').exists():
+            df = pd.read_csv(self.dirname/'combi_params.csv', sep='\t')
+            self._combi_params = df.set_index('ID', append=True)
+        return self._combi_params
+
+    def write_itable(self):
+        path = str(self.dirname / 'index-table.json')
+        write_itable(self.itable, path)
+
+        # update combi_parameters.csv
+        path = str(self.dirname / 'combi_params.csv')
+
+        parameters = self.itable.values()
+        allkeys = set().union(*parameters)
+        def _missing(d):
+            return len(allkeys - set(d.keys()))
+        if any([_missing(p) for p in parameters]):
+            defaults = {}
+            new = []
+            for p in parameters:
+                newp = {k: v for k, v in defaults if k not in p}
+                newp.update(p)
+                new.extend(newp)
+            parameters = new
+
+        combi = []
+        for k, v in zip(self.itable, parameters):
+            d = {'ID': k}
+            d.update(v)
+            combi.append(d)
+        df = pd.DataFrame(combi)
+        df.to_csv(path, index=False)
+
+    def get_id(self, param):
+        sim_id = None
+
+        if len(param) == 0:
+            sim_id = 'walter_defaults'
+
+        for _id in self.itable:
+            if param == self.itable[_id]:
+                sim_id = _id
+                break
+
+        if sim_id is None:
+            sim_id = 'id-' + str(uuid.uuid4())
+
+        if sim_id not in self.itable:
+            self.itable[sim_id] = param
+
+        return sim_id
+
+    def run(self, sim_id=None, **kwds):
         """ Run WALTer locally.
 
         Set parameter values as keyword arguments::
@@ -138,37 +215,48 @@ class Project(object):
         data = walter_data()
         walter = str(data / 'WALTer.lpy')
 
+        already_known_id = self.itable.keys()
+        if sim_id is None:
+            sim_id = self.get_id(kwds)
+        if sim_id not in already_known_id:
+            self.write_itable()
         # TODO check if this file exists...
-        lsys = Lsystem(walter, {'params': kwds})
+        lsys = Lsystem(walter, {'params': kwds, 'ID': sim_id})
         lstring = lsys.iterate()
 
         return lsys, lstring
 
-    def csv_parameters(self, csv_filename):
+    def generate_id(self, parameter_list):
+        return [self.get_id(p) for p in parameter_list]
 
+    def run_parameters(self, csv_parameters, which=None):
+        """Run walter with input parameters specified in csv file
+
+        Parameters
+        ----------
+        csv_parameters: (string)
+            name csv file containing inputs
+        which: (sequence or None)
+            indices of lines (index 0 = line 1) of input csv to be run.
+            If None (default), all lines are run.
+
+        Returns
+        -------
+            the lsystem and the lstring of the last run
+        """
         self.deactivate()
+        lsys, lstring = None, None
+        parameters = read_parameters(csv_parameters)
+        if which is not None:
+            parameters = [p for i, p in enumerate(parameters) if i in which]
+        sim_ids = self.generate_id(parameters)
+        if not all([sid in self.itable for sid in sim_ids]):
+            self.write_itable()
+        for sid, param in zip(sim_ids, parameters):
+            lsys, lstring = self.run(sid, **param)
 
-        df=pd.read_csv(csv_filename, sep='\t')
-        param_list = df.to_dict(orient='records') # a list of dict
+        return lsys, lstring
 
-        self.activate()
-
-        return param_list
-
-    def combi_parameters(self, csv_filename):
-
-        self.activate()
-
-        df=pd.read_csv(csv_filename, sep='\t')
-        param_list = df.to_dict(orient='records') # a list of dict
-        return param_list
-
-
-    def get_id(self, indice=0, **params ):
-        """ Get the id of each simulation,
-            if there are several simulations at the same time, you must know which id (identifier) you want by giving the index"""
-
-        return params['ID'][indice]
 
     def generate_index_table(self, parameters):
         """ Generate a file named index-table.json.
@@ -289,26 +377,6 @@ class Simulation(object):
         """ save the parameters into a csv file. """
         pass # TODO
 
-
-def run(**kwds):
-    """ Run WALTer locally.
-
-    Set parameter values as keyword arguments::
-
-        run(nb_plt_utiles=1,
-            dist_border_x=0,
-            dist_border_y=0,
-            nbj=30,
-            beginning_CARIBU=290)
-    """
-    data = walter_data()
-    walter = str(data / 'WALTer.lpy')
-
-    # TODO check if this file exists...
-    lsys = Lsystem(walter, {'params': kwds})
-    lstring = lsys.iterate()
-
-    return lsys, lstring
 
 
 def main():
