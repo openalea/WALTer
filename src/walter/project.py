@@ -30,35 +30,6 @@ def cwd():
     return Path(os.getcwd()).abspath()
 
 
-def read_parameters(path):
-    df = pd.read_csv(path, sep='\t')
-    param_list = df.to_dict(orient='records')  # a list of dict
-    return param_list
-
-
-def read_itable(path):
-
-    def _byteify(input):
-        if isinstance(input, dict):
-            return {_byteify(key): _byteify(value)
-                    for key, value in input.iteritems()}
-        elif isinstance(input, list):
-            return [_byteify(element) for element in input]
-        elif isinstance(input, unicode):
-            return input.encode('utf-8')
-        else:
-            return input
-
-    # The use of the byteify function kill encoding problems from json importation between unicode and strings
-    with open(path) as itable:
-        return _byteify(json.load(itable))
-
-
-def write_itable(itable, path):
-    with open(path, "w") as out:
-        json.dump(itable, out)
-
-
 class Project(object):
     """ TODO
     """
@@ -91,7 +62,7 @@ class Project(object):
 
         itable = 'index-table.json'
         if (self.dirname / itable).exists():
-            self.itable = OrderedDict(read_itable(itable))
+            self.itable = OrderedDict(self.read_itable(itable))
         else:
             self.itable = OrderedDict()
         self._combi_params = {}
@@ -153,9 +124,38 @@ class Project(object):
             self._combi_params = pd.read_csv(self.dirname/'combi_params.csv')
         return self._combi_params
 
-    def write_itable(self):
+    @staticmethod
+    def csv_parameters(path):
+        df = pd.read_csv(path, sep='\t')
+        param_list = df.to_dict(orient='records')  # a list of dict
+        return param_list
+
+    @staticmethod
+    def read_itable(path):
+
+        def _byteify(input):
+            if isinstance(input, dict):
+                return {_byteify(key): _byteify(value)
+                        for key, value in input.iteritems()}
+            elif isinstance(input, list):
+                return [_byteify(element) for element in input]
+            elif isinstance(input, unicode):
+                return input.encode('utf-8')
+            else:
+                return input
+
+        # The use of the byteify function kill encoding problems from json importation between unicode and strings
+        with open(path) as itable:
+            return _byteify(json.load(itable))
+
+    @staticmethod
+    def write_itable(itable, path):
+        with open(path, "w") as out:
+            json.dump(itable, out)
+
+    def update_itable(self):
         path = str(self.dirname / 'index-table.json')
-        write_itable(self.itable, path)
+        self.write_itable(self.itable, path)
 
         # update combi_parameters.csv
         path = str(self.dirname / 'combi_params.csv')
@@ -232,7 +232,7 @@ class Project(object):
         if sim_id is None:
             sim_id = self.get_id(kwds)
         if sim_id not in already_known_id:
-            self.write_itable()
+            self.update_itable()
         lsys, lstring = None, None
         if not dry_run:
             lsys = Lsystem(self.walter, {'params': kwds, 'ID': sim_id})
@@ -262,17 +262,36 @@ class Project(object):
         """
         self.deactivate()
         lsys, lstring = None, None
-        parameters = read_parameters(csv_parameters)
+        parameters = self.csv_parameters(csv_parameters)
         if which is not None:
+            try:
+                iter(which)
+            except TypeError:
+                which = [which]
             parameters = [p for i, p in enumerate(parameters) if i in which]
         already_known_id = self.itable.keys()
         sim_ids = self.generate_id(parameters)
         if not all([sid in already_known_id for sid in sim_ids]):
-            self.write_itable()
+            self.update_itable()
         for sid, param in zip(sim_ids, parameters):
             lsys, lstring = self.run(sid, dry_run=dry_run, **param)
 
         return lsys, lstring
+
+    def output_path(self, index=-1):
+        """return the path to output directory of a simulation
+
+        Parameters
+        ----------
+        index (int):
+            the index of the simulation. -1 stands for the last simulation
+
+        Returns
+        -------
+            a path.Path instance
+        """
+        sid = self.itable.keys()[index]
+        return self.dirname / 'output' / sid
 
     def generate_index_table(self, parameters):
         """ Generate a file named index-table.json.

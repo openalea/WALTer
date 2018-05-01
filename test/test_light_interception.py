@@ -8,23 +8,18 @@ def test_zero_light():
     #assert : all tillers receive light (value > 0 for Sum_PAR in the PAR_per_axes.csv output file)
 
     p = project.Project(name='zero_light') #Create Folder
-    params = p.csv_parameters('sim_scheme_test.csv') #Recover list of parameters
-    params = p.generate_index_table(params) #Generate ID for each simulation.
-    params = p.csv_parameters(p.name +'/combi_params.csv')[0] #Recover list of parameters with ID.
+    params = p.csv_parameters('sim_scheme_test.csv')[0]  #Recover list of parameters
     params.update(dict(nb_plt_temp=50, nb_rang=10, nbj=156)) #Add new parameters
-    outs = p.which_outputs
-    p.which_outputs = outs
     lsys, lstring = p.run(**params)
     PAR_per_axes_dico = lsys.context().locals()['PAR_per_axes_dico']
     df = pandas.DataFrame(PAR_per_axes_dico)
     PAR = df.groupby('Num_plante').agg('sum')['Sum_PAR'].values
     assert all(PAR > 0)
-    id = p.get_id(0, params)
-    dfout = pandas.read_csv(p.dirname/'output'/id/'PAR_per_axes.csv', sep='\t')
+    outdir = p.output_path()
+    dfout = pandas.read_csv(outdir/'PAR_per_axes.csv', sep='\t')
     PARout = df.groupby('Num_plante').agg('sum')['Sum_PAR'].values
     assert all(PARout > 0)
 
-    p.deactivate()
     p.remove(force=True)
 
 
@@ -36,17 +31,12 @@ def test_shift_in_light():
     # (PAR_per_axes.csv output file ; value for Sum_PAR) is always less
     # than 1000% (or x10)
     p = project.Project(name='shift_in_light')
-    params = p.csv_parameters('sim_scheme_test.csv')
-    params = p.generate_index_table(params)
-    params = p.csv_parameters('zero_light/combi_params.csv')[0]
-    outs = p.which_outputs
-    p.which_outputs = outs
-    lsys, lstring = p.run(**params)
+    # run the reference simulation
+    lsys, lstring = p.run_parameters('sim_scheme_test.csv')
     PAR_per_axes_dico = lsys.context().locals()['PAR_per_axes_dico']
     df = pandas.DataFrame(PAR_per_axes_dico)
     df['relative_Inc_PAR'] = df['Inc_PAR'] / df['Inc_PAR'].mean()
     df['relative_Sum_PAR'] = df['Sum_PAR'] / df['relative_Inc_PAR']
-
 
     def _max_variation(x):
         variation = (x.relative_Sum_PAR.diff().abs() / x.relative_Sum_PAR)[1:] * 100
@@ -58,15 +48,12 @@ def test_shift_in_light():
 
     assert all(relative_variation < 100)
 
-    p.deactivate()
     p.remove(force=True)
 
 
 def test_infinite():
     p = project.Project(name='infinite_canopy')
-    params = p.csv_parameters('sim_scheme_test.csv')
-    params = p.generate_index_table(params)
-    params = p.csv_parameters(p.name +'/combi_params.csv')[0]
+    params = p.csv_parameters('sim_scheme_test.csv')[0]
     params.update(dict(nb_plt_utiles=1,
                           dist_border_x=0,
                           dist_border_y=0,
@@ -77,7 +64,6 @@ def test_infinite():
     crop_scheme = lsys.context().locals()['crop_scheme']
     pattern = scene_pattern(crop_scheme)
     assert pattern[0] > 1
-    p.deactivate()
     p.remove(force=True)
 
 
@@ -86,14 +72,11 @@ def check_light_balance():
     p = project.Project(name='light_balance')
     params = p.csv_parameters('sim_scheme_test.csv')[0]
     params.update(dict(write_debug_PAR=True,infinity_CARIBU=0))
-    outs = p.which_outputs
-    p.which_outputs = outs
     lsys, lstring = p.run(**params)
     crop_scheme = lsys.context().locals()['crop_scheme']
     df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
     control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
     balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
-    p.deactivate()
     p.remove(force=True)
 
 
