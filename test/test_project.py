@@ -3,37 +3,78 @@ import os
 from path import Path
 
 
-def test_project1():
+def test_working_dir():
     cwd = Path(os.getcwd()).abspath()
 
     p = project.Project(name='')
     assert p.name
-
     assert str(cwd) != str(p.dirname)
+    assert (cwd / p.name).exists()
+    assert (cwd / p.name).isdir()
+    for d in ('input', 'output'):
+        assert (p.dirname / d).exists()
+        assert (p.dirname / d).isdir()
+    assert (p.dirname / 'which_output_files.csv').exists()
+
     p.deactivate()
-
     whereIam = str(Path(os.getcwd()).abspath())
-    assert str(cwd) == whereIam, str(cwd) + ' / '+ whereIam
-
-    assert (cwd/p.name).exists()
-    assert (cwd/p.name).isdir()
+    assert str(cwd) == whereIam, str(cwd) + ' / ' + whereIam
 
     p.activate()
     p.remove(force=True)
+    assert (cwd / p.name).exists() is False
 
-    assert (cwd/p.name).exists() is False
-
-
-def test_read_parameters():
-    fn = 'sim_scheme_test.csv'
     p = project.Project()
-    params = p.csv_parameters('sim_scheme_test.csv')
-    params = p.generate_index_table(params)
-    ids = params.keys()
-    params = p.combi_parameters('combi_params.csv')
-    assert len(params) == 1
-    # test conservation of id for identical inputs
-    params = p.csv_parameters('sim_scheme_test.csv')
-    params = p.generate_index_table(params)
-    assert params.keys() == ids
+    p.deactivate()
+    pp = project.Project(name=p.name)
+    assert str(pp.dirname) == str(p.dirname)
+    pp.remove(force=True)
+
+
+def test_which_outputs():
+    p = project.Project()
+    output = p.which_outputs
+    assert output
+    assert output['Apex']
+    p.which_outputs = {'Apex': 0}
+    new_output = p.which_outputs
+    assert not new_output['Apex']
+    assert len(new_output) == len(output)  # all outputs flag are required
+    p.remove(force=True)
+
+
+def test_combi_params():
+    p = project.Project()
+    assert len(p.combi_params) == 0
+
+    p.run(dry_run=True)
+    combi = p.combi_params
+    assert len(combi) == 1
+    assert combi.ID[0] == 'walter_defaults'
+
+    p.run(nbj=30, dry_run=True)
+    combi = p.combi_params
+    assert len(combi) == 2
+    assert combi.ID[0] == 'walter_defaults'
+    assert combi.nbj[1] == 30
+
+    # repeat run: same id
+    p.run(nbj=30, dry_run=True)
+    combi = p.combi_params
+    assert len(combi) == 2
+    assert combi.ID[0] == 'walter_defaults'
+    assert combi.nbj[1] == 30
+
+    path = 'sim_scheme_test.csv'
+    p.run_parameters(path, dry_run=True)
+    combi = p.combi_params
+    assert len(combi) == 3
+    assert len(combi.columns) == 27
+
+    # repeat
+    p.run_parameters(path, dry_run=True)
+    combi = p.combi_params
+    assert len(combi) == 3
+    assert len(combi.columns) == 27
+
     p.remove(force=True)
