@@ -4,8 +4,7 @@ Management of walter simulations and projects
 
 import os
 import tempfile
-import argparse
-from subprocess import Popen
+
 
 from path import Path
 import pandas as pd
@@ -28,6 +27,12 @@ def walter_data():
 
 def cwd():
     return Path(os.getcwd()).abspath()
+
+
+def check_cwd():
+    """ does the current dir looks like a walter project dir ?"""
+    dir = cwd()
+    return (dir / 'input').exists() and (dir / 'output').exists() and (dir / 'which_output_files.csv').exists()
 
 
 class Project(object):
@@ -62,7 +67,7 @@ class Project(object):
 
         itable = 'index-table.json'
         if (self.dirname / itable).exists():
-            self.itable = OrderedDict(self.read_itable(itable))
+            self.itable = OrderedDict(self.read_itable(self.dirname / itable))
         else:
             self.itable = OrderedDict()
         self._combi_params = {}
@@ -292,169 +297,3 @@ class Project(object):
         """
         sid = self.itable.keys()[index]
         return self.dirname / 'output' / sid
-
-    def generate_index_table(self, parameters):
-        """ Generate a file named index-table.json.
-
-        The file contains a dict with :
-          - as key an ID ('id_'+str(uuid.uuid4()))
-          - as value a dict of a set of parameters (parameters[i])
-
-        If the file already exists, do not regenerate it (due to recursive call).
-        Else generate it plus another file named from_json_to_humanbeing.txt
-
-        :param parameters: list of dict
-        """
-
-        self.activate()
-
-        itable = 'index-table.json'
-
-        # allkey = set().union(*alldict)
-        if os.path.isfile(itable):
-            # The use of the byteify function kill encoding problems from json importation between unicode and strings
-            ID_params = OrderedDict(byteify(json.load(open(itable))))
-        else:
-            # Generate the dict ID_params
-            ID_params = OrderedDict()
-
-        for param in parameters:
-            already_known_ID = False
-            for idp in ID_params:
-                # If the combination of parameters has already been encountered previously and stored in the json file
-                if sorted(ID_params[idp].values()) == sorted(param.values()):
-                    already_known_ID = True
-            # If the ID of the simulation is already known
-            if already_known_ID:
-                ID = idp
-            else:
-                # compute a new ID
-                ID = 'id-'+str(uuid.uuid4())
-                ID_params[ID] = param
-
-        itable_file = open(itable, "w")
-        json.dump(ID_params, itable_file)
-
-        # generate combi_parameters.csv
-        combi = []
-        for k, v in ID_params.iteritems():
-            d = {'ID': k}
-            d.update(v)
-            combi.append(d)
-
-
-        combi_param = pd.DataFrame(combi)
-        combi_param.to_csv(path_or_buf=self.dirname /'combi_params.csv', index=False)
-
-
-        # We can now generate from_json_to_humanbeing.txt
-        # json_2_human = open("from_json_to_humanbeing.txt", "a")
-        # for ID in ID_params:
-        #     params = ID_params[ID]
-        #     for key, val in params.iteritems():
-        #         json_2_human.write("%s \t %s \t %s \n" % (ID, key, val))
-        #     json_2_human.write("\n")
-        # json_2_human.close()
-
-        return ID_params
-
-
-
-def main():
-    """
-    """
-    input_folder = Path(os.getcwd()).abspath()
-
-    usage = """
-WALTer generates a project directory and run simulations inside this directory.
-
-
-1. To create a full simulation project, run:
-
-       walter -p simu_walter
-
-
-2. To run simulations inside the project, type:
-
-       cd simu_walter
-       walter -i sim_scheme.csv
-       
-3. To run simulations and delete it after, type: 
-
-       walter -i sim_scheme.csv -p [name_test] --test_only #[IN-WORK] 
-
-"""
-
-    parser = argparse.ArgumentParser(description=usage)
-    parser.add_argument("-i", type=str,
-                        help="Select input simulation scheme")
-    parser.add_argument("-p", type=str,
-                        help="Name of the project where simulations will be run")
-    parser.add_argument("-t_o", "--test_only", help="Delete the project after simulation", action="store_true")
-
-    args = parser.parse_args()
-
-    _cwd = cwd()
-    project_name = str(_cwd.name)
-
-    project = '.'
-
-    if args.i:
-        sim_scheme = args.i
-        print (sim_scheme)
-    if args.p:
-        project = args.p
-        print(project)
-    if args.test_only:
-        print ("test_only")
-
-
-
-    prj = Project(project)
-
-    # TODO: add a flag in the project to know if the project has been generated, modified or not.
-    if Path(project).exists():
-        print('Use Project %s located at %s'%(prj.name, prj.dirname))
-    else:
-        print('Project %s has been generated at %s'%(prj.name, prj.dirname))
-
-
-    param_list = prj.csv_parameters(sim_scheme)
-
-    # Management of IDs
-    # Generate a file index-table.json and an from_json_to_humanbeing.txt file
-
-    status = prj.generate_index_table(param_list)
-
-    done = False
-
-    if len(param_list) == 1:
-        prj.run(**(param_list[0]))
-        done = True
-    else:
-
-        print 'Multiple processes'
-        tmp = prj.dirname/'tmp'
-        if not tmp.exists():
-            tmp.mkdir()
-
-        pids = []
-        for i, pdict in enumerate(param_list):
-            df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
-            scheme_name = str(tmp/'sim_scheme_%d.csv'%(i+1))
-            df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
-            pid = Popen(["walter", "-i", scheme_name])
-            #, env={"PATH": "/Users/pradal/miniconda2/envs/adel2/bin"})
-            #os.system("walter -i %s"%scheme_name)
-            pids.append(pid)
-        for pid in pids : 
-            pid.wait() 
-        
-        done = True
-
-    if args.test_only and done:
-       prj.dirname.rmtree()
-
-
-
-
