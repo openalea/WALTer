@@ -25,6 +25,8 @@ WALTer generates a project directory and run simulations inside this directory.
 
        cd simu_walter
        walter -i sim_scheme.csv
+        or
+       walter -i
 
 3. To run project management only, without running te model (for debug)  
 
@@ -35,9 +37,9 @@ WALTer generates a project directory and run simulations inside this directory.
 
 def walter_parser():
     parser = argparse.ArgumentParser(description=usage)
-    parser.add_argument("-i", type=str,
-                        help="Select input simulation scheme")
-    parser.add_argument("-p", type=str,
+    parser.add_argument("-i", type=str, help="Select input simulation scheme", nargs='?', const='walter_default',
+                        default='', action='store')
+    parser.add_argument("-p", type=str, default='.',
                         help="Name of the project where simulations will be run")
     parser.add_argument("--dry_run", help="do only project management tasks", action="store_true")
     return parser
@@ -48,20 +50,13 @@ def main():
     parser = walter_parser()
     args = parser.parse_args()
 
-    p = '.'
-    if args.p:
-        p = args.p
-    else:
+    if args.p == '.':  # check '.' is walter-like (in case user has  forgotten -p)
         if not project.check_cwd():
             answer = raw_input("Current directory doesn't look like a walter project dir, Continue ? [Y/N]")
-            if not answer == 'Y':
+            if answer != 'Y':
                 return
 
-    sim_scheme = ''
-    if args.i:
-        sim_scheme = args.i
-
-    prj = project.Project(p)
+    prj = project.Project(args.p)
 
     # TODO: add a flag in the project to know if the project has been generated, modified or not.
     if prj.dirname.exists():
@@ -69,18 +64,19 @@ def main():
     else:
         print('Project %s has been generated at %s' % (prj.name, prj.dirname))
 
-    if args.i:
-        if not sim_scheme:
+    if args.i:  # -i has been set
+        sim_scheme = args.i
+        if sim_scheme == 'walter_default':  # walter command called with dry -i args
             prj.run(dry_run=args.dry_run)
         else:
             param_list = prj.csv_parameters(sim_scheme)
             if len(param_list) == 1:
                 prj.run(dry_run=args.dry_run, **(param_list[0]))
             else:
-                print 'Multiple processes'
-                print 'generate ids'
+                print('Multiple processes')
+                print('generate ids')
                 prj.run_parameters(sim_scheme, dry_run=True)
-                print 'run simulations'
+                print('run simulations')
                 tmp = prj.dirname / 'tmp'
                 if not tmp.exists():
                     tmp.mkdir()

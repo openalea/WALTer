@@ -1,11 +1,24 @@
 import os
 from shutil import rmtree, copy
-
+from walter.walter_command import walter_parser
 call_dir = os.getcwd()
 
 
 def reset_call_dir():
     os.chdir(call_dir)
+
+
+def test_parser():
+    parser = walter_parser()
+    args = parser.parse_args(''.split())
+    assert args.p == '.'
+    assert args.i == ''
+    args = parser.parse_args('-p my_project -i'.split())
+    assert args.p == 'my_project'
+    assert args.i == 'walter_default'
+    args = parser.parse_args('-p my_project -i my_sim'.split())
+    assert args.p == 'my_project'
+    assert args.i == 'my_sim'
 
 
 def test_one_sim():
