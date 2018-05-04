@@ -68,7 +68,7 @@ setup_kwds = dict(
 # #}
 # change setup_kwds below before the next pkglts tag
 
-setup_kwds['entry_points']['console_scripts'] = ['walter = walter.project:main', ]
+setup_kwds['entry_points']['console_scripts'] = ['walter = walter.command_line:main', ]
 # do not change things below
 # {# pkglts, pysetup.call
 setup(**setup_kwds)
