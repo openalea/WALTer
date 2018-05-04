@@ -1,6 +1,6 @@
 import os
 from shutil import rmtree, copy
-from walter.walter_command import walter_parser
+from walter.command_line import walter_parser
 call_dir = os.getcwd()
 
 
