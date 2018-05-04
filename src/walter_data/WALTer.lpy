@@ -9,11 +9,15 @@ import openalea.plantgl.all as pgl
 import pandas as pd
 import numpy as np
 
+
 import sys
 import os
 import uuid
 import json
 
+### Importation output management ###
+
+import walter.output_manager as out
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -924,47 +928,16 @@ real_ts0 = [float("inf")]
 
 global GAI_dico_df
 if CARIBU_state == "enabled":
-  GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[], "Weakest_axis":[],"PAR_weakest_axis":[]}
+  out.GAILog.activate()
+
 if CARIBU_state == "disabled":
-  GAI_dico_df = {"Init_flag":[], "Elapsed_time":[],"Temp_cum":[],"DOY":[],"Genotype":[],"Num_plante":[],"Surface_plante":[],"Surface_visible":[],"Surface_sol":[],"GAI_tot":[],"GAI_center":[],"GAI_ind":[],"GAI_prox":[],"Position":[]}
+  pass
 
-global Apex_Sirius_dico_df
-Apex_Sirius_dico_df = {"Elapsed_time" :[],"Temperature" :[],"Temp_cum" :[], "Daylength" :[], "Num_plante" :[], "Genotype" :[], "PN"  :[], "LN"  :[], "Sumtemp"   :[], "Vern_rate" :[], "Vern_prog" :[], "Vern_flag" :[], "Debut_ppd_flag" :[], "Fin_ppd_flag" :[], "Ln_pot" :[], "Var_L_min" :[],"Ln_app" :[], "Ln_final" :[]}
-
-global Apex_dico_df
-Apex_dico_df = {"Elapsed_time" :[], "Temperature" :[], "Temp_cum" :[], "Time_count" :[], "Sum_temp" :[], "Current_PAR" :[], "Num_plante":[],  "Genotype" :[], "Num_talle" :[], "Num_cohorte":[], "Nb_phyto_emi" :[], "Nb_emerged_leaf" :[], "Transiflo_flag" :[], "STOP_init_flag" :[], "Transiflo_DOY" :[],"Ln_final" :[]}
-
-global Apex_R_dico_df
-Apex_R_dico_df = {"Elapsed_time" :[], "DOY" : [], "Temperature" :[], "Temp_cum" :[], "Sum_temp" :[], "Num_plante":[], "Genotype" :[], "Num_cohorte":[], "Ln_final":[], "Num_talle" :[], "Date_epiaison" :[], "Epi_DOY" :[], "Date_de_flo" :[], "Mont_flag" :[], "Mont_DOY":[], "Flo_flag" :[], "Flo_DOY" :[], "Death_flag" :[], "Date_de_maturite" : [], "Mat_DOY" : []}
-
-global Blade_df
-Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
-
-global Internode_dico_df
-Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[], "Internode_surface" :[], "Internode_PAR" : [], "Photosynthetic" :[]}
-
-global Peduncle_dico_df
-Peduncle_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[],"Sum_temp" :[], "Peduncle_length" : [], "Peduncle_final_length" : [], "Peduncle_surface" : [], "Peduncle_PAR" : [], "Photosynthetic" :[]}
-
-global Sheath_dico_df
-Sheath_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[] ,"Num_cohorte":[], "Num_rang" :[],"Sheath_sumtemp" :[] ,"Sheath_diameter" :[], "Sheath_length" :[],  "Sheath_final_length" :[], "Sheath_surface" :[], "Sheath_PAR" : [], "Photosynthetic" :[]}
-
-global Ear_dico_df
-Ear_dico_df = {"Elapsed_time":[], "Temp_cum" :[], "Num_plante" :[], "Genotype":[], "Num_talle" :[],  "Ear_sumtemp"  :[], "Ear_length" :[], "Ear_surface":[], "Ear_PAR":[], "Photosynthetic" :[], "Emerged" : []}
-
-global Proba_dico_df
-Proba_dico_df = {"Elapsed_time":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Genotype":[], "Num_talle":[], "Num_rang":[], "Sumtemp":[], "GAI_prox":[], "P_debourr":[]}
-
-global Peraxes_dico_df
-Peraxes_dico_df = {"Init_flag":[], "Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sheath_max":[], "Collar_height":[], "Dead_collar_height":[], "Delta_H":[], "Visible_leaves_surface":[], "Visible_surface":[], "Stop_growth_flag" : [], "Leaf_contrib_to_GAI" : [], "Stem_contrib_to_GAI" : [], "Ear_contrib_to_GAI" : [], "Peduncle_contrib_to_GAI" : []}
-
-global Debug_PAR_dico_df
-Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_type":[], "Num_organe":[], "Organ_surface":[], "Ei":[], "id": [], "tiller_surface": [],"Inc_PAR": []}
-
+Log
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
-  PAR_per_axes_dico = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[], "Abs_int_PAR":[]}
+
 
 
 #######################
@@ -3918,21 +3891,21 @@ Internode(StI):
             StI.photosynthetic = False
       
     if write_output_file["Internode"]:
-        Internode_dico_df['Elapsed_time'].append(elapsed_time)
-        Internode_dico_df['Temp_cum'].append(Tempcum)
-        Internode_dico_df['Temperature'].append(Temperature)
-        Internode_dico_df['Num_plante'].append(StI.num_plante)
-        Internode_dico_df['Genotype'].append(StI.geno )
-        Internode_dico_df['Num_talle'].append(str(StI.tiller))
-        Internode_dico_df['Num_cohorte'].append(cohort_number(StI.tiller))
-        Internode_dico_df['Num_rang'].append(StI.n)
-        Internode_dico_df['Internode_length'].append(StI.length)
-        Internode_dico_df['Internode_final_length'].append(StI.final_length)
-        Internode_dico_df['Internode_surface'].append(StI.area)
-        Internode_dico_df['Internode_PAR'].append(StI.PAR)
-        Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
-        
-      nproduce Internode(StI)
+      Internode_dico_df['Elapsed_time'].append(elapsed_time)
+      Internode_dico_df['Temp_cum'].append(Tempcum)
+      Internode_dico_df['Temperature'].append(Temperature)
+      Internode_dico_df['Num_plante'].append(StI.num_plante)
+      Internode_dico_df['Genotype'].append(StI.geno )
+      Internode_dico_df['Num_talle'].append(str(StI.tiller))
+      Internode_dico_df['Num_cohorte'].append(cohort_number(StI.tiller))
+      Internode_dico_df['Num_rang'].append(StI.n)
+      Internode_dico_df['Internode_length'].append(StI.length)
+      Internode_dico_df['Internode_final_length'].append(StI.final_length)
+      Internode_dico_df['Internode_surface'].append(StI.area)
+      Internode_dico_df['Internode_PAR'].append(StI.PAR)
+      Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
+
+    nproduce Internode(StI)
 
 Peduncle(StP):
   StP.diameter = d_P[StP.geno]
@@ -3968,7 +3941,7 @@ Peduncle(StP):
     Peduncle_dico_df['Peduncle_surface'].append(StP.area)
     Peduncle_dico_df['Peduncle_PAR'].append(StP.PAR)
     Peduncle_dico_df['Photosynthetic'].append(StP.photosynthetic)
-    
+
   produce Peduncle(StP)
 
 Ear(StE):
