@@ -126,7 +126,7 @@ class Project(object):
     @property
     def combi_params(self):
         if (self.dirname/'combi_params.csv').exists():
-            self._combi_params = pd.read_csv(self.dirname/'combi_params.csv')
+            self._combi_params = pd.read_csv(self.dirname/'combi_params.csv', sep='\t')
         return self._combi_params
 
     @staticmethod
@@ -185,7 +185,7 @@ class Project(object):
             d.update(v)
             combi.append(d)
         df = pd.DataFrame(combi)
-        df.to_csv(path, index=False)
+        df.to_csv(path, index=False, sep = '\t')
 
     def get_id(self, param):
         sim_id = None
