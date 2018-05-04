@@ -81,6 +81,7 @@ def main():
                 if not tmp.exists():
                     tmp.mkdir()
                 pids = []
+                procs = {}
                 for i, pdict in enumerate(param_list):
                     df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
                     scheme_name = str(tmp / 'sim_scheme_%d.csv' % (i + 1))
@@ -88,7 +89,28 @@ def main():
                     prj.activate()
                     pid = Popen(["walter", "-i", scheme_name])
                     pids.append(pid)
+                    procs[pid] = scheme_name
                 for pid in pids:
                     pid.wait()
+                #~ # Test caribuRunError re-launching
+                #~ while len(procs) > 0:
+                    #~ for proc, scheme in procs.iteritems:
+                        #if proc.poll() != None:
+                            # remove this proc from procs
+                            #procs.pop(proc)
+                            #param_list_dict = prj.csv_parameters(scheme)
+                            # Recupere ID
+                            #sim_id = prj.get_id(param_list_dict[0])
+                            #if os.path.exists(prj.dirname/output/sim_id/error_caribu.txt): # Check if the file error_caribu.txt has been generated
+                                #ex_rep = param_list_dict[0]["rep"]
+                                #param_list_dict[0].update(rep = ex_rep +1))
+                                #df = pd.DataFrame.from_dict(data=param_list_dict, orient='columns')
+                                #df.to_csv(path_or_buf=scheme, sep='\t', index=False)
+                                #p=popen(["walter", "-i", scheme])
+                                #prj.itable.update(sim_id=param_list_dict[0])
+                                #prj.update_itable()
+                                #procs.append(p)
+                    #sleep 1 minute
+                                
                 tmp.rmtree()
 
