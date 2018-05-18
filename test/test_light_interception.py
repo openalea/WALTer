@@ -1,6 +1,6 @@
 from walter import project
 from walter.light import get_light, scene_pattern
-import pandas
+import pandas,os
 
 
 def test_zero_light():
@@ -183,3 +183,6 @@ def debug_dico_PAR_per_axis(lsys, lstring, res_sky=None):
     return dico_PAR_per_axis
 
 
+
+if __name__ == "__main__":
+    test_zero_light()

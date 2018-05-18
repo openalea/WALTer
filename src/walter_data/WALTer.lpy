@@ -924,19 +924,16 @@ test_res= [True]
 real_ts0 = [float("inf")]
 
 
-### PANDAS DATAFRAME ###
+### PANDAS DATAFRAME && Initialisation of Output_manager ###
 
-global GAI_dico_df
+out = out.Logger()
+
 if CARIBU_state == "enabled":
-  out.GAILog.activate()
-
-if CARIBU_state == "disabled":
+  out.loggers["GAI"].activate()
   pass
 
-Log
-
 if write_output_file["PAR_per_axes"]:
-  global PAR_per_axes_dico
+  out.add_ParPerAxesLog()
 
 
 
@@ -2168,7 +2165,9 @@ def EndEach(lstring, lscene):
       delta_H[num_plt][axis] = max(0, delta_H[num_plt][axis] - Sh_max_temp)
       
       #Calcul de GAI (on ajoute les contributions des autres parties de la plante)
-      Peraxes_dico_df["Visible_leaves_surface"].append(tiller_surface[(num_plt,axis)])
+      #Peraxes_dico_df["Visible_leaves_surface"].append(tiller_surface[(num_plt,axis)])
+      out.log("Peraxes", Visible_leaves_surface = tiller_surface[(num_plt,axis)])
+
       #TODO : transformer ces formules en fonctions � mettre en amont
       leaf_contrib = tiller_surface[(num_plt,axis)]
       stem_contrib = max(0,(Hcol_max[num_plt][axis] - max(L_b_S,Hcol_dead[num_plt][axis])) * d_S[genotype_map[num_plt]] * pi/2)
@@ -2187,23 +2186,13 @@ def EndEach(lstring, lscene):
       
       #Remplissages de dico de sortie
       if write_output_file["Peraxes"]:
-        Peraxes_dico_df["Init_flag"].append(initialization_Flag[num_plt])
-        Peraxes_dico_df["Elapsed_time"].append(elapsed_time)
-        Peraxes_dico_df["DOY"].append(DOY)
-        Peraxes_dico_df["Temperature"].append(Temperature)
-        Peraxes_dico_df["Temp_cum"].append(Tempcum)
-        Peraxes_dico_df["Num_plante"].append(num_plt)
-        Peraxes_dico_df["Num_talle"].append(axis)
-        Peraxes_dico_df["Sheath_max"].append(Sh_max_temp)      
-        Peraxes_dico_df["Collar_height"].append(Hcol_max[num_plt][axis])
-        Peraxes_dico_df["Dead_collar_height"].append(Hcol_dead[num_plt][axis])
-        Peraxes_dico_df["Delta_H"].append(delta_H[num_plt][axis])
-        Peraxes_dico_df["Visible_surface"].append(tiller_surface[(num_plt,axis)])
-        Peraxes_dico_df["Stop_growth_flag"].append(axis_census[num_plt][axis]['Stop_growth_flag'])
-        Peraxes_dico_df["Leaf_contrib_to_GAI"].append(leaf_contrib)
-        Peraxes_dico_df["Stem_contrib_to_GAI"].append(stem_contrib)
-        Peraxes_dico_df["Ear_contrib_to_GAI"].append(ear_contrib)
-        Peraxes_dico_df["Peduncle_contrib_to_GAI"].append(peduncle_contrib)
+        out.log("Peraxes", Init_flag = initialization_Flag[num_plt], Elapsed_time = elapsed_time, DOY = DOY,
+                Temperature=Temperature, Temp_cum= Tempcum, Num_plante=num_plt, Num_talle=axis, Sheath_max=Sh_max_temp,
+                Collar_height=Hcol_max[num_plt][axis], Dead_collar_height=Hcol_dead[num_plt][axis],
+                Delta_H=delta_H[num_plt][axis], Visible_surface=tiller_surface[(num_plt,axis)],
+                Stop_growth_flag=axis_census[num_plt][axis]['Stop_growth_flag'],Leaf_contrib_to_GAI=leaf_contrib,
+                Stem_contrib_to_GAI=stem_contrib, Ear_contrib_to_GAI=ear_contrib,
+                Peduncle_contrib_to_GAI=peduncle_contrib)
   
 #aggregate axes surface per plant
   for key in tiller_surface.keys():
@@ -2307,30 +2296,21 @@ def EndEach(lstring, lscene):
                     dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR/Temperature/(tiller_surface[(lstring[id][0].num_plante,lstring[id][0].tiller)] *1e-4)
                     dico_absolute_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller][round(Tempcum, 1)] += lstring[id][0].PAR
                   if write_debug_PAR == True :
-                    Debug_PAR_dico_df["Ei"].append(res_sky["Ei"][id])
-                    Debug_PAR_dico_df["Elapsed_time"].append(elapsed_time)
-                    Debug_PAR_dico_df["Temp_cum"].append(Temperature)
-                    Debug_PAR_dico_df["Organ_type"].append(lstring[id].name)
-                    Debug_PAR_dico_df["Num_talle"].append(lstring[id][0].tiller)
-                    Debug_PAR_dico_df["Num_plante"].append(lstring[id][0].num_plante)
-                    Debug_PAR_dico_df["Num_organe"].append(lstring[id][0].n)
-                    Debug_PAR_dico_df["Organ_surface"].append(lstring[id][0].organ_surface)
-                    Debug_PAR_dico_df["Organ_PAR"].append(lstring[id][0].PAR)
-                    Debug_PAR_dico_df["id"].append(id)
-                    Debug_PAR_dico_df["tiller_surface"].append(tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)]*1e-4)
-                    Debug_PAR_dico_df["Inc_PAR"].append(current_PAR)
+                    out.log("Debug", Ei=res_sky["Ei"][id], Elapsed_time=elapsed_time, Temp_cum=Temperature,
+                            Organ_type=lstring[id].name, Num_talle=lstring[id][0].tiller, Inc_PAR=current_PAR,
+                            Num_plante=lstring[id][0].num_plante, Num_organe=lstring[id][0].n,
+                            Organ_surface=lstring[id][0].organ_surface, Organ_PAR=lstring[id][0].PAR, id=id,
+                            tiller_surface=tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)]*1e-4)
+
 
           if write_output_file["PAR_per_axes"] == True:
             for num_plt in axis_census.keys():
               for axis in axis_census[num_plt].keys():
-                PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
-                PAR_per_axes_dico["Temp_cum"].append(Tempcum)
-                PAR_per_axes_dico["Num_plante"].append(num_plt)
-                PAR_per_axes_dico["Num_talle"].append(axis)
-                PAR_per_axes_dico["Inc_PAR"].append(current_PAR)
                 tt = round(Tempcum, 1)
-                PAR_per_axes_dico["Sum_PAR"].append(dico_PAR_per_axis[num_plt][axis].get(tt,0.))
-                PAR_per_axes_dico["Abs_int_PAR"].append(dico_absolute_PAR_per_axis[num_plt][axis].get(tt,0.))
+                out.log("ParPerAxes", Elapsed_time=elapsed_time, Temp_cum=Tempcum, Num_plante=num_plt, Num_talle=axis,
+                        Inc_PAR=current_PAR, Sum_PAR=dico_PAR_per_axis[num_plt][axis].get(tt,0.),
+                        Abs_int_PAR=dico_absolute_PAR_per_axis[num_plt][axis].get(tt,0.))
+
 
     ### BOUCLE DE REGRESSION DES TALLES ###
     for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
@@ -2388,30 +2368,20 @@ def EndEach(lstring, lscene):
               axis_census[num_plt][PAR_per_youngest_tiller[0]]["emerg_date"] = 0        
         
       #global GAI_df
-      GAI_dico_df['Weakest_axis'].append(weakest_axis)
-      GAI_dico_df['PAR_weakest_axis'].append(PAR/nb_timestep_fenetre)
+      out.log("GAI", Weakest_axis=weakest_axis, PAR_weakest_axis=PAR/nb_timestep_fenetre)
   
   ###### Fin rayonnement
   
   for num in range(1, crop_scheme["nplant_peupl"] + 1):
-    GAI_dico_df["Init_flag"].append(initialization_Flag[num])
-    GAI_dico_df['Elapsed_time'].append(elapsed_time)
-    GAI_dico_df['Temp_cum'].append(Tempcum)
-    GAI_dico_df['DOY'].append(DOY)
-    GAI_dico_df['Genotype'].append(0)
-    GAI_dico_df['Num_plante'].append(num)
-    GAI_dico_df['Surface_plante'].append(surface_plante[num])
-    GAI_dico_df['Surface_visible'].append(surface_plante_visible[num])
-    GAI_dico_df['Surface_sol'].append((crop_scheme["nplant_peupl"] * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))))
-    GAI_dico_df['GAI_tot'].append(GAI_tot)
-    GAI_dico_df['GAI_center'].append(GAI_center)
-    GAI_dico_df['GAI_ind'].append(GAI_ind[num])
-    GAI_dico_df['GAI_prox'].append(GAI_prox[num])
+    out.log("GAI", Init_flag=initialization_Flag[num], Elapsed_time=elapsed_time, Temp_cum=Tempcum, DOY=DOY, Genotype=0,
+            Num_plante=num, Surface_plante=surface_plante[num], Surface_visible=surface_plante_visible[num],
+            Surface_sol=(crop_scheme["nplant_peupl"] * ((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))),
+            GAI_tot=GAI_tot, GAI_center=GAI_center, GAI_ind=GAI_ind[num], GAI_prox=GAI_prox[num])
 
     if num in plant_census:
-      GAI_dico_df['Position'].append("center")
+      out.log("GAI", Position="center")
     else:
-      GAI_dico_df['Position'].append("border")
+      out.log("GAI", Position="border")
   
   
   
@@ -2422,74 +2392,7 @@ def End(lstring):
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
   print "Aloha"
-
-  if write_output_file["Apex_Sirius"] == True:
-    _Apex_Sirius_df = pd.DataFrame(Apex_Sirius_dico_df)
-    dF_labels = ["Elapsed_time","Temperature", "Temp_cum", "Daylength", "Num_plante", "Genotype", "PN", "LN", "Sumtemp", "Vern_rate", "Vern_prog", "Vern_flag", "Debut_ppd_flag", "Fin_ppd_flag", "Ln_pot", "Var_L_min","Ln_app", "Ln_final"]
-    Apex_Sirius_df = _Apex_Sirius_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Apex_Sirius_df.to_csv(pj(out_dir,folder_name, "Apex_Sirius.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Apex"] == True:
-    _Apex_df = pd.DataFrame(Apex_dico_df)
-    dF_labels = ["Elapsed_time", "Temperature", "Temp_cum", "Time_count", "Sum_temp", "Current_PAR", "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Nb_phyto_emi", "Nb_emerged_leaf", "Transiflo_flag", "STOP_init_flag", "Transiflo_DOY","Ln_final"]
-    Apex_df = _Apex_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Apex_df.to_csv(pj(out_dir,folder_name, "Apex.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Apex_R"] == True:
-    _Apex_R_df = pd.DataFrame(Apex_R_dico_df)
-    dF_labels = ["Elapsed_time", "DOY", "Temperature", "Temp_cum", "Sum_temp", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Ln_final", "Date_epiaison", "Epi_DOY", "Date_de_flo", "Mont_flag", "Mont_DOY", "Flo_flag", "Flo_DOY", "Death_flag", "Date_de_maturite", "Mat_DOY"]
-    Apex_R_df = _Apex_R_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Apex_R_df.to_csv(pj(out_dir,folder_name, "Apex_R.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Blade"] == True:
-    _Blade_df = pd.DataFrame(Blade_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic"]
-    Blade_df = _Blade_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Blade_df.to_csv(pj(out_dir,folder_name, "Blade.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Internode"] == True:
-    _Internode_df = pd.DataFrame(Internode_dico_df)
-    dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_surface", "Internode_PAR", "Photosynthetic"]
-    Internode_df = _Internode_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Internode_df.to_csv(pj(out_dir,folder_name, "Internode.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Peduncle"] == True:
-    _Peduncle_df = pd.DataFrame(Peduncle_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_surface", "Peduncle_PAR", "Photosynthetic"]
-    Peduncle_df = _Peduncle_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Peduncle_df.to_csv(pj(out_dir,folder_name, "Peduncle.csv"), sep = "\t", header=True, index=False)
-
-  if write_output_file["Sheath"] == True:
-    _Sheath_df = pd.DataFrame(Sheath_dico_df)
-    dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle" , "Num_cohorte", "Num_rang" ,"Sheath_sumtemp"  ,"Sheath_diameter" , "Sheath_length" ,  "Sheath_final_length" , "Sheath_surface" , "Sheath_PAR" , "Photosynthetic"]
-    Sheath_df = _Sheath_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Sheath_df.to_csv(pj(out_dir,folder_name, "Sheath.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Ear"] == True:
-    _Ear_df = pd.DataFrame(Ear_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" ,"Ear_surface", "Ear_PAR", "Photosynthetic", "Emerged"]
-    Ear_df = _Ear_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Ear_df.to_csv(pj(out_dir,folder_name, "Ear.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Proba"] == True:
-    _Proba_df = pd.DataFrame(Proba_dico_df)
-    dF_labels = ["Elapsed_time", "Temperature", "Temp_cum", "Num_plante", "Genotype", "Num_talle", "Num_rang", "Sumtemp", "GAI_prox", "P_debourr"]
-    Proba_df = _Proba_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Proba_df.to_csv(pj(out_dir,folder_name, "Probabilities.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["Peraxes"] == True:
-    _Peraxes_df = pd.DataFrame(Peraxes_dico_df)
-    dF_labels = ["Init_flag","Elapsed_time", "DOY","Temperature", "Temp_cum", "Num_plante", "Num_talle", "Sheath_max", "Collar_height", "Dead_collar_height", "Delta_H", "Visible_leaves_surface", "Visible_surface", "Leaf_contrib_to_GAI","Stem_contrib_to_GAI","Ear_contrib_to_GAI","Peduncle_contrib_to_GAI", "Stop_growth_flag"]
-    Peraxes_df = _Peraxes_df.reindex_axis(dF_labels, axis="columns", copy=False)
-    Peraxes_df.to_csv(pj(out_dir,folder_name, "Peraxes.csv"), sep="\t", header=True, index=False)
-
-  if write_debug_PAR == True:
-    Debug_PAR_df = pd.DataFrame(Debug_PAR_dico_df)
-    Debug_PAR_df.to_csv(pj(out_dir,folder_name, "Debug_PAR.csv"), sep="\t", header=True, index=False)
-
-  if write_output_file["PAR_per_axes"] == True:
-    PAR_per_axes_df = pd.DataFrame(PAR_per_axes_dico)
-    PAR_per_axes_df.to_csv(pj(out_dir,folder_name, "PAR_per_axes.csv"), sep = "\t", header = True, index = False)
+  out.write("output") #Write on the output repository
 
   # FICHIER PARAMETRES
   
@@ -2629,11 +2532,11 @@ def End(lstring):
     fichier_individual.write("Dse_ind" + "\t" + "%s" % numplt + "\t" + "%s" % Dse_heterogeneous[numplt] + "\n" )
   fichier_individual.close()
 
-  if write_output_file["GAI"] == True:
-    _GAI_df = pd.DataFrame(GAI_dico_df)
-    dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
-    GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
-    GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
+  # if write_output_file["GAI"] == True:
+  #   _GAI_df = pd.DataFrame(GAI_dico_df)
+  #   dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
+  #   GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
+  #   GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
   
 
 Axiom:Seed
@@ -2904,24 +2807,11 @@ Apex(StA):
                 t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
                 t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
 
-      Apex_Sirius_dico_df['Elapsed_time'].append(day)
-      Apex_Sirius_dico_df['Temperature'].append(current_temperature)
-      Apex_Sirius_dico_df['Temp_cum'].append(_Tempcum)
-      Apex_Sirius_dico_df['Daylength'].append(duree_du_jour(latitude, DOY))
-      Apex_Sirius_dico_df['Num_plante'].append(StA.num_plante)
-      Apex_Sirius_dico_df['Genotype'].append(StA.geno)
-      Apex_Sirius_dico_df['PN'].append(StA.pn)
-      Apex_Sirius_dico_df['LN'].append(StA.ln)
-      Apex_Sirius_dico_df['Sumtemp'].append(StA.sumtemp)
-      Apex_Sirius_dico_df['Vern_rate'].append(StA.vern_rate)
-      Apex_Sirius_dico_df['Vern_prog'].append(StA.vern_prog)
-      Apex_Sirius_dico_df['Vern_flag'].append(StA.vrn)
-      Apex_Sirius_dico_df['Debut_ppd_flag'].append(StA.debut_ppd)
-      Apex_Sirius_dico_df['Fin_ppd_flag'].append(StA.photop_flag)
-      Apex_Sirius_dico_df['Ln_pot'].append(StA.Ln_pot)
-      Apex_Sirius_dico_df['Var_L_min'].append(StA.var_Lmin)
-      Apex_Sirius_dico_df['Ln_app'].append(StA.Ln_app)
-      Apex_Sirius_dico_df['Ln_final'].append(StA.Ln_final)
+      out.log("ApexSirius", Elapsed_time=day, Temperature=current_temperature, Temp_cum=_Tempcum,
+              Daylength=duree_du_jour(latitude, DOY), Num_plante=StA.num_plante, Genotype=StA.geno, PN=StA.pn,
+              LN=StA.ln, Sumtemp=StA.sumtemp, Vern_rate=StA.vern_rate, Vern_prog=StA.vern_prog, Vern_flag=StA.vrn,
+              Debut_ppd_flag=StA.debut_ppd, Fin_ppd_flag=StA.photop_flag, Ln_pot=StA.Ln_pot, Var_L_min=StA.var_Lmin,
+              Ln_app=StA.Ln_app, Ln_final=StA.Ln_final )
 
     _Tempcum = 0
     date_current_day = sowing_date + datetime.timedelta(2) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
@@ -3184,34 +3074,23 @@ Apex(StA):
       else:
 
         if Tempcum  >= Dse_heterogeneous[StA.num_plante]:
-          Apex_dico_df['Nb_emerged_leaf'].append(max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
+          out.log("Apex", Nb_emerged_leaf=max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
         else:
-          Apex_dico_df['Nb_emerged_leaf'].append(0)
+          out.log("Apex", Nb_emerged_leaf=0)
 
         nproduce Apex(StA)
         
   #Ecriture dans fichiers
   if Tempcum  >= Dse_heterogeneous[StA.num_plante]:
-    Apex_dico_df['Nb_emerged_leaf'].append(max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
+    out.log("Apex", Nb_emerged_leaf=max(leaf_emergence[StA.num_plante][StA.tiller].keys()))
   else:
-    Apex_dico_df['Nb_emerged_leaf'].append(0)
+    out.log("Apex", Nb_emerged_leaf=0)
 
-  Apex_dico_df['Elapsed_time'].append(elapsed_time)
-  Apex_dico_df['Temperature'].append(Temperature)
-  Apex_dico_df['Temp_cum'].append(Tempcum)
-  Apex_dico_df['Time_count'].append(StA.time)
-  Apex_dico_df['Sum_temp'].append(StA.sumtemp)
-  Apex_dico_df['Current_PAR'].append(current_PAR)
-  Apex_dico_df['Num_plante'].append(StA.num_plante)
-  Apex_dico_df['Genotype'].append(StA.geno)
-  Apex_dico_df['Num_talle'].append(str(StA.tiller))
-  Apex_dico_df['Num_cohorte'].append(cohort_number(StA.tiller))
-  Apex_dico_df['Nb_phyto_emi'].append(StA.n)
-  Apex_dico_df['Transiflo_flag'].append(StA.transiflo)
-  Apex_dico_df['STOP_init_flag'].append(StA.STOP_init)
-  Apex_dico_df['Transiflo_DOY'].append(dico_stades[StA.num_plante][StA.tiller]["Transiflo"][2])
-  Apex_dico_df['Ln_final'].append(StA.Ln_final)
-
+  out.log( "Apex", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum, Time_count=StA.time,
+          Sum_temp=StA.sumtemp, Current_PAR=current_PAR, Num_plante=StA.num_plante, Genotype=StA.geno,
+          Num_talle=str(StA.tiller), Num_cohorte=cohort_number(StA.tiller), Nb_phyto_emi=StA.n,
+          Transiflo_flag=StA.transiflo, STOP_init_flag=StA.STOP_init, Ln_final=StA.Ln_final,
+          Transiflo_DOY=dico_stades[StA.num_plante][StA.tiller]["Transiflo"][2])
 
 Apex_R(StAR):
   
@@ -3260,26 +3139,18 @@ Apex_R(StAR):
       StAR.mat = True
       
     if write_output_file["Apex_R"]:
-      Apex_R_dico_df['Elapsed_time'].append(elapsed_time)
-      Apex_R_dico_df['DOY'].append(DOY)
-      Apex_R_dico_df['Temperature'].append(Temperature)
-      Apex_R_dico_df['Temp_cum'].append(Tempcum)
-      Apex_R_dico_df['Sum_temp'].append(StAR.sumtemp)
-      Apex_R_dico_df['Num_cohorte'].append(cohort_number(StAR.tiller))
-      Apex_R_dico_df['Ln_final'].append(StAR.Ln_final)
-      Apex_R_dico_df['Num_plante'].append(StAR.num_plante)
-      Apex_R_dico_df['Genotype'].append(StAR.geno)
-      Apex_R_dico_df['Num_talle'].append(StAR.tiller)
-      Apex_R_dico_df['Mont_flag'].append(StAR.mont)
-      Apex_R_dico_df['Mont_DOY'].append(dico_stades[StAR.num_plante][StAR.tiller]["Montaison"][2])
-      Apex_R_dico_df['Flo_flag'].append(StAR.flo)
-      Apex_R_dico_df['Flo_DOY'].append(dico_stades[StAR.num_plante][StAR.tiller]["Flo"][2])
-      Apex_R_dico_df['Death_flag'].append(StAR.death_flag)
-      Apex_R_dico_df['Date_epiaison'].append(dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][1])
-      Apex_R_dico_df['Epi_DOY'].append(dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][2])
-      Apex_R_dico_df['Date_de_flo'].append(dico_stades[StAR.num_plante][StAR.tiller]["Flo"][1])
-      Apex_R_dico_df['Mat_DOY'].append(dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][2])
-      Apex_R_dico_df['Date_de_maturite'].append(dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][1])
+      out.log("ApexR", Elapsed_time=elapsed_time, DOY=DOY, Temperature=Temperature, Temp_cum=Tempcum,
+              Sum_temp=StAR.sumtemp, Num_cohorte=cohort_number(StAR.tiller), Ln_final=StAR.Ln_final,
+              Num_plante=StAR.num_plante, Genotype=StAR.geno, Num_talle=StAR.tiller, Mont_flag=StAR.mont,
+              Mont_DOY=dico_stades[StAR.num_plante][StAR.tiller]["Montaison"][2], Flo_flag=StAR.flo,
+              Flo_DOY=dico_stades[StAR.num_plante][StAR.tiller]["Flo"][2], Death_flag=StAR.death_flag,
+              Date_epiaison=dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][1],
+              Epi_DOY=dico_stades[StAR.num_plante][StAR.tiller]["Epiaison"][2],
+              Date_de_flo=dico_stades[StAR.num_plante][StAR.tiller]["Flo"][1],
+              Mat_DOY=dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][2],
+              Date_de_maturite=dico_stades[StAR.num_plante][StAR.tiller]["Maturite"][1])
+
+
     produce Apex_R(StAR)
 
 Bud_primord(StBu_p):
@@ -3420,16 +3291,10 @@ Bud(StBu):
           
           # Enregistrement des informations
           if write_output_file["Proba"]:
-            Proba_dico_df["Elapsed_time"].append(elapsed_time)
-            Proba_dico_df["Temperature"].append(Temperature)
-            Proba_dico_df["Temp_cum"].append(Tempcum)
-            Proba_dico_df["Num_plante"].append(StBu.num_plante)
-            Proba_dico_df["Genotype"].append(StBu.geno)
-            Proba_dico_df["Num_talle"].append(str(StBu.tiller[0:len(StBu.tiller)-1]))
-            Proba_dico_df["Num_rang"].append(StBu.tiller[-1])
-            Proba_dico_df["Sumtemp"].append(StBu.sumtemp)
-            Proba_dico_df["GAI_prox"].append(GAI_prox[StBu.num_plante])
-            Proba_dico_df["P_debourr"].append(StBu.p_debourr)
+            out.log("Proba", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+                    Num_plante=StBu.num_plante, Genotype=StBu.geno, Num_talle=str(StBu.tiller[0:len(StBu.tiller)-1]),
+                    Num_rang=StBu.tiller[-1], Sumtemp=StBu.sumtemp, GAI_prox=GAI_prox[StBu.num_plante],
+                    P_debourr=StBu.p_debourr)
           
           if random.random() <= StBu.p_debourr:
             # Formatting dictionnaries
@@ -3479,17 +3344,11 @@ Bud(StBu):
 
           # Enregistrement des informations
           if write_output_file["Proba"]:
-            Proba_dico_df["Elapsed_time"].append(elapsed_time)
-            Proba_dico_df["Temperature"].append(Temperature)
-            Proba_dico_df["Temp_cum"].append(Tempcum)
-            Proba_dico_df["Num_plante"].append(StBu.num_plante)
-            Proba_dico_df["Genotype"].append(StBu.geno)
-            Proba_dico_df["Num_talle"].append(str(StBu.tiller[0:len(StBu.tiller)-1]))
-            Proba_dico_df["Num_rang"].append(StBu.tiller[-1])
-            Proba_dico_df["Sumtemp"].append(StBu.sumtemp)
-            Proba_dico_df["GAI_prox"].append(GAI_prox[StBu.num_plante])
-            Proba_dico_df["P_debourr"].append(StBu.p_debourr)
-            
+            out.log("Proba", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+                    Num_plante=StBu.num_plante, Genotype=StBu.geno, Num_talle=str(StBu.tiller[0:len(StBu.tiller) - 1]),
+                    Num_rang=StBu.tiller[-1], Sumtemp=StBu.sumtemp, GAI_prox=GAI_prox[StBu.num_plante],
+                    P_debourr=StBu.p_debourr)
+
           if random.random() <= StBu.p_debourr:
             # Formatting dictionnaries
             ## Dictionnaries including datas about emerged organs
@@ -3543,16 +3402,10 @@ Bud_R(StBuR):
       
       # Enregistrement des informations
       if write_output_file["Proba"]:
-        Proba_dico_df["Elapsed_time"].append(elapsed_time)
-        Proba_dico_df["Temperature"].append(Temperature)
-        Proba_dico_df["Temp_cum"].append(Tempcum)
-        Proba_dico_df["Num_plante"].append(StBuR.num_plante)
-        Proba_dico_df["Genotype"].append(StBuR.geno)
-        Proba_dico_df["Num_talle"].append(str(StBuR.tiller[0:len(StBuR.tiller)-1]))
-        Proba_dico_df["Num_rang"].append(StBuR.tiller[-1])
-        Proba_dico_df["Sumtemp"].append(StBuR.sumtemp)
-        Proba_dico_df["GAI_prox"].append(GAI_prox[StBuR.num_plante])
-        Proba_dico_df["P_debourr"].append(StBuR.p_debourr)
+        out.log("Proba", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+                Num_plante=StBuR.num_plante, Genotype=StBuR.geno, Num_talle=str(StBuR.tiller[0:len(StBuR.tiller) - 1]),
+                Num_rang=StBuR.tiller[-1], Sumtemp=StBuR.sumtemp, GAI_prox=GAI_prox[StBuR.num_plante],
+                P_debourr=StBuR.p_debourr)
         
       # Si le bourgeon �merge
       if random.random() <= StBuR.p_debourr:
@@ -3756,25 +3609,15 @@ Blade(StBl):
     StBl.visible_area = visible_area(StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
     
     if write_output_file["Blade"]:
-      Blade_dico_df['Elapsed_time'].append(elapsed_time)
-      Blade_dico_df['Temp_cum'].append(Tempcum)
-      Blade_dico_df['Temperature'].append(Temperature)
-      Blade_dico_df['Num_plante'].append(StBl.num_plante)
-      Blade_dico_df['Genotype'].append(StBl.geno )
-      Blade_dico_df['Num_talle'].append(str(StBl.tiller))
-      Blade_dico_df['Num_cohorte'].append(cohort_number(StBl.tiller))
-      Blade_dico_df['Num_rang'].append(StBl.n)
-      Blade_dico_df['Blade_sumtemp'].append(leaf_emergence[StBl.num_plante][StBl.tiller][StBl.n][1])
-      Blade_dico_df['Blade_width'].append(StBl.width)
-      Blade_dico_df['Blade_length'].append(StBl.length)
-      Blade_dico_df['Blade_visible_length'].append(StBl.visible_length)
-      Blade_dico_df['Blade_final_length'].append(StBl.final_length)
-      Blade_dico_df['Blade_visible_surface'].append(StBl.visible_area)
-      Blade_dico_df['Blade_surface'].append((StBl.width*StBl.length*0.75))
-      Blade_dico_df['Blade_PAR'].append(StBl.PAR)
-      Blade_dico_df['Senesc_flag'].append(StBl.senesc_flag)
-      Blade_dico_df['Photosynthetic'].append(StBl.photosynthetic)
-    
+      out.log("Blade", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+              Num_plante=StBl.num_plante, Genotype=StBl.geno, Num_talle=str(StBl.tiller),
+              Num_cohorte=cohort_number(StBl.tiller), Num_rang=StBl.n,
+              Blade_sumtemp=leaf_emergence[StBl.num_plante][StBl.tiller][StBl.n][1],
+              Blade_width=StBl.width, Blade_length=StBl.length, Blade_visible_length=StBl.visible_length,
+              Blade_final_length=StBl.final_length, Blade_visible_surface=StBl.visible_area,
+              Blade_surface=(StBl.width*StBl.length*0.75), Blade_PAR=StBl.PAR, Senesc_flag=StBl.senesc_flag,
+              Photosynthetic=StBl.photosynthetic)
+
     produce Blade(StBl)
 
 
@@ -3826,21 +3669,12 @@ Sheath(StS):
       #print "gaine : ", StS.n, StS.length
     
     if write_output_file["Sheath"]:
-      Sheath_dico_df['Elapsed_time'].append(elapsed_time)
-      Sheath_dico_df['Temp_cum'].append(Tempcum)
-      Sheath_dico_df['Temperature'].append(Temperature)
-      Sheath_dico_df['Num_plante'].append(StS.num_plante)
-      Sheath_dico_df['Genotype'].append(StS.geno )
-      Sheath_dico_df['Num_talle'].append(str(StS.tiller))
-      Sheath_dico_df['Num_cohorte'].append(cohort_number(StS.tiller))
-      Sheath_dico_df['Num_rang'].append(StS.n)
-      Sheath_dico_df['Sheath_sumtemp'].append(StS.sumtemp)
-      Sheath_dico_df['Sheath_diameter'].append(StS.diameter)
-      Sheath_dico_df['Sheath_length'].append(StS.length)
-      Sheath_dico_df['Sheath_final_length'].append(StS.final_length)
-      Sheath_dico_df['Sheath_surface'].append(pi * (StS.diameter/2) * StS.length)
-      Sheath_dico_df['Sheath_PAR'].append(StS.PAR)
-      Sheath_dico_df['Photosynthetic'].append(StS.photosynthetic)
+      out.log("Sheath", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+              Num_plante=StS.num_plante, Genotype=StS.geno, Num_talle=str(StS.tiller),
+              Num_cohorte=cohort_number(StS.tiller), Num_rang=StS.n, Sheath_PAR=StS.PAR,
+              Sheath_sumtemp=StS.sumtemp, Sheath_diameter=StS.diameter, Sheath_length=StS.length,
+              Sheath_final_length=StS.final_length, Sheath_surface=pi * (StS.diameter/2) * StS.length,
+              Photosynthetic=StS.photosynthetic)
       
     produce Sheath(StS)
 
@@ -3891,19 +3725,11 @@ Internode(StI):
             StI.photosynthetic = False
       
     if write_output_file["Internode"]:
-      Internode_dico_df['Elapsed_time'].append(elapsed_time)
-      Internode_dico_df['Temp_cum'].append(Tempcum)
-      Internode_dico_df['Temperature'].append(Temperature)
-      Internode_dico_df['Num_plante'].append(StI.num_plante)
-      Internode_dico_df['Genotype'].append(StI.geno )
-      Internode_dico_df['Num_talle'].append(str(StI.tiller))
-      Internode_dico_df['Num_cohorte'].append(cohort_number(StI.tiller))
-      Internode_dico_df['Num_rang'].append(StI.n)
-      Internode_dico_df['Internode_length'].append(StI.length)
-      Internode_dico_df['Internode_final_length'].append(StI.final_length)
-      Internode_dico_df['Internode_surface'].append(StI.area)
-      Internode_dico_df['Internode_PAR'].append(StI.PAR)
-      Internode_dico_df['Photosynthetic'].append(StI.photosynthetic)
+      out.log("Internode", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+              Num_plante=StI.num_plante, Genotype=StI.geno, Num_talle=str(StI.tiller),
+              Num_cohorte=cohort_number(StI.tiller), Num_rang=StI.n, Internode_PAR=StI.PAR,
+              Internode_length=StI.length, Internode_final_length=StI.final_length, Internode_surface=StI.area,
+              Photosynthetic=StI.photosynthetic)
 
     nproduce Internode(StI)
 
@@ -3927,20 +3753,11 @@ Peduncle(StP):
     StP.photosynthetic = False
   
   if write_output_file["Peduncle"]:
-    Peduncle_dico_df['Elapsed_time'].append(elapsed_time)
-    Peduncle_dico_df['Temp_cum'].append(Tempcum)
-    Peduncle_dico_df['Temperature'].append(Temperature)
-    Peduncle_dico_df['Num_plante'].append(StP.num_plante)
-    Peduncle_dico_df['Genotype'].append(StP.geno)
-    Peduncle_dico_df['Num_talle'].append(str(StP.tiller))
-    Peduncle_dico_df['Num_cohorte'].append(cohort_number(StP.tiller))
-    Peduncle_dico_df['Num_rang'].append(StP.n)
-    Peduncle_dico_df['Sum_temp'].append(StP.sumtemp)
-    Peduncle_dico_df['Peduncle_length'].append(StP.length)
-    Peduncle_dico_df['Peduncle_final_length'].append(StP.final_length)
-    Peduncle_dico_df['Peduncle_surface'].append(StP.area)
-    Peduncle_dico_df['Peduncle_PAR'].append(StP.PAR)
-    Peduncle_dico_df['Photosynthetic'].append(StP.photosynthetic)
+    out.log("Peduncle", Elapsed_time=elapsed_time, Temperature=Temperature, Temp_cum=Tempcum,
+            Num_plante=StP.num_plante, Genotype=StP.geno, Num_talle=str(StP.tiller),
+            Num_cohorte=cohort_number(StP.tiller), Num_rang=StP.n, Peduncle_PAR=StP.PAR,
+            Peduncle_length=StP.length, Peduncle_final_length=StP.final_length, Peduncle_surface=StP.area,
+            Photosynthetic=StP.photosynthetic)
 
   produce Peduncle(StP)
 
@@ -3964,17 +3781,11 @@ Ear(StE):
     StE.photosynthetic = False
   
   if write_output_file["Ear"]:
-    Ear_dico_df["Elapsed_time"].append(elapsed_time)
-    Ear_dico_df["Temp_cum"].append(Tempcum)
-    Ear_dico_df["Num_plante"].append(StE.num_plante)
-    Ear_dico_df["Genotype"].append(StE.geno)
-    Ear_dico_df["Num_talle"].append(str(StE.tiller))
-    Ear_dico_df["Ear_sumtemp"].append(StE.sumtemp)
-    Ear_dico_df["Ear_length"].append(StE.length)
-    Ear_dico_df["Ear_surface"].append(StE.area)
-    Ear_dico_df["Emerged"].append(StE.emerged)
-    Ear_dico_df["Ear_PAR"].append(StE.PAR)
-    Ear_dico_df["Photosynthetic"].append(StE.photosynthetic)
+    out.log("Ear", Elapsed_time=elapsed_time, Temp_cum=Tempcum,
+            Num_plante=StE.num_plante, Genotype=StE.geno, Num_talle=str(StE.tiller),
+            Ear_PAR=StE.PAR, Photosynthetic=StE.photosynthetic, Ear_length=StE.length, Ear_sumtemp=StE.sumtemp,
+            Ear_surface=StE.area, Emerged=StE.emerged
+            )
   
   produce Ear(StE)
 
