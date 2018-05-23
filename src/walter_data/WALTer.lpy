@@ -46,12 +46,12 @@ from collections import defaultdict
 
 import datetime
 
-# Liste des modules utilis�s par la suite dans le mod�le :
+# Liste des modules utilises par la suite dans le modele :
 
-# Plan de semis dans lequel on sp�cifie le nombre de plantes et espacement entre les plantes
+# Plan de semis dans lequel on specifie le nombre de plantes et espacement entre les plantes
 module Seed
 
-# Diff�rents organes qui vont suivre des lois de production "propres"
+# Differents organes qui vont suivre des lois de production "propres"
 module Apex
 module Bud_primord
 module Bud
@@ -68,21 +68,21 @@ module Blade
 module Peduncle
 module Ear
 
-# Module "d'insertion de branche" dans lequel on va faire �voluer les r�gles de r�gression de talles
+# Module "d'insertion de branche" dans lequel on va faire evoluer les regles de regression de talles
 module CutPointBud
 module CutPointBlade
 
 ### REPRESENTATION DES ORGANES
 
 
-#Param�tres de mise � l'�chelle pour que 1=1 dans chacune des directions
+#Parametres de mise a l'echelle pour que 1=1 dans chacune des directions
 scalex = 0.5
 scaley = 1
 scalez = 0.5
 
 #########################
 
-#Importation des figures cr��es dans des scenes
+#Importation des figures creees dans des scenes
 scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
 scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
 
@@ -235,6 +235,35 @@ def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_bo
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
   return crop_scheme
 
+# When using WALTer with the population genetics model, the names of the genotypes are defined in the sim_scheme.csv parameter file
+# In the sim_scheme parameter file, the parameter genotypes must be the names of the different genotypes only separated by a comma
+# In the sim_scheme parameter file, the parameter genotype_numbers must be the number of plants for each genotype (in the same order as the genotypes parameter) only separated by a comma
+
+genotypes = str()
+genotype_numbers = str()
+
+var_register_genotypes = ["genotypes","genotype_numbers"]
+
+for key, value, in params.iteritems():
+  if key in var_register_genotypes:
+    exec(key+"=value")
+
+genotypes = genotypes.split(',') # genotypes is a list with the names of the different genotypes
+genotype_numbers = genotype_numbers.split(',') # genotype_numbers is a list with the number of plants for each genotype
+
+
+var_register_Ln_final_genetics = []
+
+for geno in range (0,len(genotypes)):
+  var_register_Ln_final_genetics.append("param_Ln_final_"+genotypes[geno])
+
+Ln_final_genetics = {}
+
+for key, value, in params.iteritems():
+  if key in var_register_Ln_final_genetics:
+    Ln_final_genetics[key] = value
+
+
 
 # Setting experimental informations
 experimental_conditions = {
@@ -260,6 +289,7 @@ experimental_conditions = {
 "Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
 "Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
 "Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
+"Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics}
 }
 
 liste_expe = experimental_conditions.keys()
@@ -360,7 +390,7 @@ for key, value, in params.iteritems():
     exec(key+"=value")
 
 
-geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Nombre de g�notypes compris sur la parcelle
+geno_nb              = len(experimental_conditions[expe_related]["genotype"])                              # Number of different genotypes on the plot
 
 crop_genotype = []
 
@@ -370,14 +400,14 @@ for geno in experimental_conditions[expe_related]["genotype"]:
 ################################
 
 SIRIUS_state         = "disabled"
-infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximit�
+infinity_GAIp        = "True"         # A METTRE EN TEXTE #Infinitisation du couvert pour le calcul du GAI de proximite
 cohorte_max          = 9
 
 
 
-# Si SIRIUS n'est pas activ�, le nombre final de feuilles est fix� � la donn�e exp�rimentale. S'il n'y a pas de donn�e exp�rimental il est � 11 par d�faut.
+# If SIRIUS in not activated, the final number of leaves on the main stem is chosen according to the experimental data. If there is no experimental data, the default value is 11.
 
-#Initialisation
+# Initialization
 global param_Ln_final
 
 if SIRIUS_state == "disabled":
@@ -476,8 +506,8 @@ phyllo_decr         = 0.75
 phyllo_incr         = 1.25
 
 # Adjusting phyllochron to extreme sowing dates
-SDSA = 200                                      # mi-juillet (en DOY)
-SDWS = 90                                       # Fin de l'hiver (
+SDSA = 200                                      # mid-july (in DOY)
+SDWS = 90                                       # End of the winter (
 Rp = 0.003                                      # decroissement du phyllo 
 
 VAI_Maxwell = 0.00906
@@ -557,11 +587,20 @@ Dse_Renan_sd = int(hazard_driver["emerg"]) * 30
 
 var_registerDSE = ["Dse_Maxwell_mean","Dse_Soissons_mean","Dse_Thesee_mean","Dse_Renan_mean","Dse_Maxwell_sd","Dse_Soissons_sd","Dse_Thesee_sd","Dse_Renan_sd"]
 
+for geno in range (0,len(genotypes)):
+  var_registerDSE.append("Dse_"+genotypes[geno]+"_mean")
+  var_registerDSE.append("Dse_"+genotypes[geno]+"_sd")
+
 for key, value, in params.iteritems():
   if key in var_registerDSE:
     exec(key+"=value")
 
 Dse = {"Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Gigant_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Darwinkel_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Soissons" : {"mean" : Dse_Soissons_mean, "sd" : Dse_Soissons_sd}, "Thesee" : {"mean" : Dse_Thesee_mean, "sd" : Dse_Thesee_sd}, "Renan" : {"mean" :Dse_Renan_mean , "sd" : Dse_Renan_sd}}
+
+for geno in genotypes:
+  index = genotypes.index(geno)
+  Dse[geno] = { "mean" : eval("Dse_"+genotypes[index]+"_mean") , "sd" : eval("Dse_"+genotypes[index]+"_sd")}
+
 
 N_p_s = 4 #Number of primordia already preformed inside the seed | old name : nb_primord_seed
 
@@ -848,7 +887,7 @@ for key, value, in params.iteritems():
 Delta_prot = {"Maxwell" : Delta_prot_Maxwell,  "Darwinkel_Maxwell" : Delta_prot_Darwinkel_Maxwell, "Gigant_Maxwell" : Delta_prot_Gigant_Maxwell,"Soissons" : Delta_prot_Soissons}                    # Thermal time interval during which two tillers of the same plant cannot die | old name : duration_plant_protection
 
 
-# Param�tres communs
+# Parametres communs
 #######################
 
 radiation_type    = "diffuse" #or {"diffuse"; "complete"}
@@ -856,8 +895,8 @@ PAS               = 24
 
 ##
 
-nbj               = 25 + 300                             # Dur�e de la simulation
-time_step         = 1.                                   # Temps qui s'�coule   (jour)
+nbj               = 25 + 300                             # Duree de la simulation
+time_step         = 1.                                   # Temps qui s'ecoule   (jour)
 Tbase             = 0.                                 
 
 
@@ -874,9 +913,9 @@ liste_talles = [(1,2),(1,3)]#,(1,4),(1,5),(1,6),(1,7)]
 
 Initialization_count       = 0
 nb_voisins_glob            = {}
-elapsed_time               = 0                      # Temps �coul� depuis le d�but de la simulation (en jours)
-num_j                      = 0                      # Jour actuel
-Tempcum                    = 0                      # Temp�ratures cumul�es depuis le d�but de la simulation (degr�s jour)
+elapsed_time               = 0                      # Elapsed time since the beginning of the simulation (in days)
+num_j                      = 0                      # Current day
+Tempcum                    = 0                      # Cumulated temperature since the beginning of the simulation (degree-days)
 _Tempcum                   = 0
 DOY                        = 0
 date_current_day           = 0
@@ -890,26 +929,26 @@ latest_plant               = 0
 ###############
 
 ##### Identification #####
-n_init                     = 0                       # Num�ro du phytom�re
-tiller_init                = (1,)                    # Num�ro de la talle
-num_plante                 = 1                       # Num�ro de la plante cible
+n_init                     = 0                       # Number of the targeted phytomer
+tiller_init                = (1,)                    # Number of the targeted tiller
+num_plante                 = 1                       # Number of the targeted plant
 
 ##### Variables communes #####
 age_init                   = 0                       # Age de l'organe (j)
-time_init                  = 0                       # Temps �coul� depuis l'initiation du dernier phytom�re  (j)
+time_init                  = 0                       # Temps ecoule depuis l'initiation du dernier phytomere  (j)
 nb_j_init                  = 0
 sumtemp_init               = 0                       # Somme des temp�ratures accumul�es par l'organe depuis son initiation
 
 ##### Dimensions d'organes #####
 length_init                = 0.0                    # Taille de l'organe (cm)
 width_init                 = 0.0                 # Largeur du limbe (en cm)
-diameter_init              = 0.5                      # Diam�tre de l'organe (en cm)
+diameter_init              = 0.5                      # Diametre de l'organe (en cm)
 final_length_init          = 0.0                    # Taille finale de l'organe
-PAR_init                   = 0                       # Quantit� de Par re�u par l'organe
+PAR_init                   = 0                       # Quantite de Par recu par l'organe
 
 
 ##### Cin�tique de croissance #####
-date_emerg                 = 10000                   # Date d'�mergence de l'organe en temps "global"
+date_emerg                 = 10000                   # Date d'emergence de l'organe en temps "global"
 gr_init                    = 0
 
 ##### Vernalisation #####
@@ -977,19 +1016,19 @@ if write_output_file["PAR_per_axes"]:
 #######################
 
 initialization_Flag           = {}
-final_blade_length            = {}              # Dico regroupant les tailles finales de tous les limbes par individu, par talle, par phytom�re
-current_sheath_length         = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytom�re
+final_blade_length            = {}              # Dico regroupant les tailles finales de tous les limbes par individu, par talle, par phytomere
+current_sheath_length         = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomere
 dead_sheath_length            = {}
-current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytom�re
-dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "port�e" du voisinage
-maillage                      = []              # Tableau repr�sentant la disposition des individus en nombre de plante
+current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomere
+dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "portee" du voisinage
+maillage                      = []              # Tableau representant la disposition des individus en nombre de plante
 border_plants                 = []
-surface_sol                   = {}              # Dico regroupant la surface de sol inh�rente � chaque individu
-GAI_prox                      = {}              # Dico regroupant le GAI d'un sous-peuplement constitu� d'une plante cible ainsi que de ses voisins
+surface_sol                   = {}              # Dico regroupant la surface de sol inherente a chaque individu
+GAI_prox                      = {}              # Dico regroupant le GAI d'un sous-peuplement constitue d'une plante cible ainsi que de ses voisins
 GAI_ind                       = {}
-LNfinal                       = {}              #TODO Attention ce dico est obsolete il faudra le virer pour �purer un peu ce beau code
-tiller_death                  = {}              # Dico re�ensant toutes les talles qui doivent mourir (test� � Montaison)
-tiller_death_now              = {}              # Dico listant toutes les talles qui sont sens�es mourir � CE PAS DE TEMPS PRECIS
+LNfinal                       = {}              #TODO Attention ce dico est obsolete il faudra le virer pour epurer un peu ce beau code
+tiller_death                  = {}              # Dico recensant toutes les talles qui doivent mourir (teste a Montaison)
+tiller_death_now              = {}              # Dico listant toutes les talles qui sont sensees mourir a CE PAS DE TEMPS PRECIS
 date_emission                 = {}
 dico_stades                   = {}
 photoperiode                  = []
@@ -1036,7 +1075,7 @@ dico_cut_dead_blades          = {}
 young_tiller                  = {}
 youngest_axis                 = {}
 
-# Pour la r�gression des talles
+# For tillers regression
 liste_tal                     = {}
 axis_order                    = {}
 weaker_order                  = {}
@@ -1046,14 +1085,14 @@ youngest_axes                 = {}
 weakest_axis                  = {}
 plant_shield_indicator        = {}
 
-# Al�atoire :
+# Random :
 positions                     = {}
 hazard_dict_organ             = {}
 hazard_dict_axis              = {}
 hazard_dict_plant             = {}
 
 
-color=[0,4,5,7,8,6,9,10,11]                     # Couleur pour bien diff�rencier les diff�rents g�notypes
+color=[0,4,5,7,8,6,9,10,11]                     # Colors to differentiate the different genotypes
 organ_type = ["Blade", "Internode", "Sheath","Peduncle", "Ear"]
 #organ_type = ["Blade","Sheath","Internode","Peduncle"]
 
@@ -1099,14 +1138,14 @@ def crop_conception(densite, nb_rang, dist_inter_rang, nb_plante_min, nb_plante_
         virtual_density = nplant_peupl / surface_sol
         ecart_de_densite = abs(densite - virtual_density)/densite
         resultats[ecart_de_densite] = (round(dx,2),round(dy,2))
-    # On r�cup�re la combinaison de dx et dy pour lesquels il y'a le plus faible �cart de densit� !
+    # On recupere la combinaison de dx et dy pour lesquels il y'a le plus faible ecart de densite !
       dy = round(resultats[min(resultats.keys())][1],2)
       nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
       nplant_peupl = nb_rang * nb_plante_par_rang
       crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
     crop_scheme["dy"] = dy
     if min(resultats.keys())*100 > 5:
-      print "ATTENTION ERREUR CONSEQUENTE DE PREDICTION DE LA DENSITE"
+      print "WARNING SIGNIFICANT ERROR IN DENSITY PREDICTION"
   crop_scheme["surface_sol"] = dx*dy
   crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
   crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
@@ -1650,7 +1689,7 @@ def vrate(Tt,geno):
     Vrate = (VAI[geno] * Tverint + VBEE[geno]) * ((Tvermax - Tt)/(Tvermax - Tverint))
   return Vrate
 
-# INITIALISATION OF THE MODEL
+# INITIALIZATION OF THE MODEL
 ################################
 
 def plasto_seed(delay_sowing_emergence, nb_p_seed):
@@ -1662,7 +1701,7 @@ def plasto_seed(delay_sowing_emergence, nb_p_seed):
 # YIELD
 ##########
 
-# Nombre de grains produits
+# Number of grains produced
 def calc_grain_nb(T, PAR):
   nb_epi_msqu = 592
   photothermal_quotient = PAR/T
@@ -1860,11 +1899,11 @@ class Peduncle(Organ_Base):
 mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 
 
-#### ENREGISTREMENT DES PARAMETRES
+#### SAVING THE PARAMETERS
 
 
 location           = experimental_conditions[expe_related]["location"]
-year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier m�t�o moyenn�, year = 1901
+year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier meteo moyenne, year = 1901
 sowing_date        = experimental_conditions[expe_related]["sowing_date"]
 
 dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
@@ -1885,7 +1924,7 @@ meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep="
 
 var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B_Maxwell","Phi_zen_B_Lely","Phi_zen_B_Soissons","Phi_zen_B_Renan","Phi_zen_B_Gigant_Maxwell","Phi_zen_B_Darwinkel_Maxwell","Phi_zen_B_Caphorn","Phi_zen_B_Apache","Phi_zen_B_A208","Phi_zen_B_A210","Phi_zen_B_F236","Phi_zen_B_A398","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
-print 'parms'
+print 'params'
 print params
 
 for key, value, in params.iteritems():
@@ -1904,15 +1943,15 @@ a_B_w = {"Maxwell" : a_B_w_Maxwell, "Darwinkel_Maxwell" : a_B_w_Maxwell, "Gigant
 
 Phi_zen_B = {"Maxwell" : Phi_zen_B_Maxwell ,"Lely" : Phi_zen_B_Lely,"Soissons" : Phi_zen_B_Soissons,"Renan" : Phi_zen_B_Renan,"Gigant_Maxwell" : Phi_zen_B_Gigant_Maxwell,"Darwinkel_Maxwell" : Phi_zen_B_Darwinkel_Maxwell,"Caphorn" : Phi_zen_B_Caphorn,"Apache" : Phi_zen_B_Apache,"A208" : Phi_zen_B_A208,"A210" : Phi_zen_B_A210,"F236" : Phi_zen_B_F236,"A398" : Phi_zen_B_A398}
 
-tab_top = datetime.date(int(year)-1,9,1)													      # On d�finit la date du d�but du fichier
+tab_top = datetime.date(int(year)-1,9,1)													      # On definit la date du debut du fichier
 double_finger = datetime.date(int(year)-1,1,1)                               #Premier janvier
 sowing_DOY=(sowing_date-double_finger).days     # DOY du semis
 
 #################################################################################################################
 ### LE TEMPS QUI PASSE ###
-#delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le d�but du fichier
+#delta_date = sowing_date - tab_top		                        # Calcule le nombre de jours entre la date de semis et le debut du fichier
 #delta_date.days								                            # Retourne le nombre de jour en integer (c'est l'indice dans le tableau )
-date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
+date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date a laquelle nous nous trouvons pour un elapsed_time donne
 DOY = int(date_current_day.strftime('%j'))
 
 
@@ -1991,7 +2030,14 @@ if genotype_proportion == "equal":
   genotype_list = crop_genotype*int(ceil(crop_scheme["nplant_peupl"]/geno_nb))
   random.shuffle(genotype_list)
 
+elif genotype_proportion == "genetics":
+  genotype_list = [crop_genotype[0]]*int(genotype_numbers[0])
+  for geno in range(1, geno_nb):
+    genotype_list += [crop_genotype[geno]]*int(genotype_numbers[geno])
+  random.shuffle(genotype_list)
 
+print "genotype_list = ", genotype_list
+  
 # Create a unique ID to the simulation according to a specific combination of parameters value
 global folder_name
 global out_dir
@@ -2050,9 +2096,9 @@ def StartEach(lstring):
   global Tempcum
   global date_current_day
   global DOY
-  elapsed_time += time_step                    #dj = incr�ment de temps en jours
-  date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
-  #mean_temperatures[current_day - tab_top).days]                   # Temp�rature moyenne du jour apr�s elapsed time jours pass�s
+  elapsed_time += time_step                    #dj = increment de temps en jours
+  date_current_day = sowing_date + datetime.timedelta(elapsed_time) 	        # Date a laquelle nous nous trouvons pour un elapsed_time donne
+  #mean_temperatures[current_day - tab_top).days]                   # Temperature moyenne du jour apres elapsed time jours passes
   if DOY == 365:
     DOY = 1
   else:
@@ -2071,7 +2117,7 @@ def StartEach(lstring):
   except:
     pass
 
-  Temperature = current_temperature              # Temp�rature moyenne du jour apr�s elapsed time jours pass�s
+  Temperature = current_temperature              # Temperature moyenne du jour apres elapsed time jours passes
   Tempcum += max(Tbase,Temperature)
   
   print "date : ", date_current_day, "|", location,"|", "Experiment : ", expe_related,"|", "densite : ", densite,"|", "num_jour : ",elapsed_time,"|", "tempcum : ",int(Tempcum),"|", "DOY : ",DOY,"|", "len : ",len(lstring), "|","T : ", current_temperature,"|", "PAR : ", current_PAR
@@ -2081,7 +2127,7 @@ def StartEach(lstring):
 
 def EndEach(lstring, lscene):
 
-  # CALCUL DU GAI (� partir de la chaine)
+  # CALCUL DU GAI (a partir de la chaine)
   for num_plt in range(1, crop_scheme["nplant_peupl"] + 1):
     Hcol_max[num_plt] = dict.fromkeys(Hcol_max[num_plt].keys(), 0)
     delta_H[num_plt] = dict.fromkeys(delta_H[num_plt].keys(), 0)
@@ -2095,16 +2141,16 @@ def EndEach(lstring, lscene):
   surface_plante = dict.fromkeys(surface_plante.keys(), 0)
   surface_plante_visible = dict.fromkeys(surface_plante_visible.keys(), 0)
   
-  #Calcul du GAI
+  # Computation of GAI
   for org_id in range(len(lstring)):
     org = lstring[org_id]
     if org.name in organ_type:
       if org.name == "Blade" and org[0].photosynthetic == True:
         
-        # Ancienne methode de calcul du GAI
+        # Former method for the computation of GAI
         surface_plante[org[0].num_plante] += org[0].area
         
-        #Nouvelle m�thode de calcul du GAI (uniquement que les parties visibles des feuilles)
+        # New method for the computation of GAI (only the visible parts of the leaves)
         tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
         
       if org.name == "Internode":
@@ -2134,9 +2180,9 @@ def EndEach(lstring, lscene):
       Hcol_dead[num_plt][axis] =  Hcol_dead[num_plt][axis] + Sh_dead_max
       delta_H[num_plt][axis] = max(0, delta_H[num_plt][axis] - Sh_max_temp)
       
-      #Calcul de GAI (on ajoute les contributions des autres parties de la plante)
+      #Computation of GAI (adding the contributions of the other parts of the plant)
       Peraxes_dico_df["Visible_leaves_surface"].append(tiller_surface[(num_plt,axis)])
-      #TODO : transformer ces formules en fonctions � mettre en amont
+      #TODO : transformer ces formules en fonctions a mettre en amont
       leaf_contrib = tiller_surface[(num_plt,axis)]
       stem_contrib = max(0,(Hcol_max[num_plt][axis] - max(L_b_S,Hcol_dead[num_plt][axis])) * d_S[genotype_map[num_plt]] * pi/2)
       peduncle_contrib = max(0,(delta_H[num_plt][axis] - L_E[genotype_map[num_plt]]) * pi/2 * d_P[genotype_map[num_plt]])
@@ -2152,7 +2198,7 @@ def EndEach(lstring, lscene):
         tiller_surface[(num_plt,axis)] = leaf_contrib + stem_contrib + ear_contrib
       
       
-      #Remplissages de dico de sortie
+      #Filling the output dictionaries
       if write_output_file["Peraxes"]:
         Peraxes_dico_df["Init_flag"].append(initialization_Flag[num_plt])
         Peraxes_dico_df["Elapsed_time"].append(elapsed_time)
@@ -2176,7 +2222,7 @@ def EndEach(lstring, lscene):
   for key in tiller_surface.keys():
     surface_plante_visible[key[0]] += tiller_surface[key]
   
-  # Calcul du GAI de proximit�
+  # Calcul du GAI de proximite
   for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
     surface_peupl = 0
     for num_voisin in dico_voisins[num_plante]:
