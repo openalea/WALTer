@@ -5,6 +5,7 @@
 import argparse
 from subprocess import Popen
 import pandas as pd
+import time
 
 from walter import project
 
@@ -99,7 +100,7 @@ def main():
                             sim_id = prj.get_id(param_list_dict[0]) # Get the ID
                             if os.path.exists(prj.dirname/output/sim_id/error_caribu.txt): # Check if the file error_caribu.txt has been generated
                                 ex_rep = param_list_dict[0]["rep"] # Get the rep (random seed) used for the simulation
-                                param_list_dict[0].update(rep = ex_rep +1)) # Update the sim_scheme with a new seed to re-launch the simulation
+                                param_list_dict[0].update(rep = ex_rep +1) # Update the sim_scheme with a new seed to re-launch the simulation
                                 df = pd.DataFrame.from_dict(data=param_list_dict, orient='columns')
                                 df.to_csv(path_or_buf=scheme, sep='\t', index=False) # Create the csv file sim_scheme to launch the simulation
                                 p = Popen(["walter", "-i", scheme]) # Launch the simulation
@@ -107,7 +108,7 @@ def main():
                                 prj.update_itable()
                                 pids.append(p) # Add the new process to the list of processes for futher testing
                                 procs[scheme] = p # Add the new process to the dict of processes
-                    sleep 1 minute # To avoid testing for finished processes too often, wait between loops
+                    time.sleep(120) # To avoid testing for finished processes too often, wait 2 minutes between loops
                                 
                 tmp.rmtree()
 
