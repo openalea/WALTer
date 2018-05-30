@@ -89,28 +89,25 @@ def main():
                     prj.activate()
                     pid = Popen(["walter", "-i", scheme_name])
                     pids.append(pid)
-                    procs[pid] = scheme_name
-                for pid in pids:
-                    pid.wait()
-                #~ # Test caribuRunError re-launching
-                #~ while len(procs) > 0:
-                    #~ for proc, scheme in procs.iteritems:
-                        #if proc.poll() != None:
-                            # remove this proc from procs
-                            #procs.pop(proc)
-                            #param_list_dict = prj.csv_parameters(scheme)
-                            # Recupere ID
-                            #sim_id = prj.get_id(param_list_dict[0])
-                            #if os.path.exists(prj.dirname/output/sim_id/error_caribu.txt): # Check if the file error_caribu.txt has been generated
-                                #ex_rep = param_list_dict[0]["rep"]
-                                #param_list_dict[0].update(rep = ex_rep +1))
-                                #df = pd.DataFrame.from_dict(data=param_list_dict, orient='columns')
-                                #df.to_csv(path_or_buf=scheme, sep='\t', index=False)
-                                #p=popen(["walter", "-i", scheme])
-                                #prj.itable.update(sim_id=param_list_dict[0])
-                                #prj.update_itable()
-                                #procs.append(p)
-                    #sleep 1 minute
+                    procs[scheme_name] = pid
+                # Test caribuRunError re-launching
+                while len(procs) > 0: # While there are processes to test
+                    for scheme, proc in procs.iteritems:
+                        if proc.poll() != None: # If the proces is finished
+                            procs.pop(proc) # Remove this proc from procs
+                            param_list_dict = prj.csv_parameters(scheme)
+                            sim_id = prj.get_id(param_list_dict[0]) # Get the ID
+                            if os.path.exists(prj.dirname/output/sim_id/error_caribu.txt): # Check if the file error_caribu.txt has been generated
+                                ex_rep = param_list_dict[0]["rep"] # Get the rep (random seed) used for the simulation
+                                param_list_dict[0].update(rep = ex_rep +1)) # Update the sim_scheme with a new seed to re-launch the simulation
+                                df = pd.DataFrame.from_dict(data=param_list_dict, orient='columns')
+                                df.to_csv(path_or_buf=scheme, sep='\t', index=False) # Create the csv file sim_scheme to launch the simulation
+                                p = Popen(["walter", "-i", scheme]) # Launch the simulation
+                                prj.itable.update(sim_id = param_list_dict[0]) # updating combi_param
+                                prj.update_itable()
+                                pids.append(p) # Add the new process to the list of processes for futher testing
+                                procs[scheme] = p # Add the new process to the dict of processes
+                    sleep 1 minute # To avoid testing for finished processes too often, wait between loops
                                 
                 tmp.rmtree()
 
