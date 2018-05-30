@@ -109,6 +109,5 @@ def main():
                                 pids.append(p) # Add the new process to the list of processes for futher testing
                                 procs[scheme] = p # Add the new process to the dict of processes
                     time.sleep(120) # To avoid testing for finished processes too often, wait 2 minutes between loops
-                                
                 tmp.rmtree()
 
