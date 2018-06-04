@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 """ Run WALTer simulation as a command
 """
+import os
+import shutil
 import argparse
 from subprocess import Popen
 import pandas as pd
@@ -93,21 +95,22 @@ def main():
                     procs[scheme_name] = pid
                 # Test caribuRunError re-launching
                 while len(procs) > 0: # While there are processes to test
-                    for scheme, proc in procs.iteritems:
-                        if proc.poll() != None: # If the proces is finished
-                            procs.pop(proc) # Remove this proc from procs
+                    for scheme in procs.keys(): #Not using iteritems because you cannot change the size of a dictionary while iterating on it
+                        if procs[scheme].poll() != None: # If the proces is finished
+                            procs.pop(scheme) # Remove this proc from procs
                             param_list_dict = prj.csv_parameters(scheme)
                             sim_id = prj.get_id(param_list_dict[0]) # Get the ID
-                            if os.path.exists(prj.dirname/output/sim_id/error_caribu.txt): # Check if the file error_caribu.txt has been generated
+                            if os.path.exists(prj.dirname+"/output/"+sim_id+"/error_caribu.txt"): # Check if the file error_caribu.txt has been generated
+                                shutil.rmtree(prj.dirname+"/output/"+sim_id) # Supress the output directory
                                 ex_rep = param_list_dict[0]["rep"] # Get the rep (random seed) used for the simulation
                                 param_list_dict[0].update(rep = ex_rep +1) # Update the sim_scheme with a new seed to re-launch the simulation
                                 df = pd.DataFrame.from_dict(data=param_list_dict, orient='columns')
                                 df.to_csv(path_or_buf=scheme, sep='\t', index=False) # Create the csv file sim_scheme to launch the simulation
                                 p = Popen(["walter", "-i", scheme]) # Launch the simulation
-                                prj.itable.update(sim_id = param_list_dict[0]) # updating combi_param
+                                prj.itable[sim_id] = param_list_dict[0] # updating combi_param
                                 prj.update_itable()
                                 pids.append(p) # Add the new process to the list of processes for futher testing
                                 procs[scheme] = p # Add the new process to the dict of processes
-                    time.sleep(120) # To avoid testing for finished processes too often, wait 2 minutes between loops
+                    time.sleep(20) # To avoid testing for finished processes too often, wait 2 minutes between loops
                 tmp.rmtree()
 
