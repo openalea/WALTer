@@ -31,6 +31,7 @@ WALTer generates a project directory and run simulations inside this directory.
         or
        walter -i
 
+
 3. To run project management only, without running te model (for debug)  
 
        walter -i sim_scheme.csv -p simu_walter --dry_run 
@@ -52,6 +53,7 @@ def main():
 
     parser = walter_parser()
     args = parser.parse_args()
+
 
     if args.p == '.':  # check '.' is walter-like (in case user has  forgotten -p)
         if not project.check_cwd():
