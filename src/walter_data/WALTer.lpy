@@ -263,8 +263,9 @@ for key, value, in params.iteritems():
   if key in var_register_Ln_final_genetics:
     exec(key + "=value")
 
-for geno in genotypes:
-  Ln_final_genetics[geno] = eval("Ln_final_"+geno)
+if expe_related == "Genetics":
+  for geno in genotypes:
+    Ln_final_genetics[geno] = eval("Ln_final_"+geno)
 
 # Setting experimental informations
 experimental_conditions = {
@@ -421,8 +422,11 @@ for key, value, in params.iteritems():
   if key in var_register_Ln_final:
     exec(key+"=value")
 
-for geno in genotypes:
-  param_Ln_final[geno] = eval("Ln_final_"+geno)
+for geno in crop_genotype:
+  try:
+    param_Ln_final[geno] = eval("Ln_final_"+geno)
+  except NameError:
+    pass
 
 ####################
 #### PARAMETERS ####
@@ -466,7 +470,7 @@ SLDL_Renan = 1.12
 
 var_register_phyll_adjust = []
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_register_phyll_adjust.append("VAI_"+geno)
   var_register_phyll_adjust.append("VBEE_"+geno)
   var_register_phyll_adjust.append("SLDL_"+geno)
@@ -480,7 +484,7 @@ VAI = {"Maxwell" : VAI_Maxwell, "Gigant_Maxwell" : VAI_Maxwell, "Darwinkel_Maxwe
 VBEE = {"Maxwell" :VBEE_Maxwell, "Gigant_Maxwell" :VBEE_Maxwell , "Darwinkel_Maxwell" : VBEE_Maxwell, "Soissons" : VBEE_Soissons, "Renan" : VBEE_Renan}         # Differentes valeurs issues de recalibrations (pour Soissons)  #He : 0.012    #Ly : 0.012    #Lecarpentier : 0.012
 SLDL = {"Maxwell" : SLDL_Maxwell, "Gigant_Maxwell" : SLDL_Maxwell, "Darwinkel_Maxwell" : SLDL_Maxwell, "Soissons" : SLDL_Soissons, "Renan" : SLDL_Renan}           # Differentes valeurs issues de recalibrations (pour Soissons) #He : 1.34     #Ly : 1.467    #Lecarpentier : 
 
-for geno in genotypes:
+for geno in crop_genotype:
   VAI[geno] = eval("VAI_"+geno)
   VBEE[geno] = eval("VBEE_"+geno)
   SLDL[geno] = eval("SLDL_"+geno) 
@@ -493,7 +497,7 @@ Param_PlHeight_Darwinkel_Maxwell = 55.6155
 
 var_registerHeight = ["Param_PlHeight_Maxwell","Param_PlHeight_Soissons","Param_PlHeight_Gigant_Maxwell","Param_PlHeight_Darwinkel_Maxwell"]
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_registerHeight.append("Param_PlHeight_"+geno)
   
 for key, value, in params.iteritems():
@@ -502,7 +506,7 @@ for key, value, in params.iteritems():
 
 Param_PlHeight = {"Maxwell" : Param_PlHeight_Maxwell, "Gigant_Maxwell" : Param_PlHeight_Gigant_Maxwell, "Darwinkel_Maxwell" : Param_PlHeight_Darwinkel_Maxwell, "Soissons" : Param_PlHeight_Soissons}
 
-for geno in genotypes:
+for geno in crop_genotype:
   Param_PlHeight[geno] = eval("Param_PlHeight_"+geno)
 
 ## DEVELOPMENT OF VEGETATIVE ORGANS
@@ -536,7 +540,7 @@ P_CT_Soissons = 0
 
 var_register_till_prob = []
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_register_till_prob.append("P_T_"+geno)
   var_register_till_prob.append("P_CT_"+geno)
 
@@ -547,7 +551,7 @@ for key, value, in params.iteritems():
 P_T = {"Maxwell" : P_T_Maxwell, "Gigant_Maxwell" : P_T_Maxwell, "Darwinkel_Maxwell" : P_T_Maxwell, "Soissons" : P_T_Soissons}  # Probability of emergence of a tiller (except for coleoptil tiller) | old name : tillering_prob
 P_CT = {"Maxwell" : P_CT_Maxwell, "Gigant_Maxwell" : P_CT_Maxwell, "Darwinkel_Maxwell" : P_CT_Maxwell, "Soissons" : P_CT_Soissons}              #Probability of emergence of coleoptil tiller | old name : prob_appear_Tc
 
-for geno in genotypes:
+for geno in crop_genotype:
   P_T[geno] = eval("P_T_"+geno)
   P_CT[geno] = eval("P_CT_"+geno)
 
@@ -566,7 +570,7 @@ Dse_Renan_sd = int(hazard_driver["emerg"]) * 30
 
 var_registerDSE = ["Dse_Maxwell_mean","Dse_Soissons_mean","Dse_Thesee_mean","Dse_Renan_mean","Dse_Maxwell_sd","Dse_Soissons_sd","Dse_Thesee_sd","Dse_Renan_sd"]
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_registerDSE.append("Dse_"+geno+"_mean")
   var_registerDSE.append("Dse_"+geno+"_sd")
 
@@ -576,7 +580,7 @@ for key, value, in params.iteritems():
 
 Dse = {"Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Gigant_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Darwinkel_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Soissons" : {"mean" : Dse_Soissons_mean, "sd" : Dse_Soissons_sd}, "Thesee" : {"mean" : Dse_Thesee_mean, "sd" : Dse_Thesee_sd}, "Renan" : {"mean" :Dse_Renan_mean , "sd" : Dse_Renan_sd}}
 
-for geno in genotypes:
+for geno in crop_genotype:
   Dse[geno] = { "mean" : eval("Dse_"+geno+"_mean") , "sd" : eval("Dse_"+geno+"_sd")}
 
 
@@ -663,7 +667,7 @@ L_E_Soissons = 7.38
 
 var_register_geometry = []
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_register_geometry.append("shp_I_"+geno)
   var_register_geometry.append("N_I_el_"+geno)
   var_register_geometry.append("inc_I_"+geno)
@@ -706,7 +710,7 @@ d_S = {"Maxwell" : d_S_Maxwell, "Darwinkel_Maxwell" : d_S_Maxwell, "Gigant_Maxwe
 d_E = {"Maxwell" : d_E_Maxwell, "Darwinkel_Maxwell" :d_E_Maxwell , "Gigant_Maxwell" : d_E_Maxwell, "Soissons" : d_E_Soissons} # Diameter of the ear (cm)                                         | old name : ear_diameter
 L_E = {"Maxwell" :L_E_Maxwell , "Darwinkel_Maxwell" : L_E_Maxwell, "Gigant_Maxwell" : L_E_Maxwell, "Soissons" : L_E_Soissons} # Final length of the ear (cm)                                     | old name : ear_final_length
 
-for geno in genotypes:
+for geno in crop_genotype:
   shp_I[geno] = eval("shp_I_"+geno)
   N_I_el[geno] = eval("N_I_el_"+geno)
   inc_I[geno] = eval("inc_I_"+geno)
@@ -757,7 +761,7 @@ t3_sen_Caphorn = 1900
 
 var_register_death = []
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_register_death.append("n0_sen_"+geno)
   var_register_death.append("n1_sen_"+geno)
   var_register_death.append("n2_sen_"+geno)
@@ -780,7 +784,7 @@ t1_sen = {"Maxwell" :t1_sen_Maxwell,  "Darwinkel_Maxwell" : t1_sen_Maxwell, "Gig
 t2_sen = {"Maxwell" : t2_sen_Maxwell, "Darwinkel_Maxwell" : t2_sen_Maxwell, "Gigant_Maxwell" : t2_sen_Maxwell, "Soissons" :t2_sen_Soissons , "Caphorn" : t2_sen_Caphorn} # Date of the second phase of blade senescence (only for tillers)
 t3_sen = {"Maxwell" : t3_sen_Maxwell,  "Darwinkel_Maxwell" : t3_sen_Maxwell, "Gigant_Maxwell" : t3_sen_Maxwell,"Soissons" : t3_sen_Soissons, "Caphorn" : t3_sen_Caphorn} # Date of the end of blade senescence
 
-for geno in genotypes:
+for geno in crop_genotype:
   n0_sen[geno] = eval("n0_sen_"+geno)
   n1_sen[geno] = eval("n1_sen_"+geno)
   n2_sen[geno] = eval("n2_sen_"+geno)
@@ -859,7 +863,7 @@ GAI_c_A398 = 0.59
 
 var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell", "GAI_c_Darwinkel_Maxwell", "GAI_c_Gigant_Maxwell","GAI_c_Lely","GAI_c_Darwinkel_Maxwell","GAI_c_Gigant_Maxwell","GAI_c_Renan","GAI_c_Apache","GAI_c_Caphorn","GAI_c_A208","GAI_c_A210","GAI_c_F236","GAI_c_A398"]
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_registerGAI.append("GAI_c_"+geno)
 
 for key, value, in params.iteritems():
@@ -868,7 +872,7 @@ for key, value, in params.iteritems():
 
 GAI_c = {"Maxwell" : GAI_c_Maxwell,  "Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell, "Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Soissons" : GAI_c_Soissons, "Lely" : GAI_c_Lely,"Darwinkel_Maxwell" : GAI_c_Darwinkel_Maxwell,"Gigant_Maxwell" : GAI_c_Gigant_Maxwell,"Renan" : GAI_c_Renan,"Apache" : GAI_c_Apache,"Caphorn" : GAI_c_Caphorn,"A208" : GAI_c_A208,"A210" : GAI_c_A210,"F236" : GAI_c_F236,"A398" : GAI_c_A398} # Green Area Index threshold above which tillering of a plant stops
 
-for geno in genotypes:
+for geno in crop_genotype:
   GAI_c[geno] = eval("GAI_c_"+geno)
 
 dGAIp = 1			# Maximal range of plant detection (meter)
@@ -891,7 +895,7 @@ t_beg_reg_Soissons = 6.8
 
 var_registerT_beg = ["t_beg_reg_Soissons","t_beg_reg_Maxwell","t_beg_reg_Darwinkel_Maxwell","t_beg_reg_Gigant_Maxwell"]
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_registerT_beg.append("t_beg_reg_"+geno)
 
 for key, value, in params.iteritems():
@@ -900,7 +904,7 @@ for key, value, in params.iteritems():
 
 t_beg_reg = {"Maxwell" : t_beg_reg_Maxwell,  "Darwinkel_Maxwell" : t_beg_reg_Darwinkel_Maxwell, "Gigant_Maxwell" : t_beg_reg_Gigant_Maxwell,"Soissons" : t_beg_reg_Soissons} # Date of potentiel beginning of the regression (in Haun Stage unit)
 
-for geno in genotypes:
+for geno in crop_genotype:
   t_beg_reg[geno] = eval("t_beg_reg_"+geno)
 
 PAR_t_Maxwell = 280000
@@ -918,7 +922,7 @@ PAR_t_A398 = 280000
 
 var_registerPARt = ["PAR_t_Soissons","PAR_t_Maxwell", "PAR_t_Darwinkel_Maxwell", "PAR_t_Gigant_Maxwell","PAR_t_Lely","PAR_t_Darwinkel_Maxwell","PAR_t_Gigant_Maxwell","PAR_t_Renan","PAR_t_Apache","PAR_t_Caphorn","PAR_t_A208","PAR_t_A210","PAR_t_F236","PAR_t_A398"]
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_registerPARt.append("PAR_t_"+geno)
 
 
@@ -928,7 +932,7 @@ for key, value, in params.iteritems():
 
 PAR_t = {"Maxwell" : PAR_t_Maxwell,  "Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell, "Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Soissons" : PAR_t_Soissons, "Lely" : PAR_t_Lely,"Darwinkel_Maxwell" : PAR_t_Darwinkel_Maxwell,"Gigant_Maxwell" : PAR_t_Gigant_Maxwell,"Renan" : PAR_t_Renan,"Apache" : PAR_t_Apache,"Caphorn" : PAR_t_Caphorn,"A208" : PAR_t_A208,"A210" : PAR_t_A210,"F236" : PAR_t_F236,"A398" : PAR_t_A398}  # PAR threshold below which a tiller don't survive | old name : PARseuil
 
-for geno in genotypes:
+for geno in crop_genotype:
   PAR_t[geno] = eval("PAR_t_"+geno)
 
 
@@ -946,7 +950,7 @@ Delta_prot_Soissons = 50
 
 var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell", "Delta_prot_Darwinkel_Maxwell", "Delta_prot_Gigant_Maxwell"]
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_registerDelta_prot.append("Delta_prot_"+geno)
 
 for key, value, in params.iteritems():
@@ -955,7 +959,7 @@ for key, value, in params.iteritems():
 
 Delta_prot = {"Maxwell" : Delta_prot_Maxwell,  "Darwinkel_Maxwell" : Delta_prot_Darwinkel_Maxwell, "Gigant_Maxwell" : Delta_prot_Gigant_Maxwell,"Soissons" : Delta_prot_Soissons}                    # Thermal time interval during which two tillers of the same plant cannot die | old name : duration_plant_protection
 
-for geno in genotypes:
+for geno in crop_genotype:
   Delta_prot[geno] = eval("Delta_prot_"+geno)
 
 
@@ -1997,7 +2001,7 @@ meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep="
 var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B_Maxwell","Phi_zen_B_Lely","Phi_zen_B_Soissons","Phi_zen_B_Renan","Phi_zen_B_Gigant_Maxwell","Phi_zen_B_Darwinkel_Maxwell","Phi_zen_B_Caphorn","Phi_zen_B_Apache","Phi_zen_B_A208","Phi_zen_B_A210","Phi_zen_B_F236","Phi_zen_B_A398","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
 
-for geno in genotypes:
+for geno in crop_genotype:
   var_register.append("L_B_max_"+geno)
   var_register.append("a_B_w_"+geno)
   var_register.append("Phi_zen_B_"+geno)
@@ -2036,7 +2040,7 @@ DOY = int(date_current_day.strftime('%j'))
 
 Phl = {"Maxwell" : Phl_Maxwell, "Darwinkel_Maxwell" : Phl_Maxwell,"Gigant_Maxwell":Phl_Maxwell, "Soissons" : Phl_Soissons, "Renan" : Phl_Renan}  # Differentes valeurs issues de recalibrations He : 104      #Ly : 113.5    #Lecarpentier :
 
-for geno in genotypes:
+for geno in crop_genotype:
   L_B_max[geno] = eval("L_B_max_"+geno)
   a_B_w[geno] = eval("a_B_w_"+geno)
   Phi_zen_B[geno] = eval("Phi_zen_B_"+geno)
@@ -2051,16 +2055,16 @@ DelayTipToHS_Maxwell = 0.4125 * phyll_adjust("Maxwell")
 DelayTipToHS_Soissons = 0.4125 * phyll_adjust("Soissons")
 
 
-for geno in genotypes:
+for geno in crop_genotype:
   exec("Pls_"+geno+ "= phyll_adjust(geno)/2")
   exec("DelayTipToHS_"+geno+ "= 0.4125 * phyll_adjust(geno)")
 
 
 var_register3 = ["DelayTipToHS_Soissons","DelayTipToHS_Maxwell","Pls_Soissons","Pls_Maxwell"]
 
-for geno in range (0,len(genotypes)):
-  var_register3.append("Pls_"+genotypes[geno])
-  var_register3.append("DelayTipToHS_"+genotypes[geno])
+for geno in range (0,len(crop_genotype)):
+  var_register3.append("Pls_"+crop_genotype[geno])
+  var_register3.append("DelayTipToHS_"+crop_genotype[geno])
 
 for key, value, in params.iteritems():
   if key in var_register3:
@@ -2068,12 +2072,12 @@ for key, value, in params.iteritems():
 
 Pls = {"Maxwell" : Pls_Maxwell, "Darwinkel_Maxwell" : Pls_Maxwell,"Gigant_Maxwell":Pls_Maxwell, "Soissons" : Pls_Soissons, "Renan" : Pls_Renan}
 
-for geno in genotypes:
+for geno in crop_genotype:
   Pls[geno] = eval("Pls_"+geno)
  
 DelayTipToHS = {"Maxwell" : DelayTipToHS_Maxwell, "Darwinkel_Maxwell" : DelayTipToHS_Maxwell, "Gigant_Maxwell" : DelayTipToHS_Maxwell, "Soissons" : DelayTipToHS_Soissons}
 
-for geno in genotypes:
+for geno in crop_genotype:
   DelayTipToHS[geno] = eval("DelayTipToHS_"+geno)
  
 
