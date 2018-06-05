@@ -3649,13 +3649,13 @@ Bud(StBu):
 
 
 Bud_R(StBuR):
-  # Tant que l'axe n'a pas �t� d�sign� pour r�gresser, tout fonctionne normalement
+  # Tant que l'axe n'a pas ete designe pour regresser, tout fonctionne normalement
   if StBuR.tiller in axis_census[StBuR.num_plante] and axis_census[StBuR.num_plante][StBuR.tiller]["Stop_growth_flag"] == True:
     pass
   else:
     StBuR.sumtemp += max(Tbase,Temperature)
     
-    # C'est le moment o� le bourgeon a la possibilit� d'�merger
+    # C'est le moment ou le bourgeon a la possibilitu d'emerger
     if Tempcum >= leaf_emerg_date(StBuR.tiller[len(StBuR.tiller)-1] + 2,StBuR.tiller[0:len(StBuR.tiller)-1] , StBuR.geno, StBuR.num_plante) and StBuR.emerg == False:
       StBuR.emerg = True
       StBuR.Tmoy = StBuR.sumtemp / StBuR.nb_j # TODO inutile
