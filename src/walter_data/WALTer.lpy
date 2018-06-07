@@ -3579,7 +3579,7 @@ CutPointBud(StCPB):
       produce % CutPointBud(StCPB)
   
   ### On coupe les structures pr�sentes sur les talles qui r�gressent par manque de rayonnement
-  if Tempcum > leaf_emerg_date(t_beg_reg[StCPB.geno], (1,), genotype_map[StCPB.num_plante], StCPB.num_plante) + 1.6*phyll_adjust(StCPB.geno):
+  if Tempcum > leaf_emerg_date(dico_stades[StCPB.num_plante][(1,)]["Ln_final"]-t_beg_reg[StCPB.geno], (1,), genotype_map[StCPB.num_plante], StCPB.num_plante) + 1.6*phyll_adjust(StCPB.geno):
     #Gestion de la mort des talles
     if StCPB.tiller in axis_census[StCPB.num_plante].keys():
       if axis_census[StCPB.num_plante][StCPB.tiller]['Stop_growth_flag'] == True:
