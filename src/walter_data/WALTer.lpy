@@ -1084,7 +1084,7 @@ Debug_PAR_dico_df = {"Elapsed_time":[], "Temp_cum":[], "Num_plante":[], "Num_tal
 
 if write_output_file["PAR_per_axes"]:
   global PAR_per_axes_dico
-  PAR_per_axes_dico = {"Elapsed_time":[], "DOY":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[], "Abs_int_PAR":[]}
+  PAR_per_axes_dico = {"Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[], "Abs_int_PAR":[]}
 
 
 #######################
@@ -2443,6 +2443,7 @@ def EndEach(lstring, lscene):
               for axis in axis_census[num_plt].keys():
                 PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
                 PAR_per_axes_dico["DOY"].append(DOY)
+                PAR_per_axes_dico["Temperature"].append(Temperature)
                 PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                 PAR_per_axes_dico["Num_plante"].append(num_plt)
                 PAR_per_axes_dico["Num_talle"].append(axis)
