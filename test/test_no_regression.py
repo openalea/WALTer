@@ -37,7 +37,6 @@ def test_same_result():
                         np.assert_allclose(dfout[column], reference[column], atol=_atol_PAR)
                 else:
                     np.assert_array_equal(dfout[column], reference[column])
-
         else:
             print(' \n The ' + my_file + ' file is non-existent ')
 
