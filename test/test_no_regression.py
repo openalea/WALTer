@@ -4,6 +4,10 @@ import pandas,os
 from walter.data_access import get_data_dir
 from pathlib2 import Path
 import numpy.testing as np
+import re
+
+_atol_PAR = 200 # windows and linux version of walter lead up to 200 PAR output difference
+
 
 def test_same_result():
     #assert : verify if the same wheat field have the same results for the same chosen parameters.
@@ -24,6 +28,15 @@ def test_same_result():
         if my_file.is_file():
             dfout = pandas.read_csv(my_file, sep='\t')
             print(' \n The tested file is : '+ i + '\n')
+            for column in reference.columns:
+                if re.match('.*PAR.*', column):
+                    if column == 'Sum_PAR':
+                        np.assert_allclose(dfout[column], reference[column], atol=11 * _atol_PAR)
+                    else:
+                        np.assert_allclose(dfout[column], reference[column], atol=_atol_PAR)
+                else:
+                    np.assert_array_equal(dfout[column], reference[column])
+
             np.assert_array_equal(dfout, reference) # Comparison Reference and Simulation
         else:
             print(' \n The ' + my_file + ' file is non-existent ')
