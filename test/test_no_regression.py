@@ -13,8 +13,9 @@ def test_same_result():
     #assert : verify if the same wheat field have the same results for the same chosen parameters.
 
     p = project.Project(name='same') # Create the simulation directory
-    params = p.csv_parameters('sim_scheme_test.csv')[0] # recovery of parameters
-    lsys, lstring = p.run(**params)
+    directory = project.walter_data()
+    params = p.csv_parameters(str(directory/'sim_scheme_test.csv'))[0] # recovery of parameters
+    p.run(**params)
     result_directory = str(p.output_path()) + '/'
     reference_directory = get_data_dir() + "/ref_output/" # Reference folder
     list_of_file_ref = os.listdir(reference_directory) # Listing of the different reference files
@@ -37,7 +38,6 @@ def test_same_result():
                 else:
                     np.assert_array_equal(dfout[column], reference[column])
 
-            np.assert_array_equal(dfout, reference) # Comparison Reference and Simulation
         else:
             print(' \n The ' + my_file + ' file is non-existent ')
 
