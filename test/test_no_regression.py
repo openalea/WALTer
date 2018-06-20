@@ -14,7 +14,7 @@ def test_same_result():
 
     p = project.Project(name='same') # Create the simulation directory
     directory = project.walter_data()
-    params = p.csv_parameters(str(directory/'sim_scheme_test.csv'))[0] # recovery of parameters
+    params = p.csv_parameters(str(directory/'sim_scheme_ref.csv'))[0] # recovery of parameters
     p.run(**params)
     result_directory = str(p.output_path()) + '/'
     reference_directory = get_data_dir() + "/ref_output/" # Reference folder
