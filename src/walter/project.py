@@ -1,66 +1,103 @@
 """
-Questions: Do we need to separate Project and Simulation classes?
-
+Management of walter simulations and projects
 """
 
-import sys, os
-from os.path import join as pj
+import os
 import tempfile
-import argparse
-from subprocess import Popen
+
 
 from path import Path
 import pandas as pd
+
+# ID management
+import json
+import uuid
+from collections import OrderedDict
 
 from openalea.lpy import Lsystem
 
 from walter import data_access
 
 
+def walter_data():
+    d = data_access.get_data_dir()
+    data_dir = Path(d).abspath()
+    return data_dir
+
+
 def cwd():
     return Path(os.getcwd()).abspath()
 
-def set_dir(d):
-    global DIR
-    _cwd = Path(d).abspath()
-    DIR = _cwd
 
-    change_dir()
+def check_cwd():
+    """ does the current dir looks like a walter project dir ?"""
+    dir = cwd()
+    return (dir / 'input').exists() and (dir / 'output').exists() and (dir / 'which_output_files.csv').exists()
 
-DIR = cwd()
-OLD_DIR = DIR
 
 class Project(object):
     """ TODO
     """
 
     def __init__(self, name=''):
+
+        self.call_dir = Path(os.getcwd()).abspath()
+
         if not name:
             # TODO: Add the date time rather than temp string
             name = tempfile.mkdtemp(dir='.', prefix='simu_')
-        dirname = Path(name)
 
+        dirname = Path(name)
         if not dirname.exists():
             dirname.mkdir()
-
         self.dirname = dirname.abspath()
         self.name = str(self.dirname.name)
 
-        # remove global variables into class fields
-        # self.set_dir()
-        set_dir(self.dirname)
+        self.copy_input()
+        self.generate_output()
+        data = walter_data()
+        if not (data / 'WALTer.lpy').exists():
+            raise ImportError('could not locate walter.lpy source code')
+        self.walter = str(data / 'WALTer.lpy')
 
-        copy_input() # move to self._copy_input()
-        generate_output()
-        which_output()
+        csv = 'which_output_files.csv'
+        if not (self.dirname / csv).exists():
+            (walter_data() / csv).copy(self.dirname)
+        self._outputs = {}  # needed for first call to which_output
 
-        self._outputs = {}
+        itable = 'index-table.json'
+        if (self.dirname / itable).exists():
+            self.itable = OrderedDict(self.read_itable(self.dirname / itable))
+        else:
+            self.itable = OrderedDict()
+        self._combi_params = {}
+
+    def copy_input(self):
+        """ Copy the input dir from WALTer if it is not present.
+        """
+        data = walter_data()
+        input_src = data / 'input'
+        input_dest = self.dirname / 'input'
+        if not input_dest.exists():
+            input_src.copytree(input_dest, symlinks=True)
+            # TODO add log: copy input
+
+        return True
+
+    def generate_output(self):
+        """ Generate output dir if not present.
+        """
+        output = self.dirname / 'output'
+        if not output.exists():
+            output.mkdir()
 
     def activate(self):
-        set_dir(self.dirname)
+        """ Change directory to the project one. """
+        os.chdir(self.dirname)
 
     def deactivate(self):
-        set_dir(OLD_DIR)
+        """ Change dir to the user one. """
+        os.chdir(self.call_dir)
 
     def clean(self):
         pass
@@ -73,242 +110,190 @@ class Project(object):
     @property
     def which_outputs(self):
         if not self._outputs:
-            df=pd.read_csv(self.dirname/'which_output_files.csv', sep='\t')
+            df = pd.read_csv(self.dirname/'which_output_files.csv', sep='\t')
             outs = df.to_dict(orient='records')[0]
             self._outputs = outs
 
         return self._outputs
 
-
     @which_outputs.setter
     def which_outputs(self, outputs):
-        self._outputs = outputs
-
+        self._outputs.update(outputs)
         # Write the which_output_files
         df = pd.DataFrame.from_dict(data=[outputs], orient='columns')
         df.to_csv(path_or_buf=self.dirname/'which_output_files.csv', sep='\t', index=False)
 
+    @property
+    def combi_params(self):
+        if (self.dirname/'combi_params.csv').exists():
+            self._combi_params = pd.read_csv(self.dirname/'combi_params.csv', sep='\t')
+        return self._combi_params
 
-
-    def run(self, **kwds):
-        """ Run WALTer locally.
-
-        Set parameter values as keyword arguments::
-
-            run(nb_plt_utiles=1,
-                dist_border_x=0,
-                dist_border_y=0,
-                nbj=30,
-                beginning_CARIBU=290)
-        """
-        self.activate()
-
-        data = walter_data()
-        walter = str(data / 'WALTer.lpy')
-
-        # TODO check if this file exists...
-        lsys = Lsystem(walter, {'params': kwds})
-        lstring = lsys.iterate()
-
-        return lsys, lstring
-
-    def csv_parameters(self, csv_filename):
-
-        self.deactivate()
-
-        df=pd.read_csv(csv_filename, sep='\t')
-        param_list = df.to_dict(orient='records') # a list of dict
-
-        self.activate()
-
+    @staticmethod
+    def csv_parameters(path):
+        df = pd.read_csv(path, sep='\t')
+        param_list = df.to_dict(orient='records')  # a list of dict
         return param_list
 
+    @staticmethod
+    def read_itable(path):
 
-class Simulation(object):
-    """ Run one or several simulation """
+        def _byteify(input):
+            if isinstance(input, dict):
+                return {_byteify(key): _byteify(value)
+                        for key, value in input.iteritems()}
+            elif isinstance(input, list):
+                return [_byteify(element) for element in input]
+            elif isinstance(input, unicode):
+                return input.encode('utf-8')
+            else:
+                return input
 
-    def __init__(self, project, csv_params=None):
-        self.project = project
-        self.parameters = []
+        # The use of the byteify function kill encoding problems from json importation between unicode and strings
+        with open(path) as itable:
+            return _byteify(json.load(itable))
 
-    def run(self, **kwds):
-        """ Run WALTer locally.
+    @staticmethod
+    def write_itable(itable, path):
+        with open(path, "w") as out:
+            json.dump(itable, out)
 
-        Set parameter values as keyword arguments::
+    def update_itable(self):
+        path = str(self.dirname / 'index-table.json')
+        self.write_itable(self.itable, path)
 
-            run(nb_plt_utiles=1,
+        # update combi_parameters.csv
+        path = str(self.dirname / 'combi_params.csv')
+
+        parameters = self.itable.values()
+        allkeys = set().union(*parameters)
+
+        def _missing(d):
+            return len(allkeys - set(d.keys()))
+        if any([_missing(p) for p in parameters]):
+            self.activate()
+            new = []
+            for p in parameters:
+                lsys = Lsystem(self.walter, {'params': p})
+                newp = {k: lsys.context().locals().get(k, 'undef') for k in allkeys}
+                new.append(newp)
+            parameters = new
+
+        combi = []
+        for k, v in zip(self.itable, parameters):
+            d = {'ID': k}
+            d.update(v)
+            combi.append(d)
+        df = pd.DataFrame(combi)
+        df.to_csv(path, index=False, sep = '\t')
+
+    def get_id(self, param):
+        sim_id = None
+
+        if len(param) == 0:
+            sim_id = 'walter_defaults'
+
+        for _id in self.itable:
+            if param == self.itable[_id]:
+                sim_id = _id
+                break
+
+        if sim_id is None:
+            sim_id = 'id-' + str(uuid.uuid4())
+
+        if sim_id not in self.itable:
+            self.itable[sim_id] = param
+
+        return sim_id
+
+    def run(self, sim_id=None, dry_run=False, **kwds):
+        """Run WALTer in project dir
+
+        Parameters
+        ----------
+        sim_id:
+            simulation identifier
+        dry_run: (bool)
+            prevent running the simulation (do only side effects).
+        **kwds:
+            walter parameters values (as named arguments)
+
+        Examples
+        --------
+           p = Project()
+           p.run(nb_plt_utiles=1,
                 dist_border_x=0,
                 dist_border_y=0,
                 nbj=30,
                 beginning_CARIBU=290)
+
+        Returns
+        -------
+            the lsystem and lstring generated by the run
         """
-        self.project.activate()
 
-        data = walter_data()
-        walter = str(data / 'WALTer.lpy')
-
-        # TODO check if this file exists...
-        lsys = Lsystem(walter, {'params': kwds})
-        lstring = lsys.iterate()
+        self.activate()
+        already_known_id = self.itable.keys()
+        if sim_id is None:
+            sim_id = self.get_id(kwds)
+        if sim_id not in already_known_id:
+            self.update_itable()
+        lsys, lstring = None, None
+        if not dry_run:
+            lsys = Lsystem(self.walter, {'params': kwds, 'ID': sim_id})
+            lstring = lsys.iterate()
 
         return lsys, lstring
 
+    def generate_id(self, parameter_list):
+        return [self.get_id(p) for p in parameter_list]
 
-    def run_all(self, i=-1):
+    def run_parameters(self, csv_parameters, which=None, dry_run=False):
+        """Run walter with input parameters specified in csv file
+
+        Parameters
+        ----------
+        csv_parameters: (string)
+            name csv file containing inputs
+        which: (sequence or None)
+            indices of lines (index 0 = line 1) of input csv to be run.
+            If None (default), all lines are run.
+        dry_run: (bool)
+            prevent running the simulation (do only side effects).
+
+        Returns
+        -------
+            the lsystem and the lstring of the last run
         """
+        self.deactivate()
+        lsys, lstring = None, None
+        parameters = self.csv_parameters(csv_parameters)
+        if which is not None:
+            try:
+                iter(which)
+            except TypeError:
+                which = [which]
+            parameters = [p for i, p in enumerate(parameters) if i in which]
+        already_known_id = self.itable.keys()
+        sim_ids = self.generate_id(parameters)
+        if not all([sid in already_known_id for sid in sim_ids]):
+            self.update_itable()
+        for sid, param in zip(sim_ids, parameters):
+            lsys, lstring = self.run(sid, dry_run=dry_run, **param)
+
+        return lsys, lstring
+
+    def output_path(self, index=-1):
+        """return the path to output directory of a simulation
+
+        Parameters
+        ----------
+        index (int):
+            the index of the simulation. -1 stands for the last simulation
+
+        Returns
+        -------
+            a path.Path instance
         """
-        if i == -1:
-            for p in self.parameters:
-                self.run(**p)
-        else:
-            p = self.parameters[i]
-            self.run(**p)
-
-
-    def set_csv_parameters(self, csv_filename):
-        """ Add a set of csv parameters (with tab separators).
-        """
-        df=pd.read_csv(csv_filename, sep='\t')
-        param_list = df.to_dict(orient='records') # a list of dict
-        self.parameters.extend(param_list)
-
-
-    def save_parameters(self, csv_filename = 'sim_scheme.csv'):
-        """ save the parameters into a csv file. """
-        pass # TODO
-
-
-def change_dir(init=False):
-    if not init:
-        os.chdir(DIR)
-    else:
-        os.chdir(OLD_DIR)
-
-def walter_data():
-    d = data_access.get_data_dir()
-    data_dir = Path(d).abspath()
-    return data_dir
-
-def copy_input():
-    """ Copy the input dir from WALTer if it is not present.
-    """
-    data = walter_data()
-    input_src = data/'input'
-    input_dest = DIR / 'input'
-    if not input_dest.exists():
-        input_src.copytree(input_dest, symlinks=True)
-        # TODO add log: copy input
-
-    return True
-
-def generate_output():
-    """ Generate output dir if not present.
-    """
-    output = DIR / 'output'
-    if not output.exists():
-        output.mkdir()
-
-def which_output():
-    data = walter_data()
-    csv = 'which_output_files.csv'
-    if not (DIR /csv).exists():
-        (data/csv).copy(DIR)
-
-
-
-
-def run(**kwds):
-    """ Run WALTer locally.
-
-    Set parameter values as keyword arguments::
-
-        run(nb_plt_utiles=1,
-            dist_border_x=0,
-            dist_border_y=0,
-            nbj=30,
-            beginning_CARIBU=290)
-    """
-    data = walter_data()
-    walter = str(data / 'WALTer.lpy')
-
-    # TODO check if this file exists...
-    lsys = Lsystem(walter, {'params': kwds})
-    lstring = lsys.iterate()
-
-    return lsys, lstring
-
-
-def main():
-    """
-    """
-
-    input_folder = Path(os.getcwd()).abspath()
-
-    usage = """
-WALTer generates a project directory and run simulations inside this directory.
-
-
-1. To create a full simulation project, run:
-
-       walter -p simu_walter
-
-
-2. To run simulations inside the project, type:
-
-       cd simu_walter
-       walter -i sim_scheme.csv
-
-"""
-
-    parser = argparse.ArgumentParser(description=usage)
-    parser.add_argument("-i", type=str,
-                        help="Select input simulation scheme")
-    parser.add_argument("-p", type=str,
-                        help="Name of the project where simulations will be run")
-
-    args = parser.parse_args()
-
-    _cwd = cwd()
-    project_name = str(_cwd.name)
-
-    project = '.'
-
-    if args.i:
-        sim_scheme = args.i
-        print (sim_scheme)
-    if args.p:
-        project = args.p
-        print(project)
-
-    prj = Project(project)
-
-    # TODO: add a flag in the project to know if the project has been generated, modified or not.
-    if Path(project).exists():
-        print('Use Project %s located at %s'%(prj.name, prj.dirname))
-    else:
-        print('Project %s has been generated at %s'%(prj.name, prj.dirname))
-
-
-    param_list = prj.csv_parameters(sim_scheme)
-
-    if len(param_list) == 1:
-        prj.run(**(param_list[0]))
-    else:
-        tmp = prj.dirname/'tmp'
-        if not tmp.exists():
-            tmp.mkdir()
-
-        pids = []
-        for i, pdict in enumerate(param_list):
-            df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
-            scheme_name = str(tmp/'sim_scheme_%d.csv'%(i+1))
-            df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
-
-            pid = Popen(["walter", "-i", scheme_name]).pid#, env={"PATH": "/Users/pradal/miniconda2/envs/adel2/bin"})
-            #os.system("walter -i %s"%scheme_name)
-            pids.append(pid)
-
-
-
-
-
+        sid = self.itable.keys()[index]
+        return self.dirname / 'output' / sid
