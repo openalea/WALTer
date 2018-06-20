@@ -20,3 +20,4 @@ def change_reference():
         shutil.move(result_directory+i, reference_directory+'/'+i)
         print(result_directory+i, "has being moved into reference directory ")
 
+    p.remove(force=True)

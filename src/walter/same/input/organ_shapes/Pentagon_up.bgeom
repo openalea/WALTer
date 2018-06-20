@@ -1,9 +1,0 @@
-FaceSet house {
-	PointList [ 	<-1,0,0>, <1,0,0>, <1,0,1>, <-1,0,1>, <0,0,2>
-			]
-			 	
-	IndexList [ 	[0,3,4,2,1]
-	]
-	CCW True
-	Solid True
-}
