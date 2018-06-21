@@ -6,7 +6,7 @@ from pathlib2 import Path
 import numpy.testing as np
 import re
 
-_atol_PAR = 200 # windows and linux version of walter lead up to 200 PAR output difference
+_rtol_PAR = 0.02 # windows and linux version of walter lead up to 2 percent PAR output difference
 
 
 def test_same_result():
@@ -31,10 +31,7 @@ def test_same_result():
             print(' \n The tested file is : '+ i + '\n')
             for column in reference.columns:
                 if re.match('.*PAR.*', column):
-                    if column == 'Sum_PAR':
-                        np.assert_allclose(dfout[column], reference[column], atol=11 * _atol_PAR)
-                    else:
-                        np.assert_allclose(dfout[column], reference[column], atol=_atol_PAR)
+                    np.assert_allclose(dfout[column], reference[column], rtol=_rtol_PAR)
                 else:
                     np.assert_array_equal(dfout[column], reference[column])
         else:
