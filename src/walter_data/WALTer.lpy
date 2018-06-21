@@ -11,8 +11,7 @@ import numpy as np
 
 import sys
 import os
-import uuid
-import json
+
 
 
 pj = os.path.join
@@ -20,11 +19,17 @@ data_dir = os.getcwd()
 inputdir = pj(data_dir, 'input')
 #from my_own_functions import *
 
-# setup params if and only if not defined as Lsys args
+# setup params/ID if and only if params not defined as Lsys args
 try:
   params = params
 except NameError:
   params = {}
+  ID = 'walter_defaults'
+
+try:
+  ID = ID
+except NameError:
+  ID = 'debug'
 
 
 ### Importations de fichiers annexes ###
@@ -1669,18 +1674,7 @@ def calc_grain_nb(T, PAR):
 def age_phyto_seed(num_phyto, N_p_s, geno):
   return (N_p_s - num_phyto) * Pls[geno]
 
-############################ REGLER DES PROBLEMES D'ENCODAGE ##############################
 
-def byteify(input):
-    if isinstance(input, dict):
-        return {byteify(key): byteify(value)
-                for key, value in input.iteritems()}
-    elif isinstance(input, list):
-        return [byteify(element) for element in input]
-    elif isinstance(input, unicode):
-        return input.encode('utf-8')
-    else:
-        return input
 
 ##########################################################################
 #####                EDITING CLASS FOR ORGAN TYPES                   #####
@@ -2008,67 +2002,13 @@ if genotype_proportion == "equal":
 global folder_name
 global out_dir
 
-if len(params) == 0:
-  folder_name = "output_debug"
-  out_dir = pj(data_dir, "output")
-else:
-  # If the json file already exists
-  if os.path.isfile("index-table.json"):
-    # The use of the byteify function kill encoding problems from json importation between unicode and strings 
-    
-    ID_params = byteify(json.load(open("index-table.json")))
-    already_known_ID = False
-    
-    for id in ID_params.keys():
-      
-      # If the combination of parameters has already been encountered previously and stored in the json file
-      if sorted(ID_params[id].values()) == sorted(params.values()):
-        already_known_ID = True
-      
-    #If the ID of the simulation is already known
-    if already_known_ID:
-      ID = id
-    
-    #If the ID of the simulation is not known
-    elif not already_known_ID:
-      # We choose a random ID
-      ID = "id-"+str(uuid.uuid4())
-      ID_params = {}
-      ID_params[ID] = params
-      
-      json_2_human = open("from_json_to_humanbeing.txt", "a")
-      
-      for key, val in params.iteritems():
-        json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-      json_2_human.write("\n")
-      json_2_human.close()
-      
-      json.dump(ID_params, open("index-table.json", "w"))
-      
-      
-  # If the json file doesnot exists
-  elif not os.path.isfile("index-table.json"):
-    # We choose a random ID
-    ID = "id-"+str(uuid.uuid4())
-    ID_params = {}
-    ID_params[ID] = params
-    
-    json_2_human = open("from_json_to_humanbeing.txt", "a")
-    
-    for key, val in params.iteritems():
-      json_2_human.write("%s" % ID + "\t" + "%s" % key + "\t" + "%s" % val + "\n")
-    json_2_human.write("\n")
-    json_2_human.close()
-      
-    json.dump(ID_params, open("index-table.json", "w"))
-    
-  folder_name = ID
-  out_dir = pj(data_dir, "output")
-  print "ID : ",ID
-  #Write the ID of the current simulation in an external file to catch it later un another script
-  ID_simul = open("ID_simul.txt","w")
-  ID_simul.write(ID)
-  ID_simul.close()
+
+folder_name = ID
+out_dir = pj(data_dir, "output")
+
+
+
+print "ID : ",ID
 
 try:
   if not os.path.exists(out_dir):
