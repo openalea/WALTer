@@ -3160,10 +3160,10 @@ Bud(StBu):
   StBu.nb_j += time_step
   StBu.age += max(Tbase,Temperature)
   StBu.time += max(Tbase,Temperature)
-  
+
   #Production de phytom�res
   if StBu.time >= Pls[StBu.geno]:
-    if GAI_prox[StBu.num_plante] <= GAI_c[geno] or cohort_number(StBu.tiller) < 8: #TODO peut �tre � enlever sui on est encore dans la graine?
+    if GAI_prox[StBu.num_plante] <= GAI_c[StBu.geno] or cohort_number(StBu.tiller) < 8: #TODO peut �tre � enlever sui on est encore dans la graine?
       StL = Leaf(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu_p = Bud_primord(StBu.num_plante, StBu.geno, StBu.tiller, StBu.n + 1)
       StBu_p.sumtemp = StBu.time%Pls[StBu.geno]
@@ -3769,7 +3769,7 @@ Leaf(StL):
           
           #La transition florale n'est pas pass�e
           if dico_stades[StBl.num_plante][StBl.tiller]["Transiflo"][0] == False:
-            StBl.final_length = previous_length + s_B_1[geno]
+            StBl.final_length = previous_length + s_B_1[StBl.geno]
             StBl.width = blade_width(StBl.final_length, a_B_w[StBl.geno], b_B_w[StBl.geno])
             StS.final_length = sheath_length(StBl.final_length, a_S_L[StS.geno], b_S_L[StS.geno])
             
