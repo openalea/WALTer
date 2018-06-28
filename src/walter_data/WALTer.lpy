@@ -559,29 +559,29 @@ for geno in crop_genotype:
 
 Psi_FT = 0 #Thermal time shift between the floral transition of axes belonging to two consecutive cohorts | old name : transiflo_shift_param
 
-Dse_Maxwell_mean = 81
-Dse_Maxwell_sd = int(hazard_driver["emerg"]) * 30
-Dse_Soissons_mean = 100
-Dse_Soissons_sd = int(hazard_driver["emerg"]) * 30
-Dse_Thesee_mean = 125
-Dse_Thesee_sd = int(hazard_driver["emerg"]) * 30
-Dse_Renan_mean = 125
-Dse_Renan_sd = int(hazard_driver["emerg"]) * 30
+Dse_mean_Maxwell = 81
+Dse_sd_Maxwell = int(hazard_driver["emerg"]) * 30
+Dse_mean_Soissons = 100
+Dse_sd_Soissons = int(hazard_driver["emerg"]) * 30
+Dse_mean_Thesee = 125
+Dse_sd_Thesee = int(hazard_driver["emerg"]) * 30
+Dse_mean_Renan = 125
+Dse_sd_Renan = int(hazard_driver["emerg"]) * 30
 
-var_registerDSE = ["Dse_Maxwell_mean","Dse_Soissons_mean","Dse_Thesee_mean","Dse_Renan_mean","Dse_Maxwell_sd","Dse_Soissons_sd","Dse_Thesee_sd","Dse_Renan_sd"]
+var_registerDSE = ["Dse_mean_Maxwell","Dse_mean_Soissons","Dse_mean_Thesee","Dse_mean_Renan","Dse_sd_Maxwell","Dse_sd_Soissons","Dse_sd_Thesee","Dse_sd_Renan"]
 
 for geno in crop_genotype:
-  var_registerDSE.append("Dse_"+geno+"_mean")
-  var_registerDSE.append("Dse_"+geno+"_sd")
+  var_registerDSE.append("Dse_mean_"+geno)
+  var_registerDSE.append("Dse_sd_"+geno)
 
 for key, value, in params.iteritems():
   if key in var_registerDSE:
     exec(key+"=value")
 
-Dse = {"Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Gigant_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Darwinkel_Maxwell" : {"mean" : Dse_Maxwell_mean, "sd" : Dse_Maxwell_sd}, "Soissons" : {"mean" : Dse_Soissons_mean, "sd" : Dse_Soissons_sd}, "Thesee" : {"mean" : Dse_Thesee_mean, "sd" : Dse_Thesee_sd}, "Renan" : {"mean" :Dse_Renan_mean , "sd" : Dse_Renan_sd}}
+Dse = {"Maxwell" : {"mean" : Dse_mean_Maxwell, "sd" : Dse_sd_Maxwell}, "Gigant_Maxwell" : {"mean" : Dse_mean_Maxwell, "sd" : Dse_sd_Maxwell}, "Darwinkel_Maxwell" : {"mean" : Dse_mean_Maxwell, "sd" : Dse_sd_Maxwell}, "Soissons" : {"mean" : Dse_mean_Soissons, "sd" : Dse_sd_Soissons}, "Thesee" : {"mean" : Dse_mean_Thesee, "sd" : Dse_sd_Thesee}, "Renan" : {"mean" :Dse_mean_Renan , "sd" : Dse_sd_Renan}}
 
 for geno in crop_genotype:
-  Dse[geno] = { "mean" : eval("Dse_"+geno+"_mean") , "sd" : eval("Dse_"+geno+"_sd")}
+  Dse[geno] = { "mean" : eval("Dse_mean_"+geno) , "sd" : eval("Dse_sd_"+geno)}
 
 
 N_p_s = 4 #Number of primordia already preformed inside the seed | old name : nb_primord_seed
