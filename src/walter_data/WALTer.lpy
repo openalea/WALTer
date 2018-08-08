@@ -249,6 +249,7 @@ for key, value, in params.iteritems():
     exec(key+"=value")
 
 genotypes = genotypes.split(',') # genotypes is a list with the names of the different genotypes
+genotype_numbers = str(genotype_numbers) # making sure genotype_numbers is a string
 genotype_numbers = genotype_numbers.split(',') # genotype_numbers is a list with the number of plants for each genotype
 
 
