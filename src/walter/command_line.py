@@ -87,7 +87,11 @@ def main():
                     tmp.mkdir()
                 pids = []
                 procs = {}
+                active_procs = []
                 for i, pdict in enumerate(param_list):
+                    while len(active_procs) > 2: # As long as there are 3 active_procs, test if one ends
+                        active_procs = [proc for proc in active_procs if proc.poll() == None]
+                        time.sleep(300) # To avoid testing for finished processes too often, wait 5 minutes between loops
                     df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
                     scheme_name = str(tmp / 'sim_scheme_%d.csv' % (i + 1))
                     df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
@@ -95,6 +99,7 @@ def main():
                     pid = Popen(["walter", "-i", scheme_name])
                     pids.append(pid)
                     procs[scheme_name] = pid
+                    active_procs.append(pid)
                 # Test caribuRunError re-launching
                 while len(procs) > 0: # While there are processes to test
                     for scheme in procs.keys(): #Not using iteritems because you cannot change the size of a dictionary while iterating on it
@@ -113,6 +118,6 @@ def main():
                                 prj.update_itable()
                                 pids.append(p) # Add the new process to the list of processes for futher testing
                                 procs[scheme] = p # Add the new process to the dict of processes
-                    time.sleep(20) # To avoid testing for finished processes too often, wait 2 minutes between loops
+                    time.sleep(120) # To avoid testing for finished processes too often, wait 2 minutes between loops
                 tmp.rmtree()
 
