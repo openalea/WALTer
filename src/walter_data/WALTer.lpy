@@ -794,10 +794,10 @@ for key, value, in params.iteritems():
 
 
 # Tiller death
-t_beg_reg_Maxwell = 6.8
-t_beg_reg_Darwinkel_Maxwell = 7.8
-t_beg_reg_Gigant_Maxwell = 7.8
-t_beg_reg_Soissons = 6.8
+t_beg_reg_Maxwell = 4.2
+t_beg_reg_Darwinkel_Maxwell = 3.2
+t_beg_reg_Gigant_Maxwell = 3.2
+t_beg_reg_Soissons = 4.2
 
 var_registerT_beg = ["t_beg_reg_Soissons","t_beg_reg_Maxwell","t_beg_reg_Darwinkel_Maxwell","t_beg_reg_Gigant_Maxwell"]
 
@@ -1282,12 +1282,12 @@ def SSI_tiller(Tht, tiller, Ln_final, phyllo, n1, n3, ts1, ts3, Dse, DelayTipToH
     a = 0
     b = 0
   elif tHS0 <= Tht < real_ts1:
-    s0 = 0 #Nombre de feuilles mortes � t0
+    s0 = 0 #Number of dead leaves at t0
     a = (s1 - s0)/(real_ts1 - real_ts0[0])
     b = s1 - a*real_ts1
   #Deuxieme phase de senescence
   elif real_ts1 <= Tht <= real_ts3:
-    s3 = Ln_final                #Nombre de feuilles mortes � t2
+    s3 = Ln_final                #Number of dead leaves at t2
     a = (s3 - s1)/(real_ts3 - real_ts1)
     b = s3 - a*real_ts3
   elif Tht > real_ts3:
@@ -2790,10 +2790,11 @@ Seed:
   shortest_phyllo = min(all_phyllo.keys())
   earliest_geno = all_phyllo[shortest_phyllo]
   latest_geno = all_phyllo[longest_phyllo]
+  earliest_t_beg_reg = floor(min(param_Ln_final.values()))-max(t_beg_reg.values())
   if 'beginning_CARIBU' in params:
     beginning_CARIBU = params['beginning_CARIBU']
   else:
-    beginning_CARIBU = (leaf_emerg_date(t_beg_reg[genotype_map[earliest_plant]], (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
+    beginning_CARIBU = (leaf_emerg_date(earliest_t_beg_reg, (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
   ending_CARIBU = (leaf_emerg_date(ceil(max(param_Ln_final.values())),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
   print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
   useGroup(2)
@@ -2806,8 +2807,8 @@ Apex(StA):
   if SIRIUS_state == "disabled":
     StA.Ln_final = int(param_Ln_final[StA.geno])+int(random.random() + param_Ln_final[StA.geno]%1)
     dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
-    t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
-    t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
+    t_beg_reg_ind = dico_stades[StA.num_plante][(1,)]["Ln_final"]-t_beg_reg[StA.geno]
+    t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno)
     useGroup(3)
   
   elif SIRIUS_state == "enabled":
@@ -2816,7 +2817,7 @@ Apex(StA):
     global DOY
     
     for day in range(1,300):
-      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
+      date_current_day = sowing_date + datetime.timedelta(day) 	        # Date of the current day for a given elapsed_time
       _current_temperature = meteo_dF[(meteo_dF["year"] == date_current_day.year) & (meteo_dF["month"] == date_current_day.month) & (meteo_dF["day"] == date_current_day.day)]['TM']
       current_temperature = _current_temperature[_current_temperature.last_valid_index()]
       _Tempcum += max(Tbase,current_temperature)
@@ -2854,12 +2855,12 @@ Apex(StA):
           StA.ln = phyllo_incr * StA.sumtemp /phyll_adjust(StA.geno)
         
         StA.pn = 2 * StA.ln + 4
-        # Vernalisation
+        # Vernalization
         if StA.vrn == False:
           StA.vern_rate = vrate(current_temperature,StA.geno)
           StA.vern_prog += StA.vern_rate
           StA.vern_rate = 0
-          if StA.vern_prog >= 1 or StA.pn > Lmax: #la vernalisation progresse
+          if StA.vern_prog >= 1 or StA.pn > Lmax: #the vernalization is progressing
             StA.vrn = True
             StA.var_Lmin = max(StA.var_Lmin, StA.pn)
           else:
@@ -2867,7 +2868,7 @@ Apex(StA):
             if StA.pn >= StA.Ln_pot:
               StA.vrn = True
               StA.var_Lmin = max((StA.Ln_pot + StA.pn)/2.0, StA.var_Lmin)
-        # Photoperiode
+        # Photoperiod
         if StA.vrn == True and StA.ln > 1.5:
           if StA.photop_flag == False:
             StA.debut_ppd = True
@@ -2877,7 +2878,7 @@ Apex(StA):
             else:
               StA.Ln_app = StA.var_Lmin + SLDL[StA.geno] * (DLsat - duree_du_jour(latitude,DOY))
               #Sortie finale de la s�rie de tests
-              if 0.5 * StA.Ln_app <= StA.ln: # Sert � d�terminer le nombre de feuilles visibles EDIT (c'est plut�t le nombre de primordia emis)
+              if 0.5 * StA.Ln_app <= StA.ln: # Used to determine the number of visible leaves EDIT (It's rather the number of emitted primordia)
                 StA.photop_flag = True
                 StA.Ln_app = StA.Ln_app
                 MSLn_app[StA.num_plante] = StA.Ln_app
@@ -2885,10 +2886,10 @@ Apex(StA):
                 StA.Ln_final = int(StA.Ln_app)+int(random.random()+StA.Ln_app%1)
                 dico_stades[StA.num_plante][(1,)]["Ln_final"] = StA.Ln_final
                 
-                t_beg_reg_ind = t_beg_reg[StA.geno] + (11 - dico_stades[StA.num_plante][(1,)]["Ln_final"])
-                t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno) #11 est mis en dur car c'est le nombre de feuille final pour lequel ce param�tre a �t� mis en place � la base
+                t_beg_reg_ind = dico_stades[StA.num_plante][(1,)]["Ln_final"]-t_beg_reg[StA.geno]
+                t_beg_reg_ind_Tht[StA.num_plante] = leaf_emerg_date(t_beg_reg_ind, (1,), StA.geno, StA.num_plante) + 1.6*phyll_adjust(StA.geno)
     _Tempcum = 0
-    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date � laquelle nous nous trouvons pour un elapsed_time donn�
+    date_current_day = sowing_date + datetime.timedelta(2) 	        # Date of the current day for a given elapsed_time
     DOY = int(date_current_day.strftime('%j'))
     useGroup(3)
 
@@ -3578,7 +3579,7 @@ CutPointBud(StCPB):
       produce % CutPointBud(StCPB)
   
   ### On coupe les structures pr�sentes sur les talles qui r�gressent par manque de rayonnement
-  if Tempcum > leaf_emerg_date(t_beg_reg[StCPB.geno], (1,), genotype_map[StCPB.num_plante], StCPB.num_plante) + 1.6*phyll_adjust(StCPB.geno):
+  if Tempcum > leaf_emerg_date(dico_stades[StCPB.num_plante][(1,)]["Ln_final"]-t_beg_reg[StCPB.geno], (1,), genotype_map[StCPB.num_plante], StCPB.num_plante) + 1.6*phyll_adjust(StCPB.geno):
     #Gestion de la mort des talles
     if StCPB.tiller in axis_census[StCPB.num_plante].keys():
       if axis_census[StCPB.num_plante][StCPB.tiller]['Stop_growth_flag'] == True:
