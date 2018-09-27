@@ -89,7 +89,8 @@ def main():
                 procs = {}
                 active_procs = []
                 for i, pdict in enumerate(param_list):
-                    while len(active_procs) > 2: # As long as there are 3 active_procs, test if one ends
+                    ############################################# temporary fix #############################################################################################
+                    while len(active_procs) > 2: # As long as there are 3 active_procs, test if one ends : temporary fix to avoid running too many processes at the same time
                         active_procs = [proc for proc in active_procs if proc.poll() == None]
                         time.sleep(300) # To avoid testing for finished processes too often, wait 5 minutes between loops
                     df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
@@ -100,7 +101,8 @@ def main():
                     pids.append(pid)
                     procs[scheme_name] = pid
                     active_procs.append(pid)
-                # Test caribuRunError re-launching
+                ############################################# temporary fix #############################################################################################
+                # Test caribuRunError re-launching : temporary fix until CaribuRunErrors are solved
                 while len(procs) > 0: # While there are processes to test
                     for scheme in procs.keys(): #Not using iteritems because you cannot change the size of a dictionary while iterating on it
                         if procs[scheme].poll() != None: # If the proces is finished
