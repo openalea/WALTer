@@ -2455,6 +2455,8 @@ def EndEach(lstring, lscene):
               for num_plt in axis_census.keys():
                 for axis in axis_census[num_plt].keys():
                   PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
+                  PAR_per_axes_dico["DOY"].append(DOY)
+                  PAR_per_axes_dico["Temperature"].append(Temperature)
                   PAR_per_axes_dico["Temp_cum"].append(Tempcum)
                   PAR_per_axes_dico["Num_plante"].append(num_plt)
                   PAR_per_axes_dico["Num_talle"].append(axis)
