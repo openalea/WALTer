@@ -2557,61 +2557,61 @@ def End(lstring):
   if write_output_file["Apex_Sirius"] == True:
     _Apex_Sirius_df = pd.DataFrame(Apex_Sirius_dico_df)
     dF_labels = ["Elapsed_time","Temperature", "Temp_cum", "Daylength", "Num_plante", "Genotype", "PN", "LN", "Sumtemp", "Vern_rate", "Vern_prog", "Vern_flag", "Debut_ppd_flag", "Fin_ppd_flag", "Ln_pot", "Var_L_min","Ln_app", "Ln_final"]
-    Apex_Sirius_df = _Apex_Sirius_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Apex_Sirius_df = _Apex_Sirius_df.reindex(dF_labels, axis="columns", copy=False)
     Apex_Sirius_df.to_csv(pj(out_dir,folder_name, "Apex_Sirius.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Apex"] == True:
     _Apex_df = pd.DataFrame(Apex_dico_df)
     dF_labels = ["Elapsed_time", "Temperature", "Temp_cum", "Time_count", "Sum_temp", "Current_PAR", "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Nb_phyto_emi", "Nb_emerged_leaf", "Transiflo_flag", "STOP_init_flag", "Transiflo_DOY","Ln_final"]
-    Apex_df = _Apex_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Apex_df = _Apex_df.reindex(dF_labels, axis="columns", copy=False)
     Apex_df.to_csv(pj(out_dir,folder_name, "Apex.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Apex_R"] == True:
     _Apex_R_df = pd.DataFrame(Apex_R_dico_df)
     dF_labels = ["Elapsed_time", "DOY", "Temperature", "Temp_cum", "Sum_temp", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Ln_final", "Date_epiaison", "Epi_DOY", "Date_de_flo", "Mont_flag", "Mont_DOY", "Flo_flag", "Flo_DOY", "Death_flag", "Date_de_maturite", "Mat_DOY"]
-    Apex_R_df = _Apex_R_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Apex_R_df = _Apex_R_df.reindex(dF_labels, axis="columns", copy=False)
     Apex_R_df.to_csv(pj(out_dir,folder_name, "Apex_R.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Blade"] == True:
     _Blade_df = pd.DataFrame(Blade_dico_df)
     dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic"]
-    Blade_df = _Blade_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Blade_df = _Blade_df.reindex(dF_labels, axis="columns", copy=False)
     Blade_df.to_csv(pj(out_dir,folder_name, "Blade.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Internode"] == True:
     _Internode_df = pd.DataFrame(Internode_dico_df)
     dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle", "Num_cohorte", "Num_rang" , "Internode_length" ,  "Internode_final_length" ,  "Internode_surface", "Internode_PAR", "Photosynthetic"]
-    Internode_df = _Internode_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Internode_df = _Internode_df.reindex(dF_labels, axis="columns", copy=False)
     Internode_df.to_csv(pj(out_dir,folder_name, "Internode.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Peduncle"] == True:
     _Peduncle_df = pd.DataFrame(Peduncle_dico_df)
     dF_labels = ["Elapsed_time", "Temp_cum", "Temperature",  "Num_plante",  "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Sum_temp", "Peduncle_length", "Peduncle_final_length", "Peduncle_surface", "Peduncle_PAR", "Photosynthetic"]
-    Peduncle_df = _Peduncle_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Peduncle_df = _Peduncle_df.reindex(dF_labels, axis="columns", copy=False)
     Peduncle_df.to_csv(pj(out_dir,folder_name, "Peduncle.csv"), sep = "\t", header=True, index=False)
 
   if write_output_file["Sheath"] == True:
     _Sheath_df = pd.DataFrame(Sheath_dico_df)
     dF_labels = ["Elapsed_time" ,  "Temp_cum" ,  "Temperature" ,  "Num_plante" ,  "Genotype" ,  "Num_talle" , "Num_cohorte", "Num_rang" ,"Sheath_sumtemp"  ,"Sheath_diameter" , "Sheath_length" ,  "Sheath_final_length" , "Sheath_surface" , "Sheath_PAR" , "Photosynthetic"]
-    Sheath_df = _Sheath_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Sheath_df = _Sheath_df.reindex(dF_labels, axis="columns", copy=False)
     Sheath_df.to_csv(pj(out_dir,folder_name, "Sheath.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Ear"] == True:
     _Ear_df = pd.DataFrame(Ear_dico_df)
     dF_labels = ["Elapsed_time", "Temp_cum" , "Num_plante" ,"Genotype", "Num_talle" , "Ear_sumtemp"  , "Ear_length" ,"Ear_surface", "Ear_PAR", "Photosynthetic", "Emerged"]
-    Ear_df = _Ear_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Ear_df = _Ear_df.reindex(dF_labels, axis="columns", copy=False)
     Ear_df.to_csv(pj(out_dir,folder_name, "Ear.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Proba"] == True:
     _Proba_df = pd.DataFrame(Proba_dico_df)
     dF_labels = ["Elapsed_time", "Temperature", "Temp_cum", "Num_plante", "Genotype", "Num_talle", "Num_rang", "Sumtemp", "GAI_prox", "P_debourr"]
-    Proba_df = _Proba_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Proba_df = _Proba_df.reindex(dF_labels, axis="columns", copy=False)
     Proba_df.to_csv(pj(out_dir,folder_name, "Probabilities.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Peraxes"] == True:
     _Peraxes_df = pd.DataFrame(Peraxes_dico_df)
     dF_labels = ["Init_flag","Elapsed_time", "DOY","Temperature", "Temp_cum", "Num_plante", "Num_talle", "Sheath_max", "Collar_height", "Dead_collar_height", "Delta_H", "Visible_leaves_surface", "Visible_surface", "Leaf_contrib_to_GAI","Stem_contrib_to_GAI","Ear_contrib_to_GAI","Peduncle_contrib_to_GAI", "Stop_growth_flag"]
-    Peraxes_df = _Peraxes_df.reindex_axis(dF_labels, axis="columns", copy=False)
+    Peraxes_df = _Peraxes_df.reindex(dF_labels, axis="columns", copy=False)
     Peraxes_df.to_csv(pj(out_dir,folder_name, "Peraxes.csv"), sep="\t", header=True, index=False)
 
   if write_debug_PAR == True:
@@ -2762,7 +2762,7 @@ def End(lstring):
   if write_output_file["GAI"] == True:
     _GAI_df = pd.DataFrame(GAI_dico_df)
     dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
-    GAI_df = _GAI_df.reindex_axis(dF_labels,  axis="columns", copy=False)
+    GAI_df = _GAI_df.reindex(dF_labels,  axis="columns", copy=False)
     GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
   
 
