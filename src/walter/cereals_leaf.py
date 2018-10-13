@@ -171,8 +171,8 @@ def arrange_leaf(leaf, stem_diameter=0, inclination=1, relative=True):
 
     return leaf
 
-def leaf_mesh(leaf, L_shape, Lw_shape, length, s_base, s_top, flipx=False,
-              twist=0, volume=0.1, stem_diameter=0, inclination=1,
+def leaf_mesh(leaf, L_shape, Lw_shape, length, s_base=0, s_top=1, flipx=False,
+              twist=0, volume=0, stem_diameter=0, inclination=1,
               relative=False):
     """Compute mesh for a leaf element along a scaled leaf shape
 

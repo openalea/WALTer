@@ -11,7 +11,7 @@ import numpy as np
 
 import sys
 import os
-
+from walter.cereals_leaf import parametric_leaf, leaf_mesh
 
 
 pj = os.path.join
@@ -83,11 +83,11 @@ scalez = 0.5
 #########################
 
 #Importation des figures creees dans des scenes
-scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
-scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
+#scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
+#scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
 
-Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
-Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
+#Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
+#Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
 WALTer_version = "v2.0"
 WALTer_build = 23112017
@@ -4158,6 +4158,7 @@ Sheath(StS):
 Blade(StBl):
   if StBl.visible_length > 1e-6:
     if StBl.num_plante in plant_census: # for color between centyre and border plant
+      couleur = 1
       if StBl.n <=2 and StBl.tiller == (1,): #Les deux premi�res feuilles tester sur la taille des gaines
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno): # no inclinaison avant ligulation
           StBl.incl = 1
@@ -4165,32 +4166,27 @@ Blade(StBl):
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
           width = StBl.width
-        produce ;(1)+(StBl.incl)@g(Scaled(Vector3(width,0.25,StBl.visible_length),Blade_geo))
       else:
         if axis_census[StBl.num_plante].has_key(StBl.tiller):
           #print StBl.num_plante, StBl.tiller, axis_census[StBl.num_plante][StBl.tiller]["Stop_growth_flag"]
           if axis_census[StBl.num_plante][StBl.tiller]["Stop_growth_flag"] == True:
             couleur = 11
-          else:
-            couleur = 1
-        else:
-          couleur = 1
         #Si le limbe n'a pas fini de sortir de la grande gaine
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
           StBl.incl = 1
           if StBl.sumtemp < ED_B * phyll_adjust(StBl.geno):
-            produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno],0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]
           else:
-            produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno]-0.05,0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]-0.05
         # Si la ligule du limbe est apparente
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
+          width = StBl.width
           if StBl.photosynthetic == False:
-            produce ;(5)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
-          else:
-            produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
+            couleur = 5
     else:
       # Pour les plantes de bordures
+      couleur = 4
       if StBl.n <=2 and StBl.tiller == (1,): #Les deux premi�res feuilles tester sur la taille des gaines
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
           StBl.incl = 1
@@ -4198,23 +4194,23 @@ Blade(StBl):
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
           width = StBl.width
-        produce ;(4)+(StBl.incl)@g(Scaled(Vector3(width,0.25,StBl.visible_length),Blade_geo))
       else:
         #Si le limbe n'a pas fini de sortir de la grande gaine
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
           StBl.incl = 1
           if StBl.sumtemp < ED_B * phyll_adjust(StBl.geno):
-            produce ;(4)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno],0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]
           else:
-            produce ;(4)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno]-0.05,0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]-0.05
         # Si la ligule du limbe est apparente
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
+          width = StBl.width
           if StBl.photosynthetic == False:
-            produce ;(5)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
-          else:
-            produce ;(4)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
-
+            couleur = 5
+    leaf = parametric_leaf(insertion_angle=StBl.incl)
+    mesh = leaf_mesh(leaf, StBl.visible_length, width, StBl.visible_length)
+    produce ;(couleur) @g(mesh)
 
 #Blade(StBl):
 #  if StBl.n <=2:
