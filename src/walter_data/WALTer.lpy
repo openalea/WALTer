@@ -37,7 +37,7 @@ except NameError:
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
 
-from walter.light import caribu_scene
+from walter.light import caribu_scene, get_light, get_turtle_light
 
 # CPL
 from collections import defaultdict
@@ -2372,8 +2372,10 @@ def EndEach(lstring, lscene):
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
           print "The date : ", str(datetime.datetime.now())
-
-          c_scene = caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith)
+          # light = get_light(current_PAR, nb_azimuth, nb_zenith)
+          # 46 direction sky
+          light = get_turtle_light(current_PAR)
+          c_scene = caribu_scene(lscene, crop_scheme, light)
           res_sky= None
           try:
             _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)

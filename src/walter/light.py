@@ -2,6 +2,8 @@
 Walter"""
 from alinea.caribu.sky_tools import GenSky, GetLight
 from alinea.caribu.CaribuScene import CaribuScene
+from alinea.caribu.light import light_sources
+from alinea.astk.sun_and_sky import sun_sky_sources
 
 
 def scene_pattern(crop_scheme):
@@ -26,7 +28,18 @@ def get_light(current_PAR, nb_azimuth, nb_zenith):
     return sky_tup
 
 
-def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
+def get_turtle_light(current_PAR):
+    """Sun + sky source using the 46 sector turtle sky discretisation"""
+    # parameter for soc sky (like get_light). More realistic skies can be obtained
+    ghi = current_PAR
+    dhi = ghi # force sun = 0
+    _ , sky = sun_sky_sources(ghi, dhi, model='sun_soc')
+    sun = [[],[],[]]
+
+    return light_sources(*sun) + light_sources(*sky)
+
+
+def caribu_scene(lscene, crop_scheme, light):
     """Create a caribu scene from walter lscene
 
     Args:
@@ -39,7 +52,6 @@ def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
     Returns:
 
     """
-    sky = get_light(current_PAR, nb_azimuth, nb_zenith)
     pattern = scene_pattern(crop_scheme)
-    return CaribuScene(scene=lscene, scene_unit="cm", light=sky,
+    return CaribuScene(scene=lscene, scene_unit="cm", light=light,
                        pattern=pattern)
