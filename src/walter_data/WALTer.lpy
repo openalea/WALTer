@@ -2455,7 +2455,7 @@ def EndEach(lstring, lscene):
                     Blade_dico_df['Num_talle'].append(str(lstring[id][0].tiller))
                     Blade_dico_df['Num_cohorte'].append(cohort_number(lstring[id][0].tiller))
                     Blade_dico_df['Num_rang'].append(lstring[id][0].n)
-                    Blade_dico_df['Blade_sumtemp'].append(leaf_emergence[lstring[id][0].num_plante][lstring[id][0].tiller][lstring[id][0].n][1])
+                    Blade_dico_df['Blade_sumtemp'].append(lstring[id][0].sumtemp)
                     Blade_dico_df['Blade_width'].append(lstring[id][0].width)
                     Blade_dico_df['Blade_length'].append(lstring[id][0].length)
                     Blade_dico_df['Blade_visible_length'].append(lstring[id][0].visible_length)
