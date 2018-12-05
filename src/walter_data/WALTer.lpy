@@ -2413,17 +2413,20 @@ def EndEach(lstring, lscene):
             for id in res_sky['Ei'].keys():
               #if id not in new_lstring: continue
               new_ = lstring[id]
-              if ((new_.name == "Blade" and new_[0].photosynthetic == True) or
-                 (new_.name in ("Sheath", "Internode", "Peduncle")) or
+              if ((new_.name in ("Blade", "Sheath", "Internode", "Peduncle")) or
                  (new_.name == "Ear" and new_[0].emerged)):
                 if new_[0].tiller in axis_census[new_[0].num_plante].keys():
 
-                  if res_sky["Ei"][id] < 0:
+                  if (res_sky["Ei"][id] < 0 or new_[0].photosynthetic == False):
                     new_[0].PAR = 0
                   else:
                     new_[0].PAR = res_sky["Ei"][id] * res_sky["area"][id]
 
-                  new_[0].organ_surface = res_sky["area"][id]
+                  if (new_.name != "Sheath" and new_[0].photosynthetic == False):
+                    new_[0].organ_surface = 0
+                  else:
+                    new_[0].organ_surface = res_sky["area"][id]
+                  
                   dico_PAR[new_.name][new_[0].num_plante][new_[0].tiller][new_[0].n] = new_[0].PAR
 
                   PAR_per_organ["Num_talle"].append(lstring[id][0].tiller)
