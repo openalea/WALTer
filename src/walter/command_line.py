@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 """ Run WALTer simulation as a command
 """
+import os
+import shutil
 import argparse
 from subprocess import Popen
 import pandas as pd
+import time
 
 from walter import project
 
@@ -28,6 +31,7 @@ WALTer generates a project directory and run simulations inside this directory.
         or
        walter -i
 
+
 3. To run project management only, without running te model (for debug)  
 
        walter -i sim_scheme.csv -p simu_walter --dry_run 
@@ -49,6 +53,7 @@ def main():
 
     parser = walter_parser()
     args = parser.parse_args()
+
 
     if args.p == '.':  # check '.' is walter-like (in case user has  forgotten -p)
         if not project.check_cwd():
@@ -81,14 +86,40 @@ def main():
                 if not tmp.exists():
                     tmp.mkdir()
                 pids = []
+                procs = {}
+                active_procs = []
                 for i, pdict in enumerate(param_list):
+                    ############################################# temporary fix #############################################################################################
+                    while len(active_procs) > 2: # As long as there are 3 active_procs, test if one ends : temporary fix to avoid running too many processes at the same time
+                        active_procs = [proc for proc in active_procs if proc.poll() == None]
+                        time.sleep(300) # To avoid testing for finished processes too often, wait 5 minutes between loops
                     df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
                     scheme_name = str(tmp / 'sim_scheme_%d.csv' % (i + 1))
                     df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
                     prj.activate()
                     pid = Popen(["walter", "-i", scheme_name])
                     pids.append(pid)
-                for pid in pids:
-                    pid.wait()
+                    procs[scheme_name] = pid
+                    active_procs.append(pid)
+                ############################################# temporary fix #############################################################################################
+                # Test caribuRunError re-launching : temporary fix until CaribuRunErrors are solved
+                while len(procs) > 0: # While there are processes to test
+                    for scheme in procs.keys(): #Not using iteritems because you cannot change the size of a dictionary while iterating on it
+                        if procs[scheme].poll() != None: # If the proces is finished
+                            procs.pop(scheme) # Remove this proc from procs
+                            param_list_dict = prj.csv_parameters(scheme)
+                            sim_id = prj.get_id(param_list_dict[0]) # Get the ID
+                            if os.path.exists(prj.dirname+"/output/"+sim_id+"/error_caribu.txt"): # Check if the file error_caribu.txt has been generated
+                                shutil.rmtree(prj.dirname+"/output/"+sim_id) # Supress the output directory
+                                ex_rep = param_list_dict[0]["rep"] # Get the rep (random seed) used for the simulation
+                                param_list_dict[0].update(rep = ex_rep +1) # Update the sim_scheme with a new seed to re-launch the simulation
+                                df = pd.DataFrame.from_dict(data=param_list_dict, orient='columns')
+                                df.to_csv(path_or_buf=scheme, sep='\t', index=False) # Create the csv file sim_scheme to launch the simulation
+                                p = Popen(["walter", "-i", scheme]) # Launch the simulation
+                                prj.itable[sim_id] = param_list_dict[0] # updating combi_param
+                                prj.update_itable()
+                                pids.append(p) # Add the new process to the list of processes for futher testing
+                                procs[scheme] = p # Add the new process to the dict of processes
+                    time.sleep(120) # To avoid testing for finished processes too often, wait 2 minutes between loops
                 tmp.rmtree()
 
