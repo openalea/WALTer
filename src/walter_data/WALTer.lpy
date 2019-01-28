@@ -970,7 +970,14 @@ for geno in crop_genotype:
 # Parametres communs
 #######################
 
-radiation_type    = "diffuse" #or {"diffuse"; "complete"}
+radiation_type    = "sun_soc" # Parameter for the get_turtle_light function (diffuse or direct light)
+sky_sector_number = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+
+var_registerTurtleSky = ["radiation_type", "sky_sector_number"]
+for key, value, in params.iteritems():
+  if key in var_registerTurtleSky:
+    exec(key+"=value")
+
 PAS               = 24
 
 ##
@@ -2642,6 +2649,7 @@ def End(lstring):
                        "CARIBU_state" + "\t" + "All" + "\t" + "%s" % CARIBU_state + "\n" +
                        "SIRIUS_state" + "\t" + "All" + "\t" + "%s" % SIRIUS_state + "\n" +
                        "Radiation_type" + "\t" + "All" + "\t" + "%s" % radiation_type + "\n" +
+                       "sky_sector_number" + "\t" + "All" + "\t" + "%s" % sky_sector_number + "\n" +
                        "infinity_GAIp"  + "\t" + "All" + "\t" + "%s" % infinity_GAIp + "\n" +
                        "infinity_CARIBU" + "\t" + "All" + "\t" + "%s" % infinity_CARIBU + "\n" +
                        "Light_step" + "\t" + "All" + "\t" + "%s" % PAS + "\n" +
