@@ -131,8 +131,24 @@ class Project(object):
 
     @staticmethod
     def csv_parameters(path):
-        df = pd.read_csv(path, sep='\t')
-        param_list = df.to_dict(orient='records')  # a list of dict
+        param_list = []
+        i = 0
+        with open(path) as f:
+            headers = f.readline().strip().split('\t')
+            for l in f.readlines():
+                param_list.append({})
+                list_val = l.strip().split('\t')
+                for ind in range(len(list_val)):
+                    val = list_val[ind]
+                    try :
+                        param_list[i][headers[ind]] = int(val)
+                    except :
+                        try :
+                            param_list[i][headers[ind]] = float(val)
+                        except :
+                            param_list[i][headers[ind]] = val
+                i += 1
+                
         return param_list
 
     @staticmethod
