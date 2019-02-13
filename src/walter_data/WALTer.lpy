@@ -975,8 +975,9 @@ for geno in crop_genotype:
 
 radiation_type    = "sun_soc" # Parameter for the get_turtle_light function (diffuse or direct light)
 sky_sector_number = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+add_sun = False
 
-var_registerTurtleSky = ["radiation_type", "sky_sector_number"]
+var_registerTurtleSky = ["radiation_type", "sky_sector_number", "add_sun"]
 for key, value, in params.iteritems():
   if key in var_registerTurtleSky:
     exec(key+"=value")
