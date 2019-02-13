@@ -28,7 +28,7 @@ def get_light(current_PAR, nb_azimuth, nb_zenith):
     return sky_tup
 
 
-def get_turtle_light(current_PAR, sky_type='soc', add_sun=False, curent_date=None, longitude = _longitude, latitude=_latitude,
+def get_turtle_light(current_PAR, sky_type='soc', turtle_sectors=46, add_sun=False, curent_date=None, longitude = _longitude, latitude=_latitude,
                 altitude=_altitude, timezone=_timezone):
     """Sun + sky source using the 46 sector turtle sky discretisation
         Args:

@@ -974,10 +974,10 @@ for geno in crop_genotype:
 #######################
 
 sky_type    = "soc" # Parameter for type of sky : 'soc' (overcast sky) or 'clear_sky'
-sky_sector_number = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+turtle_sectors = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
 add_sun = 0 # trigger the addition of one sun position per hour in the light sources
 
-var_registerTurtleSky = ["sky_type", "sky_sector_number", "add_sun"]
+var_registerTurtleSky = ["sky_type", "turtle_sectors", "add_sun"]
 for key, value, in params.iteritems():
   if key in var_registerTurtleSky:
     exec(key+"=value")
@@ -2395,8 +2395,8 @@ def EndEach(lstring, lscene):
           lat = dico_latitudes[location]
           alt = dico_altitude[location]
           tz = dico_time_zone[location]
-          light = get_turtle_light(current_PAR, sky_type=sky_type, add_sun=bool(add_sun), curent_date=date_current_day,
-                                   longitude=longi, latitude=lat, altitude=alt, timezone=tz)
+          light = get_turtle_light(current_PAR, sky_type=sky_type, turtle_sectors=turtle_sectors, add_sun=bool(add_sun),
+                                   curent_date=date_current_day, longitude=longi, latitude=lat, altitude=alt, timezone=tz)
           c_scene = caribu_scene(lscene, crop_scheme, light)
           res_sky= None
           try:
@@ -2690,7 +2690,7 @@ def End(lstring):
                        "CARIBU_state" + "\t" + "All" + "\t" + "%s" % CARIBU_state + "\n" +
                        "SIRIUS_state" + "\t" + "All" + "\t" + "%s" % SIRIUS_state + "\n" +
                        "sky_type" + "\t" + "All" + "\t" + "%s" % sky_type + "\n" +
-                       "sky_sector_number" + "\t" + "All" + "\t" + "%s" % sky_sector_number + "\n" +
+                       "turtle_sectors" + "\t" + "All" + "\t" + "%s" % turtle_sectors + "\n" +
                        "infinity_GAIp"  + "\t" + "All" + "\t" + "%s" % infinity_GAIp + "\n" +
                        "infinity_CARIBU" + "\t" + "All" + "\t" + "%s" % infinity_CARIBU + "\n" +
                        "Light_step" + "\t" + "All" + "\t" + "%s" % PAS + "\n" +
