@@ -3,6 +3,7 @@ import numpy
 from math import pi, cos, sin, radians
 import cereals_fitting as fitting
 import openalea.plantgl.all as pgl
+from scipy.integrate import simps
 
 
 
@@ -70,7 +71,7 @@ def leaf_shape_perez(nb_segment = 100,insertion_angle=50, l=0.5, infl=30):
     return x / length, y / length
 
 
-def sr_prevot(nb_segment=10, alpha=-2.5):
+def sr_prevot(nb_segment=10, alpha=-2.3):
     beta = -2 * (alpha + numpy.sqrt(-alpha))
     gamma = 2 * numpy.sqrt(-alpha) + alpha
     s = numpy.linspace(0, 1, nb_segment + 1)
@@ -108,10 +109,10 @@ def leaf_morpho_rel(nb_segment=10, w0=0.5, lm=0.5):
 #     return s, r
 
 
-# def parametric_leaf(nb_segment=10, insertion_angle=50, pos_l=0.5,
-#                     infl=30, alpha=-2.5):
 def parametric_leaf(nb_segment=10, insertion_angle=50, pos_l=0.5,
-                    infl=30, w0=0.5, lm=0.5):
+                     infl=30, alpha=-2.3):
+# def parametric_leaf(nb_segment=10, insertion_angle=50, pos_l=0.5,
+#                    infl=30, w0=0.5, lm=0.5):
     """
 
     Args:
@@ -127,10 +128,32 @@ def parametric_leaf(nb_segment=10, insertion_angle=50, pos_l=0.5,
     nseg = min(100, nb_segment)
     # x, y = leaf_shape_perez(nseg, insertion_angle, delta_angle, coef_curv)
     x, y = leaf_shape_perez(nseg, insertion_angle, pos_l, infl)
-    # s, r = sr_prevot(nseg, alpha)
-    s, r = leaf_morpho_rel(nb_segment=nseg, w0=w0, lm=lm)
+    s, r = sr_prevot(nseg, alpha)
+    # s, r = leaf_morpho_rel(nb_segment=nseg, w0=w0, lm=lm)
     return fitting.fit3(x, y, s, r, nb_points=nb_segment)
 
+def blade_elt_area(s, r, Lshape=1, Lwshape=1, sr_base=0, sr_top=1):
+    """ surface of a blade element, positioned with two relative curvilinear absisca"""
+
+    S = 0
+    sr_base = min([1, max([0, sr_base])])
+    sr_top = min([1, max([sr_base, sr_top])])
+    sre = [sr for sr in zip(s, r) if (sr_base < sr[0] < sr_top)]
+    if len(sre) > 0:
+        se, re = zip(*sre)
+        snew = [sr_base] + list(se) + [sr_top]
+        rnew = [numpy.interp(sr_base, s, r)] + list(re) + [numpy.interp(sr_top, s, r)]
+    else:
+        snew = [sr_base, sr_top]
+        rnew = [numpy.interp(sr_base, s, r), numpy.interp(sr_top, s, r)]
+
+    S = simps(rnew, snew) * Lshape * Lwshape
+
+    return S
+
+def form_factor():
+    _, _, s, r = parametric_leaf()
+    return blade_elt_area(s, r)
 
 def arrange_leaf(leaf, stem_diameter=0, inclination=1, relative=True):
     """Arrange a leaf to be placed along a stem with a given inclination.

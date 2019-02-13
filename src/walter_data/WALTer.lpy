@@ -11,8 +11,8 @@ import numpy as np
 
 import sys
 import os
-from walter.cereals_leaf import parametric_leaf, leaf_mesh
-
+from walter.cereals_leaf import parametric_leaf, leaf_mesh, blade_elt_area, form_factor
+_form_factor = form_factor()
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -1615,15 +1615,17 @@ def blade_width(bld_lgt, a_bl_width, b_bl_width):
   return (a_bl_width * bld_lgt) + b_bl_width
 
 #CALCULATION OF THE VISIBLE SURFACE OF A BLADE
-def visible_area(length_from_the_top, width_max, total_length):
-  if length_from_the_top <= total_length/2:
-    current_width = (width_max * length_from_the_top)/total_length/2
-    vis_area = (current_width * length_from_the_top) / 2
-  elif length_from_the_top > total_length/2:
-    triangle_area = width_max * total_length/4
-    rectangle_area = (width_max * (length_from_the_top - total_length/2))
-    vis_area = triangle_area + rectangle_area
-  return vis_area
+def visible_area(s,r,length_from_the_top, width_max, total_length):
+  sr_b = float(length_from_the_top) / total_length
+  return blade_elt_area(s,r,total_length, width_max, sr_base=sr_b, sr_top=1)
+  # if length_from_the_top <= total_length/2:
+  #   current_width = (width_max * length_from_the_top)/total_length/2
+  #   vis_area = (current_width * length_from_the_top) / 2
+  # elif length_from_the_top > total_length/2:
+  #   triangle_area = width_max * total_length/4
+  #   rectangle_area = (width_max * (length_from_the_top - total_length/2))
+  #   vis_area = triangle_area + rectangle_area
+  # return vis_area
 
 
 ### INTERNODE FINAL LENGTH ###
@@ -2464,7 +2466,7 @@ def EndEach(lstring, lscene):
                     Blade_dico_df['Blade_visible_length'].append(lstring[id][0].visible_length)
                     Blade_dico_df['Blade_final_length'].append(lstring[id][0].final_length)
                     Blade_dico_df['Blade_visible_surface'].append(lstring[id][0].visible_area)
-                    Blade_dico_df['Blade_surface'].append((lstring[id][0].width*lstring[id][0].length*0.75))
+                    Blade_dico_df['Blade_surface'].append((lstring[id][0].width*lstring[id][0].length*_form_factor))
                     Blade_dico_df['Blade_PAR'].append(lstring[id][0].PAR)
                     Blade_dico_df['Senesc_flag'].append(lstring[id][0].senesc_flag)
                     Blade_dico_df['Photosynthetic'].append(lstring[id][0].photosynthetic)
@@ -3910,9 +3912,11 @@ Blade(StBl):
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][0] = True
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][1] = Tempcum
     
-    StBl.area = (StBl.width * StBl.length * 0.75)
+
     StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
-    StBl.visible_area = visible_area(StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
+    _, _, s, r = parametric_leaf(insertion_angle=StBl.incl)
+    StBl.area = visible_area(s, r, StBl.final_length, StBl.width, StBl.final_length)
+    StBl.visible_area = visible_area(s, r, StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
     
     produce Blade(StBl)
 
