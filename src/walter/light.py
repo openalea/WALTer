@@ -3,7 +3,7 @@ Walter"""
 from alinea.caribu.sky_tools import GenSky, GetLight
 from alinea.caribu.CaribuScene import CaribuScene
 from alinea.caribu.light import light_sources
-from alinea.astk.sun_and_sky import sun_sources, sky_sources
+from alinea.astk.sun_and_sky import sun_sources, sky_sources, _timezone, _longitude, _latitude, _altitude
 
 
 def scene_pattern(crop_scheme):
@@ -28,10 +28,29 @@ def get_light(current_PAR, nb_azimuth, nb_zenith):
     return sky_tup
 
 
-def get_turtle_light(current_PAR, curent_date=None):
-    """Sun + sky source using the 46 sector turtle sky discretisation"""
-    sky = sky_sources(sky_type='soc', irradiance=current_PAR)
-    return light_sources(*sky)
+def get_turtle_light(current_PAR, sky_type='soc', add_sun=False, curent_date=None, longitude = _longitude, latitude=_latitude,
+                altitude=_altitude, timezone=_timezone):
+    """Sun + sky source using the 46 sector turtle sky discretisation
+        Args:
+        current_date: a naive datetime object
+        sky_type:(str) type of sky luminance model. One of :
+                           'soc' (standard overcast sky),
+                           'uoc' (uniform overcast sky)
+                           'clear_sky' (standard clear sky)
+        longitude: (float) in degrees
+        latitude: (float) in degrees
+        altitude: (float) in meter
+        timezone:(str) the time zone
+"""
+    daydate='2000-06-21'
+    if curent_date is not None:
+        daydate = curent_date.strftime('%Y-%m-%d')
+    sun = [(), (), ()]
+    if add_sun:
+        pass
+    sky = sky_sources(sky_type=sky_type, irradiance=current_PAR, daydate=daydate, longitude = longitude, latitude=latitude,
+                altitude=altitude, timezone=timezone)
+    return light_sources(*sky) + light_sources(*sun)
 
 
 def caribu_scene(lscene, crop_scheme, light):
