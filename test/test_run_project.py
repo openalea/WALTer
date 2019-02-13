@@ -17,48 +17,58 @@ def test_direct_run():
                           dist_border_y=0,
                           nbj=30,
                           beginning_CARIBU=290)
-
-    assert len(lstring) > 10
     s = lsys.sceneInterpretation(lstring)
-    assert len(s) > 2
     p.remove(force=True)
+    assert len(lstring) > 10
+    assert len(s) > 0
 
 
 def test_run_parameters():
     reset_call_dir()
     p = project.Project()
-    lsys, lstring = p.run_parameters('sim_scheme_fast_test.csv')
-    assert len(lstring) > 10
-    s = lsys.sceneInterpretation(lstring)
-    assert len(s) > 2
-    lsys, lstring = p.run_parameters('sim_scheme_fast_test2.csv')
-    assert len(lstring) > 10
-    s = lsys.sceneInterpretation(lstring)
-    assert len(s) > 2
-    assert len(p.combi_params) == 3
-
-    p.remove(force=True)
+    try:
+        lsys, lstring = p.run_parameters('sim_scheme_fast_test.csv')
+        s = lsys.sceneInterpretation(lstring)
+        assert len(lstring) > 10
+        assert len(s) > 0
+        lsys, lstring = p.run_parameters('sim_scheme_fast_test2.csv')
+        s = lsys.sceneInterpretation(lstring)
+        assert len(lstring) > 10
+        assert len(s) > 0
+        assert len(p.combi_params) == 3
+    except:
+        raise
+    finally:
+        p.remove(force=True)
 
 
 def test_which_parameters():
     reset_call_dir()
     p = project.Project()
-    lsys, lstring = p.run_parameters('sim_scheme_fast_test2.csv', which=0)
-    assert lstring
-    assert len(p.combi_params) == 1
-    lsys, lstring = p.run_parameters('sim_scheme_fast_test2.csv', which=[1,2])
-    assert lstring
-    assert len(p.combi_params) == 3
-    p.remove(force=True)
+    try:
+        lsys, lstring = p.run_parameters('sim_scheme_fast_test2.csv', which=0)
+        assert lstring
+        assert len(p.combi_params) == 1
+        lsys, lstring = p.run_parameters('sim_scheme_fast_test2.csv', which=[1,2])
+        assert lstring
+        assert len(p.combi_params) == 3
+    except:
+        raise
+    finally:
+        p.remove(force=True)
 
 
 def test_modified_parameters():
     reset_call_dir()
     p = project.Project()
-    param = p.csv_parameters('sim_scheme_fast_test.csv')[0]
-    param.update(dict(nbj=40))
-    lsys, lstring = p.run(**param)
-    assert lstring
-    assert p.combi_params.nbj[0] == 40
-    p.remove(force=True)
+    try:
+        param = p.csv_parameters('sim_scheme_fast_test.csv')[0]
+        param.update(dict(nbj=40))
+        lsys, lstring = p.run(**param)
+        assert lstring
+        assert p.combi_params.nbj[0] == 40
+    except:
+        raise
+    finally:
+        p.remove(force=True)
 
