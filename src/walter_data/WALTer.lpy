@@ -973,11 +973,11 @@ for geno in crop_genotype:
 # Parametres communs
 #######################
 
-radiation_type    = "sun_soc" # Parameter for the get_turtle_light function (diffuse or direct light)
+sky_type    = "soc" # Parameter for type of sky : 'soc' (overcast sky) or 'clear_sky'
 sky_sector_number = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
-add_sun = False
+add_sun = 0 # trigger the addition of one sun position per hour in the light sources
 
-var_registerTurtleSky = ["radiation_type", "sky_sector_number", "add_sun"]
+var_registerTurtleSky = ["sky_type", "sky_sector_number", "add_sun"]
 for key, value, in params.iteritems():
   if key in var_registerTurtleSky:
     exec(key+"=value")
@@ -2391,7 +2391,12 @@ def EndEach(lstring, lscene):
           print "The date : ", str(datetime.datetime.now())
           # light = get_light(current_PAR, nb_azimuth, nb_zenith)
           # 46 direction sky
-          light = get_turtle_light(current_PAR)
+          longi = dico_longitudes[location]
+          lat = dico_latitudes[location]
+          alt = dico_altitude[location]
+          tz = dico_time_zone[location]
+          light = get_turtle_light(current_PAR, sky_type='soc', add_sun=bool(add_sun), curent_date=date_current_day,
+                                   longitude=longi, latitude=lat, altitude=alt, timezone=tz)
           c_scene = caribu_scene(lscene, crop_scheme, light)
           res_sky= None
           try:
