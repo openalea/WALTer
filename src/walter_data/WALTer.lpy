@@ -303,6 +303,9 @@ nb_azimuth = 5
 nb_zenith = 4
 
 dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9, "Climat_max_AS" : 48.8, "Climat_min_AS" :48.8 ,"Climat_moy_AS" : 48.8}
+dico_longitudes = {'Gif_sur_Yvette': 2.13, 'Le_Pin_aux_Haras': 0.13, 'Lelystad': 5.47, 'Lelystad_mean10': 5.47, 'Le_Rheu': 1.77,'Alenya': 2.98,'Bertheloot_2005' : 1.95, 'Grignon': 1.95, 'Grignon_mean10' : 1.95, 'Grignon_mean18' : 1.95, 'Colmar': 7.37, 'Fagniere': 4.32, 'Clermont': 3.08, "Nottingham" : -1.17, "Climat_max_AS" : 1.95, "Climat_min_AS" : 1.95 ,"Climat_moy_AS" : 1.95}
+dico_altitude = {'Gif_sur_Yvette': 61, 'Le_Pin_aux_Haras': 200, 'Lelystad': 0, 'Lelystad_mean10': 0, 'Le_Rheu': 25,'Alenya': 8,'Bertheloot_2005' : 106, 'Grignon': 106, 'Grignon_mean10' : 106, 'Grignon_mean18' : 106, 'Colmar': 200, 'Fagniere': 100, 'Clermont': 358, "Nottingham" : 46, "Climat_max_AS" : 106, "Climat_min_AS" : 106 ,"Climat_moy_AS" : 106}
+dico_time_zone = {'Gif_sur_Yvette': "Europe/Paris", 'Le_Pin_aux_Haras': "Europe/Paris", 'Lelystad': "Europe/Amsterdam",'Lelystad_mean10': "Europe/Amsterdam", 'Le_Rheu': "Europe/Paris",'Alenya': "Europe/Paris",'Bertheloot_2005' : "Europe/Paris", 'Grignon': "Europe/Paris", 'Grignon_mean10' : "Europe/Paris", 'Grignon_mean18' : "Europe/Paris", 'Colmar': "Europe/Paris", 'Fagniere': "Europe/Paris", 'Clermont': "Europe/Paris", "Nottingham" : "Europe/London", "Climat_max_AS" : "Europe/Paris", "Climat_min_AS" : "Europe/Paris" ,"Climat_moy_AS" : "Europe/Paris"}
 
 # Moyennes sur 10/18ans disponibles sur Grignon : { "Grignon_mean10" "Grignon_mean18"}
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
@@ -972,8 +975,9 @@ for geno in crop_genotype:
 
 radiation_type    = "sun_soc" # Parameter for the get_turtle_light function (diffuse or direct light)
 sky_sector_number = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+add_sun = False
 
-var_registerTurtleSky = ["radiation_type", "sky_sector_number"]
+var_registerTurtleSky = ["radiation_type", "sky_sector_number", "add_sun"]
 for key, value, in params.iteritems():
   if key in var_registerTurtleSky:
     exec(key+"=value")
