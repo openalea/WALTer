@@ -3,7 +3,7 @@ Walter"""
 from alinea.caribu.sky_tools import GenSky, GetLight
 from alinea.caribu.CaribuScene import CaribuScene
 from alinea.caribu.light import light_sources
-from alinea.astk.sun_and_sky import sun_sources, sky_sources, _timezone, _longitude, _latitude, _altitude
+from alinea.astk.sun_and_sky import sun_sources, sun_fraction, sky_irradiances, sky_sources, _timezone, _longitude, _latitude, _altitude
 
 
 def scene_pattern(crop_scheme):
@@ -46,9 +46,16 @@ def get_turtle_light(current_PAR, sky_type='soc', add_sun=False, curent_date=Non
     if curent_date is not None:
         daydate = curent_date.strftime('%Y-%m-%d')
     sun = [(), (), ()]
+    f_sun = 0
     if add_sun:
-        pass
-    sky = sky_sources(sky_type=sky_type, irradiance=current_PAR, daydate=daydate, longitude = longitude, latitude=latitude,
+        sky_irr = sky_irradiances(daydate=daydate, longitude=longitude,
+                                  latitude=latitude, altitude=altitude,
+                                  timezone=timezone)
+        f_sun = sun_fraction(sky_irr)
+        sun = sun_sources(irradiance=f_sun * current_PAR,
+                          daydate=daydate, latitude=latitude, longitude=longitude,
+                          altitude=altitude, timezone=timezone)
+    sky = sky_sources(sky_type=sky_type, irradiance=current_PAR * (1 - f_sun), daydate=daydate, longitude = longitude, latitude=latitude,
                 altitude=altitude, timezone=timezone)
     return light_sources(*sky) + light_sources(*sun)
 

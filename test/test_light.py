@@ -33,3 +33,7 @@ def test_get_turtle_light():
     nrj, dir = zip(*get_turtle_light(par, curent_date=d, sky_type='clear_sky'))
     assert_almost_equal(sum(nrj), 1)
     assert len(nrj) == 46
+
+    nrj, dir = zip(*get_turtle_light(par, curent_date=d, sky_type='clear_sky', add_sun=True))
+    assert_almost_equal(sum(nrj), 1)
+    assert len(nrj) == 57
