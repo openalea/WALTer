@@ -2395,7 +2395,7 @@ def EndEach(lstring, lscene):
           lat = dico_latitudes[location]
           alt = dico_altitude[location]
           tz = dico_time_zone[location]
-          light = get_turtle_light(current_PAR, sky_type='soc', add_sun=bool(add_sun), curent_date=date_current_day,
+          light = get_turtle_light(current_PAR, sky_type=sky_type, add_sun=bool(add_sun), curent_date=date_current_day,
                                    longitude=longi, latitude=lat, altitude=alt, timezone=tz)
           c_scene = caribu_scene(lscene, crop_scheme, light)
           res_sky= None
