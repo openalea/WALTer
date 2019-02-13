@@ -26,6 +26,21 @@ def get_light(current_PAR, nb_azimuth, nb_zenith):
     return sky_tup
 
 
+class CaribuRecorder(object):
+    records = []
+
+    def record(self, caribu_scene, raw, show=False):
+        try:
+            self.records.append(caribu_scene.run_statistics(raw, show=show))
+        except AttributeError: # old caribu version (<= 7.0.3)
+            pass
+
+    def records_data(self):
+        resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence = zip(*self.records)
+        return dict(zip(('resolution', 'ldiag', 'pixel_per_cm', 'pixel_per_triangle', 'confidence'),
+                        (resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence)))
+
+
 def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
     """Create a caribu scene from walter lscene
 
