@@ -5,7 +5,7 @@ Management of walter simulations and projects
 import os
 import tempfile
 
-
+import time
 from path import Path
 import pandas as pd
 
@@ -241,7 +241,11 @@ class Project(object):
         lsys, lstring = None, None
         if not dry_run:
             lsys = Lsystem(self.walter, {'params': kwds, 'ID': sim_id})
+            time_start = time.time()
             lstring = lsys.iterate()
+            time_stop = time.time()
+            with open(self.dirname/'output'/sim_id/"Simulation_time.txt", 'w') as time_file:
+                time_file.write(str(time_stop - time_start))
 
         return lsys, lstring
 
