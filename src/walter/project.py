@@ -131,25 +131,29 @@ class Project(object):
 
     @staticmethod
     def csv_parameters(path):
-        param_list = []
+        params = []
         i = 0
         with open(path) as f:
-            headers = f.readline().strip().split('\t')
-            for l in f.readlines():
-                param_list.append({})
-                list_val = l.strip().split('\t')
+            dialect = csv.Sniffer().sniff(f.read(4096))
+            f.seek(0)
+            reader = csv.reader(f, dialect)
+            headers = reader.next()
+            for list_val in reader:
+                params.append({})
+                #list_val = l.strip().split('\t')
                 for ind in range(len(list_val)):
                     val = list_val[ind]
                     try :
-                        param_list[i][headers[ind]] = int(val)
+                        params[i][headers[ind]] = int(val)
                     except :
                         try :
-                            param_list[i][headers[ind]] = float(val)
+                            params[i][headers[ind]] = float(val)
                         except :
-                            param_list[i][headers[ind]] = val
+                            params[i][headers[ind]] = val
                 i += 1
                 
-        return param_list
+        return params
+
 
     @staticmethod
     def read_itable(path):
