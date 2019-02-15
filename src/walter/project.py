@@ -4,7 +4,7 @@ Management of walter simulations and projects
 
 import os
 import tempfile
-
+import csv
 
 from path import Path
 import pandas as pd
