@@ -244,7 +244,7 @@ class Project(object):
             time_start = time.time()
             lstring = lsys.iterate()
             time_stop = time.time()
-            with open(self.dirname/'output'/sim_id/"Simulation_time.txt", 'w') as time_file:
+            with open(self.output_path(sim_id = sim_id)/"Simulation_time.txt", 'w') as time_file:
                 time_file.write(str(time_stop - time_start))
 
         return lsys, lstring
@@ -287,7 +287,7 @@ class Project(object):
 
         return lsys, lstring
 
-    def output_path(self, index=-1):
+    def output_path(self, index=-1, sim_id=None):
         """return the path to output directory of a simulation
 
         Parameters
@@ -299,5 +299,8 @@ class Project(object):
         -------
             a path.Path instance
         """
-        sid = self.itable.keys()[index]
+        if sim_id == None:
+            sid = self.itable.keys()[index]
+        else:
+            sid = sim_id
         return self.dirname / 'output' / sid
