@@ -28,8 +28,8 @@ def get_light(current_PAR, nb_azimuth, nb_zenith):
     return sky_tup
 
 
-def get_turtle_light(current_PAR, sky_type='soc', turtle_sectors=46, add_sun=False, curent_date=None, longitude = _longitude, latitude=_latitude,
-                altitude=_altitude, timezone=_timezone):
+def get_turtle_light(current_PAR, sky_type='soc', turtle_sectors=46, add_sun=False, curent_date=None,
+                     longitude = _longitude, latitude=_latitude, altitude=_altitude, timezone=_timezone):
     """Sun + sky source using the 46 sector turtle sky discretisation
         Args:
         current_date: a naive datetime object
@@ -37,12 +37,14 @@ def get_turtle_light(current_PAR, sky_type='soc', turtle_sectors=46, add_sun=Fal
                            'soc' (standard overcast sky),
                            'uoc' (uniform overcast sky)
                            'clear_sky' (standard clear sky)
+        turtle_sectors : (int) the minimal number of sectors to be used for discretising the sky hemisphere. Turtle
+        discretisation will be one of 1, 6, 16 or 46 sectors
         longitude: (float) in degrees
         latitude: (float) in degrees
         altitude: (float) in meter
         timezone:(str) the time zone
-"""
-    daydate='2000-06-21'
+    """
+    daydate = '2000-06-21'
     if curent_date is not None:
         daydate = curent_date.strftime('%Y-%m-%d')
     sun = [(), (), ()]
@@ -55,8 +57,8 @@ def get_turtle_light(current_PAR, sky_type='soc', turtle_sectors=46, add_sun=Fal
         sun = sun_sources(irradiance=f_sun * current_PAR,
                           daydate=daydate, latitude=latitude, longitude=longitude,
                           altitude=altitude, timezone=timezone)
-    sky = sky_sources(sky_type=sky_type, irradiance=current_PAR * (1 - f_sun), daydate=daydate, longitude = longitude, latitude=latitude,
-                altitude=altitude, timezone=timezone)
+    sky = sky_sources(sky_type=sky_type, irradiance=current_PAR * (1 - f_sun), turtle_sectors=turtle_sectors,
+                      daydate=daydate, longitude = longitude, latitude=latitude, altitude=altitude, timezone=timezone)
     return light_sources(*sky) + light_sources(*sun)
 
 
