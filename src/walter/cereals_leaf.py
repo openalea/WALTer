@@ -4,6 +4,7 @@ from math import pi, cos, sin, radians
 import cereals_fitting as fitting
 import openalea.plantgl.all as pgl
 from scipy.integrate import simps
+from scipy.optimize import brentq
 
 
 
@@ -77,6 +78,37 @@ def sr_prevot(nb_segment=10, alpha=-2.3):
     s = numpy.linspace(0, 1, nb_segment + 1)
     r = alpha * s**2 + beta * s + gamma
     return s, r
+
+
+def sr_dornbush(nb_segment=10, klig=0.6, swmax=0.55, f1=0.64, f2=0.92):
+    """
+    Leaf shape model from DornBush et al. 2011
+    Parameters
+    ----------
+    nb_segment: number of points sampled along the leaf to represent the shape
+    klig: relative leaf width at leaf base
+    swmax: relative distance from leaf tip of the point where leaf width is maximal
+    f1 : form factor of the distal leaf segment (near leaf tip)
+    f2: form factor if the proximal leaf segment (near leaf base)
+
+    Returns
+    -------
+
+    s,r parralel array for curviliear abcissa / relative leaf width along leaf shape
+    """
+
+    c1 = 1. / f1 - 1
+    c2 = brentq(lambda x: klig - f2 + (1 -klig) * (1 + 1. / x) - 1. / numpy.log(1 + x), 1, 1e9)
+    ntop = int(nb_segment * swmax)
+    offset = 1. / nb_segment / 2
+    st = numpy.array(numpy.linspace(1 - swmax, 1 - offset, ntop).tolist() + [1])
+    rt = numpy.power((1 - st) / swmax, c1)
+    nbase = nb_segment - ntop
+    offset = 1. / nb_segment / 10
+    sb = numpy.array([0] + numpy.linspace(offset, 1 - swmax, nbase)[:-1].tolist())
+    rb = klig + (1 - klig) * numpy.log(1 + c2 * sb / (1 - swmax)) / numpy.log(1 + c2)
+    return numpy.array(sb.tolist() + st.tolist()), numpy.array(rb.tolist() + rt.tolist())
+
 
 def leaf_morpho_rel(nb_segment=10, w0=0.5, lm=0.5):
     a0 = w0
