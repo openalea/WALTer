@@ -11,7 +11,9 @@ import numpy as np
 
 import sys
 import os
-from walter.cereals_leaf import parametric_leaf, leaf_mesh, blade_elt_area, form_factor
+from walter.cereals_leaf import blade_elt_area, form_factor
+from walter.leaf_shape import walter_leaf, walter_leaf_mesh
+
 _form_factor = form_factor()
 
 pj = os.path.join
@@ -3914,7 +3916,7 @@ Blade(StBl):
     
 
     StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
-    _, _, s, r = parametric_leaf(insertion_angle=StBl.incl)
+    _, _, s, r = walter_leaf()
     StBl.area = visible_area(s, r, StBl.final_length, StBl.width, StBl.final_length)
     StBl.visible_area = visible_area(s, r, StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
     
@@ -4215,8 +4217,8 @@ Blade(StBl):
           width = StBl.width
           if StBl.photosynthetic == False:
             couleur = 5
-    leaf = parametric_leaf(insertion_angle=StBl.incl)
-    mesh = leaf_mesh(leaf, StBl.visible_length, width, StBl.visible_length)
+    leaf = walter_leaf()
+    mesh = walter_leaf_mesh(leaf, StBl.final_length, width, StBl.visible_length, StBl.incl)
     produce ;(couleur) @g(mesh)
 
 #Blade(StBl):

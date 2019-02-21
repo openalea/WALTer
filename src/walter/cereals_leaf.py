@@ -27,10 +27,12 @@ from scipy.optimize import brentq
 #     length = numpy.sum(numpy.sqrt(dx**2 + dy**2))
 #     return x / length, y / length
 
-def leaf_shape_perez(nb_segment = 100,insertion_angle=50, l=0.5, infl=30):
+
+
+def leaf_shape_perez(nb_segment = 100,insertion_angle=50, l=0.5, curvature=0.6, curvature_max=240):
     # insertion_angle:  leaf insertion angle from the vertical (degree)
-    # l:  relative position on the midrib of the transition bteween the 2 sections of the curve
-    # infl : inflexion point (in degree) related to difference between insertion angle and final angle (delta angle)
+    # l:  relative position on the midrib at which 2/3 of curvature is achieved
+    # curvature: leaf angular curvature (tip angle - insertion angle) relative to curvature_max
 
     def _sigmo(x,max,slope,infl):
         return(max / (1+numpy.exp(4*slope*(infl-x))))
@@ -48,9 +50,15 @@ def leaf_shape_perez(nb_segment = 100,insertion_angle=50, l=0.5, infl=30):
     coefCurv_1 = -0.2
     # curvature coefficient of the second section (after l)
     coefCurv_2 = 5
+    # slope of sigmoid
+    slope = 0.02
+    # value of infl-insertion at which sigmoid = 0.99
+    s1 = numpy.log(1./0.01 - 1) / (4*slope)
+    # sigmoid 1% + (sigmoid_99% - sigmoid_1%) * curvature
+    infl = s1 + (-s1 - s1) * curvature
 
     #leaf tip angle
-    tip_angle = numpy.maximum(insertion_angle, _sigmo(x=insertion_angle, max=240, slope=0.02, infl=infl))
+    tip_angle = numpy.maximum(insertion_angle, _sigmo(x=insertion_angle, max=curvature_max, slope=slope, infl=infl))
 
     # leaf angle at l
     l_angle = insertion_angle + frac_l*(tip_angle - insertion_angle)
