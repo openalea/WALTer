@@ -1,5 +1,10 @@
-from walter.cereals_leaf import parametric_leaf, blade_elt_area
+from walter.leaf_shape import walter_sr
 from nose.tools import assert_almost_equal
+
+
+def test_walter_sr():
+    s,r = walter_sr()
+
 
 def test_leaf_area():
     x, y, s, r = parametric_leaf()

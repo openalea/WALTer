@@ -191,9 +191,11 @@ def blade_elt_area(s, r, Lshape=1, Lwshape=1, sr_base=0, sr_top=1):
 
     return S
 
-def form_factor():
-    _, _, s, r = parametric_leaf()
-    return blade_elt_area(s, r)
+
+def form_factor(leaf):
+    _, _, s, r = leaf
+    return blade_elt_area(s, r, 1, 1, 0, 1)
+
 
 def arrange_leaf(leaf, stem_diameter=0, inclination=1, relative=True):
     """Arrange a leaf to be placed along a stem with a given inclination.

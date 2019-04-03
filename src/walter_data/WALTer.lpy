@@ -3,18 +3,13 @@
 ### Importation de libraries
 from __future__ import division
 import random
-from math import sqrt, exp, pi, floor, ceil, asin, acos, cos, sin, tan, log
 from openalea.plantgl.all import *
-import openalea.plantgl.all as pgl
 import pandas as pd
 import numpy as np
 
 import sys
 import os
-from walter.cereals_leaf import blade_elt_area, form_factor
-from walter.leaf_shape import walter_leaf, walter_leaf_mesh
-
-_form_factor = form_factor()
+from walter.leaf_shape import walter_leaf, walter_leaf_mesh, leaf_area, form_factor
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -42,11 +37,15 @@ except NameError:
 from walter.light import caribu_scene
 
 # CPL
-from collections import defaultdict
 
 # Date
 
 import datetime
+
+# leaf geometry (simplified) : one shape for all leaves, with control of inclination at meshing
+# TODO: add/use depedency to leaf rank
+_leaf = walter_leaf()
+_form_factor = form_factor(_leaf)
 
 # Liste des modules utilises par la suite dans le modele :
 
@@ -1616,20 +1615,6 @@ def sheath_length(bld_lgt, a_sh_length, b_sh_length):
 def blade_width(bld_lgt, a_bl_width, b_bl_width):
   return (a_bl_width * bld_lgt) + b_bl_width
 
-#CALCULATION OF THE VISIBLE SURFACE OF A BLADE
-def visible_area(s,r,length_from_the_top, width_max, total_length):
-  sr_b = float(length_from_the_top) / total_length
-  return blade_elt_area(s,r,total_length, width_max, sr_base=sr_b, sr_top=1)
-  # if length_from_the_top <= total_length/2:
-  #   current_width = (width_max * length_from_the_top)/total_length/2
-  #   vis_area = (current_width * length_from_the_top) / 2
-  # elif length_from_the_top > total_length/2:
-  #   triangle_area = width_max * total_length/4
-  #   rectangle_area = (width_max * (length_from_the_top - total_length/2))
-  #   vis_area = triangle_area + rectangle_area
-  # return vis_area
-
-
 ### INTERNODE FINAL LENGTH ###
 
 # Finding the possible range of a and b values, for a given height and NENL
@@ -2468,7 +2453,7 @@ def EndEach(lstring, lscene):
                     Blade_dico_df['Blade_visible_length'].append(lstring[id][0].visible_length)
                     Blade_dico_df['Blade_final_length'].append(lstring[id][0].final_length)
                     Blade_dico_df['Blade_visible_surface'].append(lstring[id][0].visible_area)
-                    Blade_dico_df['Blade_surface'].append((lstring[id][0].width*lstring[id][0].length*_form_factor))
+                    Blade_dico_df['Blade_surface'].append(lstring[id][0].area)
                     Blade_dico_df['Blade_PAR'].append(lstring[id][0].PAR)
                     Blade_dico_df['Senesc_flag'].append(lstring[id][0].senesc_flag)
                     Blade_dico_df['Photosynthetic'].append(lstring[id][0].photosynthetic)
@@ -3916,9 +3901,8 @@ Blade(StBl):
     
 
     StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
-    _, _, s, r = walter_leaf()
-    StBl.area = visible_area(s, r, StBl.final_length, StBl.width, StBl.final_length)
-    StBl.visible_area = visible_area(s, r, StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
+    StBl.area = leaf_area(_leaf, StBl.length, StBl.final_length, StBl.width, _form_factor)
+    StBl.visible_area = leaf_area(_leaf, StBl.visible_length, StBl.final_length, StBl.width, _form_factor) #TODO a optimiser par incr�mentation
     
     produce Blade(StBl)
 
@@ -4217,8 +4201,7 @@ Blade(StBl):
           width = StBl.width
           if StBl.photosynthetic == False:
             couleur = 5
-    leaf = walter_leaf()
-    mesh = walter_leaf_mesh(leaf, StBl.final_length, width, StBl.visible_length, StBl.incl)
+    mesh = walter_leaf_mesh(_leaf, StBl.final_length, width, StBl.visible_length, StBl.incl)
     produce ;(couleur) @g(mesh)
 
 #Blade(StBl):
