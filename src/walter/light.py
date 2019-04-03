@@ -77,7 +77,7 @@ class CaribuRecorder(object):
                         (resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence)))
 
 
-def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
+def caribu_scene(lscene, crop_scheme, current_PAR):
     """Create a caribu scene from walter lscene
 
     Args:
