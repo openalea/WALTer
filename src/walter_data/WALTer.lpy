@@ -9,6 +9,7 @@ import numpy as np
 
 import sys
 import os
+from math import sqrt, exp, pi, floor, ceil, asin, acos, cos, sin, tan, log
 from walter.leaf_shape import walter_leaf, walter_leaf_mesh, leaf_area, form_factor
 
 pj = os.path.join
