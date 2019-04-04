@@ -3866,7 +3866,7 @@ Leaf(StL):
         rank_max = dico_stades[StL.num_plante][StL.tiller]["Ln_final"] - N_B_r[StL.geno]
         rank_flag = dico_stades[StL.num_plante][StL.tiller]["Ln_final"]
         StBl.leaf_shape = walter_leaf(nb_segment=leaf_nb_segments, rank=StL.n, rank_j=rank_j, rank_max=rank_max,
-                                      rank_flag=rank_flag)
+                                      rank_flag=rank_flag, scurv=scurv[StL.geno], curvature=curvature[StL.geno])
         StBl.form_factor = form_factor(StBl.leaf_shape)
         #Ajout du point de coupe pour repr�senter la s�nescence des limbes
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
