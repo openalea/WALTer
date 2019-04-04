@@ -46,7 +46,26 @@ import datetime
 # leaf geometry, with control of inclination at meshing
 leaf_nb_segments=10
 
+scurv_Maxwell = 0.5
+curvature_Maxwell = 0.4
 
+var_register_leaf = ["leaf_nb_segments"]
+
+for geno in crop_genotype:
+  var_register_leaf.append("scurv_"+geno)
+  var_register_leaf.append("curvature_"+geno)
+
+for key, value, in params.iteritems():
+  if key in var_register_leaf:
+    exec(key+"=value")
+
+
+scurv = {"Maxwell" : scurv_Maxwell} 
+curvature {"Maxwell" : curvature_Maxwell}
+
+for geno in crop_genotype:
+  scurv[geno] = eval("scurv"+geno)
+  curvature[geno] = eval("curvature"+geno)
 
 # Liste des modules utilises par la suite dans le modele :
 
