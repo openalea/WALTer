@@ -3863,9 +3863,12 @@ Leaf(StL):
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
 
         #Ajout de la forme de feuille
-        rank_j = (dico_stades[StL.num_plante][StL.tiller]["Ln_final"] - N_I_el[StL.geno]) + 1
-        rank_max = dico_stades[StL.num_plante][StL.tiller]["Ln_final"] - N_B_r[StL.geno]
-        rank_flag = dico_stades[StL.num_plante][StL.tiller]["Ln_final"]
+        ln_final = ceil(param_Ln_final[StL.geno])
+        if dico_stades[StL.num_plante][StL.tiller]["Ln_final"] != "undefined":
+          ln_final = dico_stades[StL.num_plante][StL.tiller]["Ln_final"]
+        rank_j = (ln_final - N_I_el[StL.geno]) + 1
+        rank_max = ln_final - N_B_r[StL.geno]
+        rank_flag = ln_final
         StBl.leaf_shape = walter_leaf(nb_segment=leaf_nb_segments, rank=StL.n, rank_j=rank_j, rank_max=rank_max,
                                       rank_flag=rank_flag, scurv=scurv[StL.geno], curvature=curvature[StL.geno])
         StBl.form_factor = form_factor(StBl.leaf_shape)
