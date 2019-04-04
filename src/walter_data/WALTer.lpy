@@ -43,10 +43,10 @@ from walter.light import caribu_scene
 
 import datetime
 
-# leaf geometry (simplified) : one shape for all leaves, with control of inclination at meshing
-# TODO: add/use depedency to leaf rank
-_leaf = walter_leaf()
-_form_factor = form_factor(_leaf)
+# leaf geometry, with control of inclination at meshing
+leaf_nb_segments=10
+
+
 
 # Liste des modules utilises par la suite dans le modele :
 
@@ -3841,7 +3841,14 @@ Leaf(StL):
           StBl.gr_blade = (StBl.final_length - StBl.length) / (phyll_adjust(StL.geno) * ED_B)      
         
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
-        
+
+        #Ajout de la forme de feuille
+        rank_j = (dico_stades[StL.num_plante][StL.tiller]["Ln_final"] - N_I_el[StL.geno]) + 1
+        rank_max = dico_stades[StL.num_plante][StL.tiller]["Ln_final"] - N_B_r[StL.geno]
+        rank_flag = dico_stades[StL.num_plante][StL.tiller]["Ln_final"]
+        StBl.leaf_shape = walter_leaf(nb_segment=leaf_nb_segments, rank=StL.n, rank_j=rank_j, rank_max=rank_max,
+                                      rank_flag=rank_flag)
+        StBl.form_factor = form_factor(StBl.leaf_shape)
         #Ajout du point de coupe pour repr�senter la s�nescence des limbes
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
         produce \(StL.azimuth)Sheath(StS)[CutPointBlade(StCPBl)Blade(StBl)]
@@ -3902,8 +3909,8 @@ Blade(StBl):
     
 
     StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
-    StBl.area = leaf_area(_leaf, StBl.length, StBl.final_length, StBl.width, _form_factor)
-    StBl.visible_area = leaf_area(_leaf, StBl.visible_length, StBl.final_length, StBl.width, _form_factor) #TODO a optimiser par incr�mentation
+    StBl.area = leaf_area(StBl.leaf_shape, StBl.length, StBl.final_length, StBl.width, StBl.form_factor)
+    StBl.visible_area = leaf_area(StBl.leaf_shape, StBl.visible_length, StBl.final_length, StBl.width, StBl.form_factor) #TODO a optimiser par incr�mentation
     
     produce Blade(StBl)
 
@@ -4202,7 +4209,7 @@ Blade(StBl):
           width = StBl.width
           if StBl.photosynthetic == False:
             couleur = 5
-    mesh = walter_leaf_mesh(_leaf, StBl.final_length, width, StBl.visible_length, StBl.incl)
+    mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl)
     produce ;(couleur) @g(mesh)
 
 #Blade(StBl):
