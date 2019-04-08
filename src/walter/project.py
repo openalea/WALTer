@@ -131,28 +131,9 @@ class Project(object):
 
     @staticmethod
     def csv_parameters(path):
-        params = []
-        i = 0
-        with open(path) as f:
-            dialect = csv.Sniffer().sniff(f.read(4096))
-            f.seek(0)
-            reader = csv.reader(f, dialect)
-            headers = reader.next()
-            for list_val in reader:
-                params.append({})
-                #list_val = l.strip().split('\t')
-                for ind in range(len(list_val)):
-                    val = list_val[ind]
-                    try :
-                        params[i][headers[ind]] = int(val)
-                    except :
-                        try :
-                            params[i][headers[ind]] = float(val)
-                        except :
-                            params[i][headers[ind]] = val
-                i += 1
-                
-        return params
+        df = pd.read_csv(path, sep='\t', float_precision='high')
+        param_list = df.to_dict(orient='records')  # a list of dict
+        return param_list
 
 
     @staticmethod
