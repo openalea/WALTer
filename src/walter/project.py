@@ -4,7 +4,6 @@ Management of walter simulations and projects
 
 import os
 import tempfile
-import csv
 
 from path import Path
 import pandas as pd
@@ -134,7 +133,6 @@ class Project(object):
         df = pd.read_csv(path, sep='\t', float_precision='high')
         param_list = df.to_dict(orient='records')  # a list of dict
         return param_list
-
 
     @staticmethod
     def read_itable(path):
