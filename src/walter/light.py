@@ -91,5 +91,5 @@ def caribu_scene(lscene, crop_scheme, current_PAR):
 
     """
     pattern = scene_pattern(crop_scheme)
-    return CaribuScene(scene=lscene, scene_unit="cm", light=light,
+    return CaribuScene(scene=lscene, scene_unit="cm", light=current_PAR,
                        pattern=pattern)
