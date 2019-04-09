@@ -70,7 +70,7 @@ def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclin
                      relative=False)
     # compensate for area error
     # TODO search where does this error come from ?
-    if compensate:
+    if mesh is not None and compensate:
         area = leaf_area(leaf, length=visible_length, mature_length=final_length)
         sc = SurfComputer(Discretizer())
         mesh.apply(sc)
@@ -105,9 +105,12 @@ def leaf_area(leaf , length=1, mature_length=1, width_max=1, form_factor=None):
 
 
 def mesh_area(mesh):
-    sc = SurfComputer(Discretizer())
-    mesh.apply(sc)
-    return sc.surface
+    if mesh:
+        sc = SurfComputer(Discretizer())
+        mesh.apply(sc)
+        return sc.surface
+    else
+        return None
 
 
 
