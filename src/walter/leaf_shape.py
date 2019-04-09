@@ -1,6 +1,7 @@
 """Leaf shape model for the geometry of leaves"""
 from walter import cereals_fitting as fitting
 from walter.cereals_leaf import leaf_shape_perez, sr_dornbush, leaf_mesh, blade_elt_area, form_factor
+from openalea.plantgl.all import SurfComputer, Discretizer, Scaling
 
 def walter_xy(insertion_angle=50, scurv=0.5, curvature=0.4):
     """ x,y coordinates of points sampling a leaf midrib placed in a vertical plane (origin = leaf base)
@@ -64,9 +65,19 @@ def walter_leaf(nb_segment=10, rank=10, rank_j=8, rank_max=10, rank_flag=11, ins
     return fitting.fit3(x, y, s, r, nb_points=nb_segment)
 
 
-def walter_leaf_mesh(leaf, final_length, max_width, visible_length, inclination):
-    return leaf_mesh(leaf, L_shape=final_length, Lw_shape=max_width, length=visible_length, inclination=inclination,
+def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclination=0, compensate=True):
+    mesh = leaf_mesh(leaf, L_shape=final_length, Lw_shape=max_width, length=visible_length, inclination=inclination,
                      relative=False)
+    # compensate for area error
+    # TODO search where does this error come from ?
+    if compensate:
+        area = leaf_area(leaf, length=visible_length, mature_length=final_length)
+        sc = SurfComputer(Discretizer())
+        mesh.apply(sc)
+        scale_radius = area / sc.surface
+        mesh = mesh.transform(Scaling((1, scale_radius, 1)))
+
+    return mesh
 
 
 def leaf_area(leaf , length=1, mature_length=1, width_max=1, form_factor=None):
@@ -91,6 +102,12 @@ def leaf_area(leaf , length=1, mature_length=1, width_max=1, form_factor=None):
     _,_,s,r = leaf
     sr_b = 1- float(length) / mature_length
     return blade_elt_area(s,r, mature_length, width_max, sr_base=sr_b, sr_top=1)
+
+
+def mesh_area(mesh):
+    sc = SurfComputer(Discretizer())
+    mesh.apply(sc)
+    return sc.surface
 
 
 
