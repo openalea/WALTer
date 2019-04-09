@@ -43,7 +43,7 @@ def test_area_vs_area_mesh():
     marea = mesh_area(mesh)
     assert_allclose(area, marea, rtol=0.015)
     # No diff between mesh and leaf if compensate=True (but mesh width are modified)
-    mesh = walter_leaf_mesh(leaf)
+    mesh = walter_leaf_mesh(leaf, compensate=True)
     marea = mesh_area(mesh)
     assert_allclose(area, marea)
 
@@ -62,13 +62,18 @@ def test_area_vs_area_mesh():
     # error drop to 30 percent
     assert_allclose(area, marea, rtol=.3)
     # but compensate still works
-    mesh = walter_leaf_mesh(leaf)
+    mesh = walter_leaf_mesh(leaf, compensate=True)
     marea = mesh_area(mesh)
     assert_allclose(area, marea)
 
     # growing leaf
     leaf = walter_leaf()
     area = leaf_area(leaf, length=0.5)
-    mesh = walter_leaf_mesh(leaf, visible_length=0.5)
+    mesh = walter_leaf_mesh(leaf, visible_length=0.5, compensate=False)
     marea = mesh_area(mesh)
-    assert_allclose(area, marea)
+    assert_allclose(area, marea, rtol=0.02)
+
+    area = leaf_area(leaf, length=1e-1)
+    mesh = walter_leaf_mesh(leaf, visible_length=1e-1, compensate=False)
+    marea = mesh_area(mesh)
+    assert_allclose(area, marea, rtol=0.02)

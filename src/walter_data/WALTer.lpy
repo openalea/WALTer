@@ -97,7 +97,8 @@ densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
 write_debug_PAR = False
-
+# minimal length for representing visible objects (1mm). 1e-3 apparently prevent generation of small leaves (pgl warning)
+epsilonL = 1e-1
 var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR"]
 
 for key, value, in params.iteritems():
@@ -2276,7 +2277,8 @@ def EndEach(lstring, lscene):
         surface_plante[org[0].num_plante] += org[0].area
         
         # New method for the computation of GAI (only the visible parts of the leaves)
-        tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
+        if org[0].visible_length > epsilonL:
+          tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
         
       if org.name == "Internode":
         if org[0].photosynthetic == True:
@@ -4181,7 +4183,7 @@ Sheath(StS):
 
 
 Blade(StBl):
-  if StBl.visible_length > 1e-6:
+  if StBl.visible_length > epsilonL:
     if StBl.num_plante in plant_census: # for color between centyre and border plant
       couleur = 1
       if StBl.n <=2 and StBl.tiller == (1,): #Les deux premi�res feuilles tester sur la taille des gaines
@@ -4285,14 +4287,14 @@ Ear(StE):
       ear_color = 6
     else:
       ear_color = 7
-  if StE.visible_length > 1e-6:
+  if StE.visible_length > epsilonL:
     produce ;(ear_color)&(StE.zenith)_(StE.diameter/2)F(StE.visible_length)
 
 Peduncle(StP):
   color = 5
   if StP.photosynthetic == True:
     color = 7
-  if StP.visible_length > 1e-6:
+  if StP.visible_length > epsilonL:
     produce ;(color)_(StP.diameter/2)F(StP.visible_length)
     
 
@@ -4303,7 +4305,7 @@ Internode(StI):
   else:
     my_color = 5
   
-  if StI.visible_length > 1e-6:
+  if StI.visible_length > epsilonL:
     produce ;(my_color)_(StI.diameter/2)F(StI.visible_length)
 
 
