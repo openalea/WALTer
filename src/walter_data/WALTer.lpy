@@ -3864,7 +3864,7 @@ Leaf(StL):
           StBl.gr_blade = (StBl.final_length - StBl.length) / (phyll_adjust(StL.geno) * ED_B)      
         
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
-
+        
         #Ajout de la forme de feuille
         ln_final = ceil(param_Ln_final[StL.geno])
         if dico_stades[StL.num_plante][StL.tiller]["Ln_final"] != "undefined":
@@ -3933,7 +3933,6 @@ Blade(StBl):
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][0] = True
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][1] = Tempcum
     
-
     StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
     StBl.area = leaf_area(StBl.leaf_shape, StBl.length, StBl.final_length, StBl.width, StBl.form_factor)
     StBl.visible_area = leaf_area(StBl.leaf_shape, StBl.visible_length, StBl.final_length, StBl.width, StBl.form_factor) #TODO a optimiser par incr�mentation
