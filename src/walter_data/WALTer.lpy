@@ -2405,7 +2405,7 @@ def EndEach(lstring, lscene):
               error_default_file = open(pj(out_dir,folder_name, "error_default.txt"), "w")
             
             sys.stderr.write(str(exception))
-            exit(1)
+            sys.exit(1)
 
 #          except Exception:
 #            print '#'*80

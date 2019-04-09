@@ -65,7 +65,7 @@ def walter_leaf(nb_segment=10, rank=10, rank_j=8, rank_max=10, rank_flag=11, ins
     return fitting.fit3(x, y, s, r, nb_points=nb_segment)
 
 
-def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclination=0, compensate=True):
+def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclination=0, compensate=False):
     mesh = leaf_mesh(leaf, L_shape=final_length, Lw_shape=max_width, length=visible_length, inclination=inclination,
                      relative=False)
     # compensate for area error
