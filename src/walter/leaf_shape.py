@@ -109,7 +109,7 @@ def mesh_area(mesh):
         sc = SurfComputer(Discretizer())
         mesh.apply(sc)
         return sc.surface
-    else
+    else:
         return None
 
 
