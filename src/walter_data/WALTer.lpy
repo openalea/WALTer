@@ -4175,7 +4175,7 @@ Sheath(StS):
   my_color = 6
   if StS.photosynthetic == True:
     my_color = 2
-  if StS.visible_length > 1e-6:
+  if StS.visible_length > epsilonL:
     # To represent only the longest blade and thus to avoid nested cylinders
     produce ;(my_color)_(StS.diameter/2)F(StS.visible_length)
 
