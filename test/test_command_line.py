@@ -46,8 +46,11 @@ def test_multi_simulation():
         rmtree('test_multi_sim')
 
 
-def test_combi_params_error():
-    """Write the test here because detect a double prec read bug that need re-read of index-table"""
+def test_multi_simulation_ghost_simulation_error():
+    """Only occur on some machine if project.csv_parameters method use simple float precision in read.csv:
+      when the bug occurs, the second simulation leads to the generation of 3 ids instead of 2, one corresponding
+      to a 'ghost' (no directory generated) simulation with GAI_c_Maxwell = 0.6xxxxxxxxx where xxxxx are
+      strange additional digits"""
     reset_call_dir()
     cmd = "walter -i sim_scheme_test_combi_params_err.csv -p combi_params_error"
     os.system(cmd)
