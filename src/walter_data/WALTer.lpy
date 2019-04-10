@@ -34,10 +34,12 @@ except NameError:
 
 ### Importations de fichiers annexes ###
 
+from walter import fitness
+
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
 
-from walter.light import caribu_scene
+from walter.light import caribu_scene, CaribuRecorder
 
 # CPL
 from collections import defaultdict
@@ -100,8 +102,11 @@ densite              = 150
 CARIBU_state         = "enabled"
 rep                  = 1
 write_debug_PAR = False
+CARIBU_screen_res = 2000
 
-var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR"]
+caribu_recorder = CaribuRecorder()
+
+var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR", "CARIBU_screen_res"]
 
 for key, value, in params.iteritems():
   if key in var_register1:
@@ -128,7 +133,7 @@ write_lscene = False
 write_lstring = False
 
 which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t")
-write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
+write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Fitness":which_output_files.Fitness[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
 print "ce qu'on ecrit:", write_output_file["Lscene"]
 
 
@@ -972,6 +977,17 @@ for geno in crop_genotype:
 
 radiation_type    = "diffuse" #or {"diffuse"; "complete"}
 PAS               = 24
+
+n_days_fitness = 30
+a_fitness = 1
+b_fitness = 0
+
+var_register_fitness = ["n_days_fitness", "a_fitness", "b_fitness"]
+
+for key, value, in params.iteritems():
+  if key in var_register_fitness:
+    exec(key+"=value")
+
 
 ##
 
@@ -2382,9 +2398,10 @@ def EndEach(lstring, lscene):
           c_scene = caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith)
           res_sky= None
           try:
-            _, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True)
+            raw, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True, screen_size = CARIBU_screen_res)
           # The outputs are in micromolPAR.m-2 for Ei and Ea, and m2 for area
           # TODO: check these outputs are those expected or should be converted
+            caribu_recorder.record(c_scene, raw, show=True)
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
@@ -2789,6 +2806,11 @@ def End(lstring):
     dF_labels = ["Init_flag","Elapsed_time","Temp_cum","DOY","Genotype","Num_plante","Surface_plante","Surface_visible","Surface_sol","GAI_tot","GAI_center","GAI_ind","GAI_prox","Position","Weakest_axis","PAR_weakest_axis"]
     GAI_df = _GAI_df.reindex(dF_labels,  axis="columns", copy=False)
     GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
+
+  if write_output_file["Fitness"] == True:
+    Flo_date_dict = fitness.flo_date(Transiflo_dico=dico_stades, nb_days=n_days_fitness)
+    Fitness_dict = fitness.fitness(PAR_dict=PAR_per_axes_dico, geno_dict=genotype_map, flo_date_dict=Flo_date_dict, a_k=a_fitness, b_k=b_fitness, nb_days=n_days_fitness)
+    Fitness_dict.to_csv(path_or_buf = pj(out_dir, folder_name, 'Fitness.csv'), sep='\t', index=True) # Saving WALTer's Fitness_dict as a csv file
   
 
 Axiom:Seed

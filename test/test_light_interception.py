@@ -117,3 +117,10 @@ def shift_in_light_bug():
     dfag.tiller_surface / dfag.Organ_surface
 
 
+def projecion_screen_tuning():
+    p = project.Project(name='projection_screen_tuning')
+    # run the reference simulation
+    lsys, lstring = p.run_parameters('sim_scheme_test.csv')
+    caribu_recorder = lsys.context().locals()['caribu_recorder']
+    df = pandas.DataFrame(caribu_recorder.records_data())
+    p.remove(force=True)
