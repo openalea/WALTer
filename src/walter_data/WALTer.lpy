@@ -1105,7 +1105,7 @@ global PAR_per_organ
 PAR_per_organ = {"Num_plante":[], "Num_talle":[], "Organ_PAR":[], "Organ_surface":[], "tiller_surface": []}
 
 
-if write_output_file["PAR_per_axes"]:
+if write_output_file["PAR_per_axes"] or write_output_file["Fitness"] == True:
   global PAR_per_axes_dico
   PAR_per_axes_dico = {"Elapsed_time":[], "DOY":[], "Temperature":[], "Temp_cum":[], "Num_plante":[], "Num_talle":[], "Sum_PAR":[], "Inc_PAR":[], "Abs_int_PAR":[]}
 
@@ -2491,7 +2491,7 @@ def EndEach(lstring, lscene):
               dico_PAR_per_axis[nump][numt][round(Tempcum, 1)] = row.Organ_PAR / Temperature / row.Organ_surface
             dico_absolute_PAR_per_axis = par_per_axe.to_dict()
 
-            if write_output_file["PAR_per_axes"] == True:
+            if write_output_file["PAR_per_axes"] == True or write_output_file["Fitness"] == True:
               for num_plt in axis_census.keys():
                 for axis in axis_census[num_plt].keys():
                   PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
@@ -2808,10 +2808,12 @@ def End(lstring):
     GAI_df.to_csv(pj(out_dir,folder_name, "GAI.csv"), sep="\t", header=True, index=False)
 
   if write_output_file["Fitness"] == True:
-    Flo_date_dict = fitness.flo_date(Transiflo_dico=dico_stades, nb_days=n_days_fitness)
-    Fitness_dict = fitness.fitness(PAR_dict=PAR_per_axes_dico, geno_dict=genotype_map, flo_date_dict=Flo_date_dict, a_k=a_fitness, b_k=b_fitness, nb_days=n_days_fitness)
-    Fitness_dict.to_csv(path_or_buf = pj(out_dir, folder_name, 'Fitness.csv'), sep='\t', index=True) # Saving WALTer's Fitness_dict as a csv file
-  
+    if CARIBU_state != "disabled" and len(PAR_per_axes_dico['Num_plante']) >=1:
+      Flo_date_dict = fitness.flo_date(Transiflo_dico=dico_stades, nb_days=n_days_fitness)
+      Fitness_dict = fitness.fitness(PAR_dict=PAR_per_axes_dico, geno_dict=genotype_map, flo_date_dict=Flo_date_dict, a_k=a_fitness, b_k=b_fitness, nb_days=n_days_fitness)
+      Fitness_dict.to_csv(path_or_buf = pj(out_dir, folder_name, 'Fitness.csv'), sep='\t', index=True) # Saving WALTer's Fitness_dict as a csv file
+    else:
+      print "The Fitness could not be computed because CARIBU_state = disabled or the model has not run for enough days"
 
 Axiom:Seed
 
