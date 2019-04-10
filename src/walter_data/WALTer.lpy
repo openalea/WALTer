@@ -2491,7 +2491,7 @@ def EndEach(lstring, lscene):
               dico_PAR_per_axis[nump][numt][round(Tempcum, 1)] = row.Organ_PAR / Temperature / row.Organ_surface
             dico_absolute_PAR_per_axis = par_per_axe.to_dict()
 
-            if write_output_file["PAR_per_axes"] == True:
+            if write_output_file["PAR_per_axes"] == True or write_output_file["Fitness"] == True:
               for num_plt in axis_census.keys():
                 for axis in axis_census[num_plt].keys():
                   PAR_per_axes_dico["Elapsed_time"].append(elapsed_time)
