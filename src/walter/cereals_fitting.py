@@ -152,7 +152,7 @@ def fit2(x, y, s, r):
     snew2, rnew2 = splev(linspace(0, 1, 200), tckp2)
 
     snew2 = snew2 / snew2.max()
-    rnew2 = rnew2 / rnew2.max()
+    rnew2 = numpy.maximum(rnew2, 0) / rnew2.max()
 
     # 2.4 leaf surface (integral r ds)
     leaf_surface = simps(rnew2, snew2)

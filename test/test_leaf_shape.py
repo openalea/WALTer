@@ -1,5 +1,6 @@
-from walter.leaf_shape import walter_sr, walter_leaf, leaf_area, walter_leaf_mesh, mesh_area
+from walter.leaf_shape import walter_sr, walter_xy, walter_leaf, leaf_area, walter_leaf_mesh, mesh_area
 from walter.cereals_leaf import blade_elt_area, form_factor
+from walter.cereals_fitting import fit2
 from nose.tools import assert_almost_equal
 from numpy.testing import assert_allclose
 from numpy import array
@@ -16,6 +17,14 @@ def test_leaf_area():
     sb = blade_elt_area(s, r, sr_top=0.5)
     assert sb > st
     assert_almost_equal(sb+st, stot, 2)
+
+
+def test_positive_area():
+    # fitting.fit2 should not return negative radius
+    x,y = walter_xy(insertion_angle=50, scurv=0.5, curvature=0.4)
+    s,r = walter_sr(rank=8, rank_j=8, rank_max=10, rank_flag=11)
+    (xx, yy, ss, rr), area = fit2(x,y,s,r)
+    assert all(rr >= 0)
 
 
 def test_nb_segment():
