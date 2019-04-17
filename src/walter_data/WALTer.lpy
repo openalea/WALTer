@@ -441,11 +441,12 @@ for geno in crop_genotype:
 
 # leaf geometry, with control of inclination at meshing
 leaf_nb_segments=10
+comp_leaf_mesh = False
 
 scurv_Maxwell = 0.5
 curvature_Maxwell = 0.4
 
-var_register_leaf = ["leaf_nb_segments"]
+var_register_leaf = ["leaf_nb_segments", "comp_leaf_mesh"]
 
 for geno in crop_genotype:
   var_register_leaf.append("scurv_"+geno)
@@ -4260,7 +4261,7 @@ Blade(StBl):
           width = StBl.width
           if StBl.photosynthetic == False:
             couleur = 5
-    scale_radius, mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl)
+    scale_radius, mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl, compensate = comp_leaf_mesh)
     StBl.scale_radius = scale_radius
     produce ;(couleur) @g(mesh)
 
