@@ -68,6 +68,7 @@ def walter_leaf(nb_segment=10, rank=10, rank_j=8, rank_max=10, rank_flag=11, ins
 def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclination=0, compensate=False):
     mesh = leaf_mesh(leaf, L_shape=final_length, Lw_shape=max_width, length=visible_length, inclination=inclination,
                      relative=False)
+    scale_radius = 1
     # compensate for area error
     # TODO search where does this error come from ?
     if mesh is not None and compensate:
@@ -77,7 +78,7 @@ def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclin
         scale_radius = area / sc.surface
         mesh = mesh.transform(Scaling((1, scale_radius, 1)))
 
-    return mesh
+    return scale_radius, mesh
 
 
 def leaf_area(leaf , length=1, mature_length=1, width_max=1, form_factor=None):
