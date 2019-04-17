@@ -2440,7 +2440,7 @@ def EndEach(lstring, lscene):
                     new_[0].PAR = res_sky["Ei"][id] * res_sky["area"][id]
 
                   if (new_.name != "Sheath" and new_[0].photosynthetic == False):
-                    new_[0].organ_surface = 0
+                    new_[0].organ_surface = 0 # Non photosynthetic organs do not count in the tiller surface for the computation of the PARt (except for sheath, because they often hide other photosynthetic organs)
                   else:
                     new_[0].organ_surface = res_sky["area"][id]
                   
