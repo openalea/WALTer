@@ -1,6 +1,6 @@
 from walter.leaf_shape import walter_sr, walter_xy, walter_leaf, leaf_area, walter_leaf_mesh, mesh_area
 from walter.cereals_leaf import blade_elt_area, form_factor
-from walter.cereals_fitting import fit2
+from walter.cereals_fitting import fit2, simplify
 from nose.tools import assert_almost_equal
 from numpy.testing import assert_allclose
 from numpy import array
@@ -25,7 +25,10 @@ def test_positive_area():
     s,r = walter_sr(rank=8, rank_j=8, rank_max=10, rank_flag=11)
     (xx, yy, ss, rr), area = fit2(x,y,s,r)
     assert all(rr >= 0)
-
+    leaf = (xx, yy, ss, rr)
+    # simplify should return s with same max
+    sx, sy, sis, sr = simplify(leaf, 10)
+    assert max(ss) == max(sis)
 
 def test_nb_segment():
     """how nb segment changes form factor"""

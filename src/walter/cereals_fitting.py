@@ -661,6 +661,8 @@ def simplify(leaf, nb_points):
     coords = ((pt.x, pt.y, pt.z) for pt in pts)
     x, r, y = map(array, izip(*coords))
     s = curvilinear_abscisse(x, y)
+    # keep smax similar to sn
+    s = s / max(s) * max(sn)
     return x, y, s, r
 
 
