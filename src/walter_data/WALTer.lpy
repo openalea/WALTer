@@ -2440,7 +2440,7 @@ def EndEach(lstring, lscene):
                     new_[0].PAR = res_sky["Ei"][id] * res_sky["area"][id]
 
                   if (new_.name != "Sheath" and new_[0].photosynthetic == False):
-                    new_[0].organ_surface = 0
+                    new_[0].organ_surface = 0 # Non photosynthetic organs do not count in the tiller surface for the computation of the PARt (except for sheath, because they often hide other photosynthetic organs)
                   else:
                     new_[0].organ_surface = res_sky["area"][id]
                   
@@ -2488,7 +2488,10 @@ def EndEach(lstring, lscene):
 
             par_per_axe = pd.DataFrame(PAR_per_organ).groupby(['Num_plante', 'Num_talle']).agg({'Organ_PAR': 'sum','Organ_surface': 'sum', 'tiller_surface':'mean'})
             for (nump, numt), row in par_per_axe.iterrows():
-              dico_PAR_per_axis[nump][numt][round(Tempcum, 1)] = row.Organ_PAR / Temperature / row.Organ_surface
+              if row.Organ_surface > 0:
+                dico_PAR_per_axis[nump][numt][round(Tempcum, 1)] = row.Organ_PAR / Temperature / row.Organ_surface
+              else:
+                dico_PAR_per_axis[nump][numt][round(Tempcum, 1)] = 0
             dico_absolute_PAR_per_axis = par_per_axe.to_dict()
 
             if write_output_file["PAR_per_axes"] == True or write_output_file["Fitness"] == True:
