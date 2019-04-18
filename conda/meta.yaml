@@ -33,6 +33,7 @@ requirements:
     - alinea.caribu
     - boost >=1.66
     - openalea.lpy
+    - alinea.astk
 
 test:
   requires:

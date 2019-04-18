@@ -39,7 +39,8 @@ from walter import fitness
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
 
-from walter.light import caribu_scene, CaribuRecorder
+from walter.light import caribu_scene, get_light, get_turtle_light
+from walter.light import CaribuRecorder
 
 # CPL
 from collections import defaultdict
@@ -308,6 +309,9 @@ nb_azimuth = 5
 nb_zenith = 4
 
 dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9, "Climat_max_AS" : 48.8, "Climat_min_AS" :48.8 ,"Climat_moy_AS" : 48.8}
+dico_longitudes = {'Gif_sur_Yvette': 2.13, 'Le_Pin_aux_Haras': 0.13, 'Lelystad': 5.47, 'Lelystad_mean10': 5.47, 'Le_Rheu': 1.77,'Alenya': 2.98,'Bertheloot_2005' : 1.95, 'Grignon': 1.95, 'Grignon_mean10' : 1.95, 'Grignon_mean18' : 1.95, 'Colmar': 7.37, 'Fagniere': 4.32, 'Clermont': 3.08, "Nottingham" : -1.17, "Climat_max_AS" : 1.95, "Climat_min_AS" : 1.95 ,"Climat_moy_AS" : 1.95}
+dico_altitude = {'Gif_sur_Yvette': 61, 'Le_Pin_aux_Haras': 200, 'Lelystad': 0, 'Lelystad_mean10': 0, 'Le_Rheu': 25,'Alenya': 8,'Bertheloot_2005' : 106, 'Grignon': 106, 'Grignon_mean10' : 106, 'Grignon_mean18' : 106, 'Colmar': 200, 'Fagniere': 100, 'Clermont': 358, "Nottingham" : 46, "Climat_max_AS" : 106, "Climat_min_AS" : 106 ,"Climat_moy_AS" : 106}
+dico_time_zone = {'Gif_sur_Yvette': "Europe/Paris", 'Le_Pin_aux_Haras': "Europe/Paris", 'Lelystad': "Europe/Amsterdam",'Lelystad_mean10': "Europe/Amsterdam", 'Le_Rheu': "Europe/Paris",'Alenya': "Europe/Paris",'Bertheloot_2005' : "Europe/Paris", 'Grignon': "Europe/Paris", 'Grignon_mean10' : "Europe/Paris", 'Grignon_mean18' : "Europe/Paris", 'Colmar': "Europe/Paris", 'Fagniere': "Europe/Paris", 'Clermont': "Europe/Paris", "Nottingham" : "Europe/London", "Climat_max_AS" : "Europe/Paris", "Climat_min_AS" : "Europe/Paris" ,"Climat_moy_AS" : "Europe/Paris"}
 
 # Moyennes sur 10/18ans disponibles sur Grignon : { "Grignon_mean10" "Grignon_mean18"}
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
@@ -975,7 +979,15 @@ for geno in crop_genotype:
 # Parametres communs
 #######################
 
-radiation_type    = "diffuse" #or {"diffuse"; "complete"}
+sky_type    = "soc" # Parameter for type of sky : 'soc' (overcast sky) or 'clear_sky'
+turtle_sectors = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+add_sun = 0 # trigger the addition of one sun position per hour in the light sources
+
+var_registerTurtleSky = ["sky_type", "turtle_sectors", "add_sun"]
+for key, value, in params.iteritems():
+  if key in var_registerTurtleSky:
+    exec(key+"=value")
+
 PAS               = 24
 
 n_days_fitness = 30
@@ -2394,8 +2406,15 @@ def EndEach(lstring, lscene):
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
           print "The date : ", str(datetime.datetime.now())
-
-          c_scene = caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith)
+          # light = get_light(current_PAR, nb_azimuth, nb_zenith)
+          # 46 direction sky
+          longi = dico_longitudes[location]
+          lat = dico_latitudes[location]
+          alt = dico_altitude[location]
+          tz = dico_time_zone[location]
+          light = get_turtle_light(current_PAR, sky_type=sky_type, turtle_sectors=turtle_sectors, add_sun=bool(add_sun),
+                                   curent_date=date_current_day, longitude=longi, latitude=lat, altitude=alt, timezone=tz)
+          c_scene = caribu_scene(lscene, crop_scheme, light)
           res_sky= None
           try:
             raw, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True, screen_size = CARIBU_screen_res)
@@ -2691,7 +2710,8 @@ def End(lstring):
                        "Genotypes_nb" + "\t" + "All" + "\t" + "%s" % geno_nb + "\n" +
                        "CARIBU_state" + "\t" + "All" + "\t" + "%s" % CARIBU_state + "\n" +
                        "SIRIUS_state" + "\t" + "All" + "\t" + "%s" % SIRIUS_state + "\n" +
-                       "Radiation_type" + "\t" + "All" + "\t" + "%s" % radiation_type + "\n" +
+                       "sky_type" + "\t" + "All" + "\t" + "%s" % sky_type + "\n" +
+                       "turtle_sectors" + "\t" + "All" + "\t" + "%s" % turtle_sectors + "\n" +
                        "infinity_GAIp"  + "\t" + "All" + "\t" + "%s" % infinity_GAIp + "\n" +
                        "infinity_CARIBU" + "\t" + "All" + "\t" + "%s" % infinity_CARIBU + "\n" +
                        "Light_step" + "\t" + "All" + "\t" + "%s" % PAS + "\n" +
