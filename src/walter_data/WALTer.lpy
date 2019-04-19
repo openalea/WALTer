@@ -837,26 +837,26 @@ Delta_flsp = 100 #Thermal time delay between the senescence of the flag blade an
 
 
 # Plant geometry
-Phi_zen_B_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Lely = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Soissons = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Renan = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Gigant_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Darwinkel_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Caphorn = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Apache = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_A208 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_A210 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_F236 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_A398 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Maxwell = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Lely = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Soissons = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Renan = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Gigant_Maxwell = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Darwinkel_Maxwell = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Caphorn = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Apache = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A208 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A210 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_F236 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A398 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
 
 Phi_azi_B = 185       # Angle between the azimuth of two consecutive blades | old name : bl_azi_shift
 Phi_zen_T = 0         # Angle between the zenith of two consecutive tillers  | old name : till_zen_shift
 Phi_azi_T = 40        # Angle between the azimuth of two consecutive tillers | old name : till_azi_shift
 
-Phi_zen_E = 0         # Angle between ear inclination and Y axis | old name : ear_zen_shift
+Phi_zen_E = 0         # Angle between ear inclination and the stem | old name : ear_zen_shift
 Phi_azi_S = 0         # Angle between seed azimuth and X axis | old name : seed_azi_shift
-Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : seed_zen_shift
+Phi_zen_S = 0         # Angle between seed inclination and the stem | old name : seed_zen_shift
 
 # Hazard parameters
 
