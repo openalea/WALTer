@@ -12,5 +12,8 @@ def compare_leaf_shape_2d(nb_segment=10, rank=10, rank_j=8, rank_max=10, rank_fl
     fig, axs = plt.subplots(1, 2)
     axs[0].plot(x,y)
     axs[0].plot(xx, yy)
+    axs[0].axis('equal')
     axs[1].plot(s, r)
     axs[1].plot(ss, rr)
+    axs[1].axis('equal')
+    plt.show()
