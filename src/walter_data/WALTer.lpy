@@ -441,12 +441,11 @@ for geno in crop_genotype:
 
 # leaf geometry, with control of inclination at meshing
 leaf_nb_segments=10
-comp_leaf_mesh = False
 
 scurv_Maxwell = 0.5
 curvature_Maxwell = 0.4
 
-var_register_leaf = ["leaf_nb_segments", "comp_leaf_mesh"]
+var_register_leaf = ["leaf_nb_segments"]
 
 for geno in crop_genotype:
   var_register_leaf.append("scurv_"+geno)
