@@ -275,29 +275,29 @@ if expe_related == "Genetics":
 
 # Setting experimental informations
 experimental_conditions = {
-"Sreten":{"sowing_date" : datetime.date(1998,10,15), "year" : "1999","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Rim1-1":{"sowing_date" : datetime.date(2007,9,25), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Rim1-2":{"sowing_date" : datetime.date(2007,11,12), "year" : "2008","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Rim2-1":{"sowing_date" : datetime.date(2008,9,30), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11.3}},
-"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
-"Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":{"Lely":11}},
-"Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
-"Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
-"Ouitamics-2014":{"sowing_date" : datetime.date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":{"Soissons":11,"Apache":11, "Renan":11, "Caphorn":11, "A208":11, "A210":11, "F236":11, "A398":11}},
-"None":{"sowing_date" : datetime.date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":{"Soissons":11,"Maxwell":11}},
-"Mariem_mean":{"sowing_date" : datetime.date(1900,10,26), "year" : "1901","location" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11}},
-"Darwinkel_Grignon_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
-"Darwinkel_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11.3}
+"Sreten":{"sowing_date" : datetime.date(1998,10,15), "year" : "1999","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim1-1":{"sowing_date" : datetime.date(2007,9,25), "year" : "2008","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim1-2":{"sowing_date" : datetime.date(2007,11,12), "year" : "2008","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim2-1":{"sowing_date" : datetime.date(2008,9,30), "year" : "2009","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Rim2-2":{"sowing_date" : datetime.date(2008,11,17), "year" : "2009","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Jillian":{"sowing_date" : datetime.date(2003,10,16), "year" : "2004","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Jessica":{"sowing_date" : datetime.date(2005,10,27), "year" : "2006","location" : "Grignon","meteo" : "Bertheloot_2005", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11.3}},
+"Mariem":{"sowing_date" : datetime.date(2010,10,26), "year" : "1901","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
+"Darwinkel":{"sowing_date" : datetime.date(1976,10,19), "year" : "1977","location" : "Lelystad","meteo" : "Lelystad", "dist_inter_rang" : 0.175, "genotype" : ["Lely"], "Ln_final":{"Lely":11}},
+"Darwinkel_temp":{"sowing_date" : datetime.date(2013,10,19), "year" : "1901","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Wheatamix-2014":{"sowing_date" : datetime.date(2013,10,31), "year" : "2014","location" : "Grignon","meteo" : "Grignon", "dist_inter_rang" : 0.175, "genotype" : ["Soissons"], "Ln_final":{"Soissons":11}},
+"Ouitamics-2014":{"sowing_date" : datetime.date(2013,10,30), "year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.15, "genotype" : ["Soissons","Apache", "Renan", "Caphorn", "A208", "A210", "F236", "A398"], "Ln_final":{"Soissons":11,"Apache":11, "Renan":11, "Caphorn":11, "A208":11, "A210":11, "F236":11, "A398":11}},
+"None":{"sowing_date" : datetime.date(2013,10,15), "year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.1, "genotype" : ["Soissons","Maxwell"], "Ln_final":{"Soissons":11,"Maxwell":11}},
+"Mariem_mean":{"sowing_date" : datetime.date(1900,10,26), "year" : "1901","location" : "Grignon","meteo" : "Grignon_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11}},
+"Darwinkel_Grignon_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Grignon","meteo" : "Grignon_mean10", "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Darwinkel_mean":{"sowing_date" : datetime.date(1900,10,19), "year" : "1901","location" : "Lelystad","meteo" : "Lelystad_mean10", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11.3}
 },
-"Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
-"Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
-"Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
-"Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
-"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
-"Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics}
+"Sparkes_2001":{"sowing_date" : datetime.date(2000,10,17), "year" : "2001","location" : "Nottingham","meteo" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Sparkes_2002":{"sowing_date" : datetime.date(2001,10,4), "year" : "2002","location" : "Nottingham","meteo" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","meteo" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
+"Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
+"Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
+"Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics}
 }
 
 liste_expe = experimental_conditions.keys()
@@ -307,7 +307,7 @@ infinity_CARIBU = 0              # En booleen 0 : False 1: True
 nb_azimuth = 5
 nb_zenith = 4
 
-dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5,'Lelystad_mean10': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6,'Bertheloot_2005' : 48.8, 'Grignon': 48.8, 'Grignon_mean10' : 48.8, 'Grignon_mean18' : 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9, "Climat_max_AS" : 48.8, "Climat_min_AS" :48.8 ,"Climat_moy_AS" : 48.8}
+dico_latitudes = {'Gif_sur_Yvette': 48.5, 'Le_Pin_aux_Haras': 48.7, 'Lelystad': 52.5, 'Le_Rheu': 48.1,'Alenya': 42.6, 'Grignon': 48.8, 'Colmar': 48.1, 'Fagniere': 49, 'Clermont': 45.7, "Nottingham" : 52.9}
 
 # Moyennes sur 10/18ans disponibles sur Grignon : { "Grignon_mean10" "Grignon_mean18"}
 # Pour Lelystad on a plusieurs variantes : Lelystad, Lelystad_plusundemi, Lelystad_plusun
@@ -2005,12 +2005,13 @@ mod_to_remove = ["[","]", "%", "CutPointBlade", "@M","CutPointBud"]
 
 
 location           = experimental_conditions[expe_related]["location"]
+meteo           = experimental_conditions[expe_related]["meteo"]
 year               = experimental_conditions[expe_related]["year"]                            #s'il s'agit d'un fichier meteo moyenne, year = 1901
 sowing_date        = experimental_conditions[expe_related]["sowing_date"]
 
 dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
 
-var_register2 = ["location"]
+var_register2 = ["location", "meteo"]
 
 for key, value, in params.iteritems():
   if key in var_register2:
@@ -2022,7 +2023,7 @@ latitude           = dico_latitudes[location]
 # LIRE UN FICHIER METEO  #
 ##########################
 
-meteo_dF = pd.read_csv(pj(inputdir, "meteo", location + ".csv"), header=9, sep=";")
+meteo_dF = pd.read_csv(pj(inputdir, "meteo", meteo + ".csv"), header=9, sep=";")
 
 var_register = ["crop_ccptn","sowing_date","year","latitude","nbj","densite","nb_rang","nb_plantes","area_targeted","geno_nb","SIRIUS_state","infinity_GAIp","nb_azimuth","nb_zenith","dist_inter_rang","N_p_s","l_c","L_b_S","Psi_FT","param_Ln_final","Tbase","Tvermin","Tverint","Tvermax","Lmax","Lmin","Ldecr","Lincr","phyllo_decr","phyllo_incr","DLsat","Delta_b","dGAIp","Delta_l","Delta_c_GN","Delta_hf","Delta_hm","Delta_lflf","Delta_flsp","Delta_SGtR","Delta_SGtC","ED_I","ED_B","ED_FB","ED_S","Phi_zen_B_Maxwell","Phi_zen_B_Lely","Phi_zen_B_Soissons","Phi_zen_B_Renan","Phi_zen_B_Gigant_Maxwell","Phi_zen_B_Darwinkel_Maxwell","Phi_zen_B_Caphorn","Phi_zen_B_Apache","Phi_zen_B_A208","Phi_zen_B_A210","Phi_zen_B_F236","Phi_zen_B_A398","Phi_azi_B","Phi_zen_T","Phi_azi_T","Phi_zen_E","Phi_azi_S","Phi_zen_S","y_position_hazard","x_position_hazard","z_position_hazard","blade_incl_hazard","blade_azi_hazard","till_zen_hazard","till_azi_hazard","Phl_Soissons","Phl_Maxwell","VAI_Soissons","VAI_Maxwell","VBEE_Soissons","VBEE_Maxwell","SLDL_Soissons","SLDL_Maxwell","N_I_el_Soissons","N_I_el_Maxwell","s_B_1_Soissons","s_B_1_Maxwell","N_B_r_Soissons","N_B_r_Maxwell","L_B_1_Soissons","L_B_1_Maxwell","L_B_max_Soissons","L_B_max_Maxwell","s_B_f_Soissons","s_B_f_Maxwell","a_B_w_Soissons","a_B_w_Maxwell","b_B_w_Soissons","b_B_w_Maxwell","a_S_L_Soissons","a_S_L_Gigant_Maxwell","a_S_L_Maxwell","b_S_L_Soissons","b_S_L_Gigant_Maxwell","b_S_L_Maxwell","inc_I_Soissons","inc_I_Maxwell","b_I_L_Soissons","b_I_L_Maxwell","b_I_L_Gigant_Maxwell","a_I_L_Soissons","a_I_L_MAxwell","a_I_L_Gigant_Maxwell","d_I_Soissons","d_I_Maxwell","L_P_Soissons","L_P_Maxwell","d_P_Soissons","d_P_Maxwell","d_E_Soissons","d_E_Maxwell","L_E_Soissons","L_E_Maxwell","d_S_Soissons","d_S_Maxwell","n0_sen_Soissons","n0_sen_Maxwell","n1_sen_Soissons","n1_sen_Maxwell","n2_sen_Soissons","n2_sen_Maxwell","n3_sen_Soissons","n3_sen_Maxwell","t0_sen_Soissons","t0_sen_Maxwell","t1_sen_Soissons","t1_sen_Maxwell","t2_sen_Soissons","t2_sen_Maxwell","t3_sen_Soissons","t3_sen_Maxwell","P_CT_Soissons","P_CT_Maxwell","P_T_Soissons","P_T_Maxwell","nb_plt_utiles","dist_border_x","dist_border_y","nb_plt_temp"]
 
@@ -2675,6 +2676,7 @@ def End(lstring):
                        "Sowing_date" + "\t" + "All" + "\t" + "%s" % sowing_date + "\n" +
                        "Year" + "\t" + "All" + "\t" + "%s" % year + "\n" +
                        "Location" + "\t" + "All" + "\t" + "%s" % location + "\n" +
+                       "Meteo" + "\t" + "All" + "\t" + "%s" % meteo + "\n" +
                        "Latitude" + "\t" + "All" + "\t" + "%s" % latitude + "\n" +
                        "Nbj" + "\t" + "All" + "\t" + "%s" % nbj + "\n" +
                        "rep" + "\t" + "All" + "\t" + "%s" % rep + "\n" +
