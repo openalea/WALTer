@@ -4261,7 +4261,7 @@ Blade(StBl):
           width = StBl.width
           if StBl.photosynthetic == False:
             couleur = 5
-    scale_radius, mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl, compensate = comp_leaf_mesh)
+    mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl)
     StBl.scale_radius = scale_radius
     produce ;(couleur) @g(mesh)
 

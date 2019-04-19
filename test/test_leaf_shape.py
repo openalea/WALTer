@@ -1,6 +1,6 @@
 from walter.leaf_shape import walter_sr, walter_xy, walter_leaf, leaf_area, walter_leaf_mesh, mesh_area
 from walter.cereals_leaf import blade_elt_area, form_factor
-from walter.cereals_fitting import fit2, simplify
+from walter.cereals_fitting import fit2, simplify, leaf_to_mesh_2d, plantgl_shape
 from nose.tools import assert_almost_equal
 from numpy.testing import assert_allclose
 from numpy import array
@@ -31,61 +31,62 @@ def test_positive_area():
     assert max(ss) == max(sis)
 
 def test_nb_segment():
-    """how nb segment changes form factor"""
     leaf_ref = walter_leaf(nb_segment=100)
     ffref = form_factor(leaf_ref)
     nseg = (2,5,10,20)
     leaves = map(walter_leaf,nseg)
     ff = map(form_factor, leaves)
     rel_err = abs(array(ff) - ffref) / ffref
-    max_err = array((0.03, 0.05, 0.01, 0.001))
+    max_err = array([1e-6]*len(nseg))
     assert all(rel_err < max_err)
 
 
 def test_area_vs_area_mesh():
     # TODO check why meash area is not compensated by cereals.fitting
 
+    # a 100 points described leaf
+    s, r = walter_sr(rank=2, rank_j=8, rank_max=10, rank_flag=11)
     leaf = walter_leaf()
-    ff = form_factor(leaf)
+    area_ref = leaf_area((s,r,s,r))
     area = leaf_area(leaf)
+    assert_almost_equal(area, area_ref, 2)
+    # formula using ff
+    ff = form_factor(leaf)
     areaff = leaf_area(leaf, form_factor=ff)
     assert_almost_equal(area, areaff, 2)
-    # about 1 percent difference between area and meash area (caribu) if compensate=False
-    mesh = walter_leaf_mesh(leaf, compensate=False)
-    marea = mesh_area(mesh)
-    assert_allclose(area, marea, rtol=0.015)
-    # No diff between mesh and leaf if compensate=True (but mesh width are modified)
-    mesh = walter_leaf_mesh(leaf, compensate=True)
-    marea = mesh_area(mesh)
-    assert_allclose(area, marea)
 
-    # effect of nb_segments
-    leaf = walter_leaf(nb_segment=100)
-    area = leaf_area(leaf)
-    mesh = walter_leaf_mesh(leaf, compensate=False)
+    # compare with mesh
+    # about 1 percent difference between area and meash area (caribu) if compensate=False: to be tested for rank2
+    mesh = walter_leaf_mesh(leaf)
     marea = mesh_area(mesh)
-    # error decrease below 1 per thousand
-    assert_allclose(area, marea, rtol=0.0015)
+    assert_almost_equal(area, marea)
 
+    # test compensation for varying nb_segments
+    leafref = walter_leaf(nb_segment=50)
+    area_ref = leaf_area(leafref)
     leaf = walter_leaf(nb_segment=2)
     area = leaf_area(leaf)
-    mesh = walter_leaf_mesh(leaf, compensate=False)
-    marea = mesh_area(mesh)
-    # error drop to 30 percent
-    assert_allclose(area, marea, rtol=.3)
-    # but compensate still works
-    mesh = walter_leaf_mesh(leaf, compensate=True)
+    assert_almost_equal(area, area_ref, 2)
+    mesh = walter_leaf_mesh(leaf)
     marea = mesh_area(mesh)
     assert_allclose(area, marea)
+    # direct flat mesh (debug)
+    xx, yy, ss, rr = leaf
+    m = plantgl_shape(*leaf_to_mesh_2d(ss, [0] * len(ss), rr))
+    dmarea = mesh_area(m)
+    assert_almost_equal(area, dmarea)
 
     # growing leaf
     leaf = walter_leaf()
     area = leaf_area(leaf, length=0.5)
-    mesh = walter_leaf_mesh(leaf, visible_length=0.5, compensate=False)
+    mesh = walter_leaf_mesh(leaf, visible_length=0.5)
     marea = mesh_area(mesh)
-    assert_allclose(area, marea, rtol=0.02)
+    assert_almost_equal(area, marea,2)
 
     area = leaf_area(leaf, length=1e-1)
-    mesh = walter_leaf_mesh(leaf, visible_length=1e-1, compensate=False)
+    mesh = walter_leaf_mesh(leaf, visible_length=1e-1)
     marea = mesh_area(mesh)
-    assert_allclose(area, marea, rtol=0.02)
+    assert_almost_equal(area, marea,2)
+
+    # a particularly deformed mesh even with 10 points: rank=2: to be checked if this is due to the loss of the 'maximal width' point
+    # during leaf simplification

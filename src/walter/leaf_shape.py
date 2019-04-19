@@ -65,20 +65,10 @@ def walter_leaf(nb_segment=10, rank=10, rank_j=8, rank_max=10, rank_flag=11, ins
     return fitting.fit3(x, y, s, r, nb_points=nb_segment)
 
 
-def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclination=0, compensate=False):
-    mesh = leaf_mesh(leaf, L_shape=final_length, Lw_shape=max_width, length=visible_length, inclination=inclination,
+def walter_leaf_mesh(leaf, final_length=1, max_width=1, visible_length=1, inclination=0):
+    return leaf_mesh(leaf, L_shape=final_length, Lw_shape=max_width, length=visible_length, inclination=inclination,
                      relative=False)
-    scale_radius = 1
-    # compensate for area error
-    # TODO search where does this error come from ?
-    if mesh is not None and compensate:
-        area = leaf_area(leaf, length=visible_length, mature_length=final_length)
-        sc = SurfComputer(Discretizer())
-        mesh.apply(sc)
-        scale_radius = area / sc.surface
-        mesh = mesh.transform(Scaling((1, scale_radius, 1)))
 
-    return scale_radius, mesh
 
 
 def leaf_area(leaf , length=1, mature_length=1, width_max=1, form_factor=None):
@@ -96,7 +86,7 @@ def leaf_area(leaf , length=1, mature_length=1, width_max=1, form_factor=None):
 
     Returns
     -------
-    the area of the leaf corresponding to the distal part up to length
+    the area of the leaf corresponding to the distal part up to length (computed with trapeze aera)
     """
     if length >= mature_length and form_factor is not None:
         return length * width_max * form_factor
