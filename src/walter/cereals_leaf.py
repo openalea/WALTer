@@ -3,7 +3,7 @@ import numpy
 from math import pi, cos, sin, radians
 import cereals_fitting as fitting
 import openalea.plantgl.all as pgl
-from scipy.integrate import simps
+from scipy.integrate import trapz
 from scipy.optimize import brentq
 
 
@@ -187,7 +187,7 @@ def blade_elt_area(s, r, Lshape=1, Lwshape=1, sr_base=0, sr_top=1):
         snew = [sr_base, sr_top]
         rnew = [numpy.interp(sr_base, s, r), numpy.interp(sr_top, s, r)]
 
-    S = simps(rnew, snew) * Lshape * Lwshape
+    S = trapz(rnew, snew) * Lshape * Lwshape
 
     return S
 

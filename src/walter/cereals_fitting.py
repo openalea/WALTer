@@ -1,7 +1,7 @@
 import numpy
 from numpy import *
 from scipy.interpolate import *
-from scipy.integrate import simps
+from scipy.integrate import simps, trapz
 import openalea.plantgl.all as pgl
 
 from cereals_simplification import cost
@@ -442,7 +442,7 @@ def mesh2(leaf, length_max, length, radius_max, twist=0, volume=0):
     return mesh4(leaf, length_max, length, 0., 1., radius_max, twist, volume)
 
 
-def leaf_element(leaf, length_max, length, s_base, s_top, radius_max):
+def leaf_element(leaf, length_max=1, length=1, s_base=0, s_top=1, radius_max=1):
     def insert_values(a, values):
         l = a.tolist()
         l.extend(values)
@@ -451,15 +451,21 @@ def leaf_element(leaf, length_max, length, s_base, s_top, radius_max):
     s_base = min(s_base, s_top, 1.)
     s_top = max(s_base, s_top, 0.)
 
-    x, y, s, r = leaf
-    # force the leaf width to zero at the top
-    r[-1] = 0
-
-    # 1. compute s_xy and s_r for length vs length_max
     if length <= 0.:
         return
     if length > length_max:
         length = length_max
+
+    # nothing to do case
+    if length == length_max and s_base == 0 and s_top == 1:
+        return leaf
+
+    # 1. compute s_xy and s_r for length vs length_max
+    x, y, s, r = leaf
+    # force the leaf width to zero at the top
+    r[-1] = 0
+
+
 
     param = float(length) / length_max
     n = len(s)
@@ -644,9 +650,9 @@ def leaf_shape(leaf, nb_triangles, length_max, length, radius_max):
 
 
 def fit3(x, y, s, r, nb_points):
-    leaf, leaf_surface = fit2(x, y, s, r)
+    leaf, leaf_surface = fit2(x, y, s, r) # use here simpson as leaf is a smooth shape
     xn, yn, sn, rn = simplify(leaf, nb_points)
-    new_surface = simps(rn, sn)
+    new_surface = trapz(rn, sn) # use here trapz as the new surface is a polygonial shape
     scale_radius = leaf_surface / new_surface
     rn *= scale_radius
     return xn, yn, sn, rn
@@ -662,7 +668,10 @@ def simplify(leaf, nb_points):
     x, r, y = map(array, izip(*coords))
     s = curvilinear_abscisse(x, y)
     # keep smax similar to sn
-    s = s / max(s) * max(sn)
+    adj = max(sn) / max(s)
+    s *= adj
+    x *= adj
+    y *= adj
     return x, y, s, r
 
 
