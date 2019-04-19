@@ -131,7 +131,7 @@ class Project(object):
 
     @staticmethod
     def csv_parameters(path):
-        df = pd.read_csv(path, sep='\t')
+        df = pd.read_csv(path, sep='\t', float_precision='high')
         param_list = df.to_dict(orient='records')  # a list of dict
         return param_list
 
