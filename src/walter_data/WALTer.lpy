@@ -1004,7 +1004,7 @@ for geno in crop_genotype:
 #######################
 
 sky_type    = "soc" # Parameter for type of sky : 'soc' (overcast sky) or 'clear_sky'
-turtle_sectors = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+turtle_sectors = 16 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 6, 16 or 46
 add_sun = 0 # trigger the addition of one sun position per hour in the light sources
 
 var_registerTurtleSky = ["sky_type", "turtle_sectors", "add_sun"]
