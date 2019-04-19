@@ -1,6 +1,8 @@
 import os
 from shutil import rmtree, copy
 from walter.command_line import walter_parser
+from walter.project import Project
+
 
 call_dir = os.getcwd()
 
@@ -42,4 +44,19 @@ def test_multi_simulation():
     reset_call_dir()
     if os.path.exists('test_multi_sim'):
         rmtree('test_multi_sim')
+
+
+def test_multi_simulation_ghost_simulation_error():
+    """Only occur on some machine if project.csv_parameters method use simple float precision in read.csv:
+      when the bug occurs, the second simulation leads to the generation of 3 ids instead of 2, one corresponding
+      to a 'ghost' (no directory generated) simulation with GAI_c_Maxwell = 0.6xxxxxxxxx where xxxxx are
+      strange additional digits"""
+    reset_call_dir()
+    cmd = "walter -i sim_scheme_test_combi_params_err.csv -p combi_params_error"
+    os.system(cmd)
+    reset_call_dir()
+    index_table_test = Project.read_itable("combi_params_error/index-table.json")
+    if os.path.exists('combi_params_error'):
+        rmtree('combi_params_error')
+    assert len(index_table_test) == 2
 
