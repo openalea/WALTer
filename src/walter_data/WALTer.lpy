@@ -1103,7 +1103,7 @@ global Apex_R_dico_df
 Apex_R_dico_df = {"Elapsed_time" :[], "DOY" : [], "Temperature" :[], "Temp_cum" :[], "Sum_temp" :[], "Num_plante":[], "Genotype" :[], "Num_cohorte":[], "Ln_final":[], "Num_talle" :[], "Date_epiaison" :[], "Epi_DOY" :[], "Date_de_flo" :[], "Mont_flag" :[], "Mont_DOY":[], "Flo_flag" :[], "Flo_DOY" :[], "Death_flag" :[], "Date_de_maturite" : [], "Mat_DOY" : []}
 
 global Blade_df
-Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[], "Form_factor" : [], "Scale_radius" : []}
+Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[], "Form_factor" : []}
 
 global Internode_dico_df
 Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[], "Internode_surface" :[], "Internode_PAR" : [], "Photosynthetic" :[]}
@@ -2500,7 +2500,6 @@ def EndEach(lstring, lscene):
                     Blade_dico_df['Senesc_flag'].append(lstring[id][0].senesc_flag)
                     Blade_dico_df['Photosynthetic'].append(lstring[id][0].photosynthetic)
                     Blade_dico_df['Form_factor'].append(lstring[id][0].form_factor)
-                    Blade_dico_df['Scale_radius'].append(lstring[id][0].scale_radius)
 
             par_per_axe = pd.DataFrame(PAR_per_organ).groupby(['Num_plante', 'Num_talle']).agg({'Organ_PAR': 'sum','Organ_surface': 'sum', 'tiller_surface':'mean'})
             for (nump, numt), row in par_per_axe.iterrows():
@@ -2632,7 +2631,7 @@ def End(lstring):
 
   if write_output_file["Blade"] == True:
     _Blade_df = pd.DataFrame(Blade_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic", "Form_factor", "Scale_radius"]
+    dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic", "Form_factor"]
     Blade_df = _Blade_df.reindex(dF_labels, axis="columns", copy=False)
     Blade_df.to_csv(pj(out_dir,folder_name, "Blade.csv"), sep="\t", header=True, index=False)
 
@@ -4262,7 +4261,6 @@ Blade(StBl):
           if StBl.photosynthetic == False:
             couleur = 5
     mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl)
-    StBl.scale_radius = scale_radius
     produce ;(couleur) @g(mesh)
 
 #Blade(StBl):
