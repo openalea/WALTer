@@ -456,12 +456,17 @@ def leaf_element(leaf, length_max=1, length=1, s_base=0, s_top=1, radius_max=1):
     if length > length_max:
         length = length_max
 
-    # nothing to do case
+    x, y, s, r = leaf
+    # just scale leaf case
     if length == length_max and s_base == 0 and s_top == 1:
-        return leaf
+        x *= length_max
+        y *= length_max
+        s *= length_max
+        r *= radius_max
+        return x,y,s,r
 
     # 1. compute s_xy and s_r for length vs length_max
-    x, y, s, r = leaf
+
     # force the leaf width to zero at the top
     r[-1] = 0
 

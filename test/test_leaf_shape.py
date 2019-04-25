@@ -61,6 +61,14 @@ def test_area_vs_area_mesh():
     marea = mesh_area(mesh)
     assert_almost_equal(area, marea)
 
+    #test scaling
+    mesh = walter_leaf_mesh(leaf,10,1,10)
+    marea = mesh_area(mesh)
+    assert_almost_equal(area*10, marea)
+    mesh = walter_leaf_mesh(leaf,10,2,10)
+    marea = mesh_area(mesh)
+    assert_almost_equal(area*20, marea)
+
     # test compensation for varying nb_segments
     leafref = walter_leaf(nb_segment=50)
     area_ref = leaf_area(leafref)
