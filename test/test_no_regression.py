@@ -1,6 +1,7 @@
 # coding=utf-8
 from walter import project
 import pandas,os
+import glob
 from walter.data_access import get_data_dir
 from pathlib2 import Path
 import numpy.testing as np
@@ -18,8 +19,8 @@ def test_same_result():
     p.run(**params)
     result_directory = str(p.output_path()) + '/'
     reference_directory = get_data_dir() + "/ref_output/" # Reference folder
-    list_of_file_ref = os.listdir(reference_directory) # Listing of the different reference files
-    list_of_result = os.listdir(result_directory)
+    list_of_file_ref = glob.glob(reference_directory + '*.csv') # Listing of the different reference files
+    list_of_result = glob.glob(result_directory + '*.csv')
     np.assert_array_equal(list_of_file_ref, list_of_result)  # Check that the 2 lists are equal
 
     for i in list_of_file_ref:
