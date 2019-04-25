@@ -3,21 +3,21 @@ from walter import cereals_fitting as fitting
 from walter.cereals_leaf import leaf_shape_perez, sr_dornbush, leaf_mesh, blade_elt_area, form_factor
 from openalea.plantgl.all import SurfComputer, Discretizer, Scaling
 
-def walter_xy(insertion_angle=50, scurv=0.5, curvature=0.4):
+def walter_xy(insertion_angle=50, scurv=0.5, curvature=96):
     """ x,y coordinates of points sampling a leaf midrib placed in a vertical plane (origin = leaf base)
 
     Parameters
     ----------
     insertion_angle: the angle (degree) between stem and leaf at leaf base
     scurv : the relative position on the midrib where 2/3 of total leaf curvature is achieved
-    curvature : leaf angular curvature (tip angle - insertion angle) relative to curvature_max (set to 240)
+    curvature : leaf angular curvature (tip angle - insertion angle, degree)
 
     Returns
     -------
     x, y coordinates of 100 points sampling the leaf midrib
     """
-    return leaf_shape_perez(nb_segment=100, insertion_angle=insertion_angle, l=scurv, curvature=curvature,
-                            curvature_max=240)
+    return leaf_shape_perez(nb_segment=100, insertion_angle=insertion_angle, l=scurv, curvature=1,
+                            curvature_max=curvature)
 
 def wheatI_dornbush(rank=10, rank_j=8, rank_max=10, rank_flag=11):
     """Mini model proposed by Dornbush for parameterising wheat I dataset"""
@@ -59,7 +59,7 @@ def walter_sr(rank=10, rank_j=8, rank_max=10, rank_flag=11):
 
 
 def walter_leaf(nb_segment=10, rank=10, rank_j=8, rank_max=10, rank_flag=11, insertion_angle=50, scurv=0.5,
-                curvature=0.4):
+                curvature=96):
     x, y = walter_xy(insertion_angle=insertion_angle, scurv=scurv, curvature=curvature)
     s, r = walter_sr(rank=rank, rank_j=rank_j, rank_max=rank_max, rank_flag=rank_flag)
     return fitting.fit3(x, y, s, r, nb_points=nb_segment)
