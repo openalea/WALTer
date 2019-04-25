@@ -2,6 +2,8 @@
 Walter"""
 from alinea.caribu.sky_tools import GenSky, GetLight
 from alinea.caribu.CaribuScene import CaribuScene
+from alinea.caribu.light import light_sources
+from alinea.astk.sun_and_sky import sun_sources, sun_fraction, sky_irradiances, sky_sources, _timezone, _longitude, _latitude, _altitude
 
 
 def scene_pattern(crop_scheme):
@@ -26,7 +28,56 @@ def get_light(current_PAR, nb_azimuth, nb_zenith):
     return sky_tup
 
 
-def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
+def get_turtle_light(current_PAR, sky_type='soc', turtle_sectors=46, add_sun=False, curent_date=None,
+                     longitude = _longitude, latitude=_latitude, altitude=_altitude, timezone=_timezone):
+    """Sun + sky source using the 46 sector turtle sky discretisation
+        Args:
+        current_date: a naive datetime object
+        sky_type:(str) type of sky luminance model. One of :
+                           'soc' (standard overcast sky),
+                           'uoc' (uniform overcast sky)
+                           'clear_sky' (standard clear sky)
+        turtle_sectors : (int) the minimal number of sectors to be used for discretising the sky hemisphere. Turtle
+        discretisation will be one of 1, 6, 16 or 46 sectors
+        longitude: (float) in degrees
+        latitude: (float) in degrees
+        altitude: (float) in meter
+        timezone:(str) the time zone
+    """
+    daydate = '2000-06-21'
+    if curent_date is not None:
+        daydate = curent_date.strftime('%Y-%m-%d')
+    sun = [(), (), ()]
+    f_sun = 0
+    if add_sun:
+        sky_irr = sky_irradiances(daydate=daydate, longitude=longitude,
+                                  latitude=latitude, altitude=altitude,
+                                  timezone=timezone)
+        f_sun = sun_fraction(sky_irr)
+        sun = sun_sources(irradiance=f_sun * current_PAR,
+                          daydate=daydate, latitude=latitude, longitude=longitude,
+                          altitude=altitude, timezone=timezone)
+    sky = sky_sources(sky_type=sky_type, irradiance=current_PAR * (1 - f_sun), turtle_sectors=turtle_sectors,
+                      daydate=daydate, longitude = longitude, latitude=latitude, altitude=altitude, timezone=timezone)
+    return light_sources(*sky) + light_sources(*sun)
+
+
+class CaribuRecorder(object):
+    records = []
+
+    def record(self, caribu_scene, raw, show=False):
+        try:
+            self.records.append(caribu_scene.run_statistics(raw, show=show))
+        except AttributeError: # old caribu version (<= 7.0.3)
+            pass
+
+    def records_data(self):
+        resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence = zip(*self.records)
+        return dict(zip(('resolution', 'ldiag', 'pixel_per_cm', 'pixel_per_triangle', 'confidence'),
+                        (resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence)))
+
+
+def caribu_scene(lscene, crop_scheme, current_PAR):
     """Create a caribu scene from walter lscene
 
     Args:
@@ -39,7 +90,6 @@ def caribu_scene(lscene, crop_scheme, current_PAR, nb_azimuth, nb_zenith):
     Returns:
 
     """
-    sky = get_light(current_PAR, nb_azimuth, nb_zenith)
     pattern = scene_pattern(crop_scheme)
-    return CaribuScene(scene=lscene, scene_unit="cm", light=sky,
+    return CaribuScene(scene=lscene, scene_unit="cm", light=current_PAR,
                        pattern=pattern)

@@ -78,16 +78,17 @@ def test_infinite():
 
 # debug helper
 
-def check_light_balance():
+def test_check_light_balance():
     """test if total par intercepted is above or below incident par"""
     p = project.Project(name='light_balance')
     params = p.csv_parameters('sim_scheme_test.csv')[0]
-    params.update(dict(write_debug_PAR=True,infinity_CARIBU=0))
+    params.update(dict(write_debug_PAR=True, infinity_CARIBU=1))
     lsys, lstring = p.run(**params)
     crop_scheme = lsys.context().locals()['crop_scheme']
     df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
     control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
     balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
+    assert all(balance <= 1)
     p.remove(force=True)
 
 
@@ -117,6 +118,13 @@ def shift_in_light_bug():
     dfag.tiller_surface / dfag.Organ_surface
 
 
+def projecion_screen_tuning():
+    p = project.Project(name='projection_screen_tuning')
+    # run the reference simulation
+    lsys, lstring = p.run_parameters('sim_scheme_test.csv')
+    caribu_recorder = lsys.context().locals()['caribu_recorder']
+    df = pandas.DataFrame(caribu_recorder.records_data())
+    p.remove(force=True)
 def debug_dico_PAR_per_axis(lsys, lstring, res_sky=None):
     """generate a dico_par_per_axis like dict for the current time"""
 
