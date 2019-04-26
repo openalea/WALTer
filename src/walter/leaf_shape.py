@@ -16,8 +16,7 @@ def walter_xy(insertion_angle=50, scurv=0.5, curvature=96):
     -------
     x, y coordinates of 100 points sampling the leaf midrib
     """
-    return leaf_shape_perez(nb_segment=100, insertion_angle=insertion_angle, l=scurv, curvature=1,
-                            curvature_max=curvature)
+    return leaf_shape_perez(nb_segment=100, insertion_angle=insertion_angle, l=scurv, curvature=curvature)
 
 def wheatI_dornbush(rank=10, rank_j=8, rank_max=10, rank_flag=11):
     """Mini model proposed by Dornbush for parameterising wheat I dataset"""
