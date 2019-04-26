@@ -229,8 +229,7 @@ dico_time_zone = {'Gif_sur_Yvette': "Europe/Paris", 'Le_Pin_aux_Haras': "Europe/
 ########################################
 
 crop_ccptn = "Mesh_for_nplants"
-area_targeted = 1
-nb_rang = 1
+
 
 var_register0 = ["crop_ccptn", "infinity_CARIBU"]
 
@@ -238,50 +237,25 @@ for key, value, in params.iteritems():
   if key in var_register0:
     exec(key+"=value")
 
-
+#default values relative to crop_conception (registered later on before crop_scheme init)
+area_targeted = 1
+nb_rang = 1
+nb_plt_temp = 1
+area_min, area_max = 1, 13
+opt_plt_nb = 10
+nb_plt_utiles = 50
 if crop_ccptn == "classical":
-  nb_plt_temp = 1
-  nb_rang = 1
-  dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
-  crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
   dist_border_x = 0.*100 #inside a rang
   dist_border_y = 0.*100 #rang
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
 elif crop_ccptn == "neo_Darwinkel":
-  area_min, area_max = 1, 13
-  dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
-  opt_plt_nb = 10
-  crop_scheme = adapting_crop_area(densite,area_min, area_max, dist_inter_rang, opt_plt_nb)
   dist_border_x = 0.2*100 #inside a rang
   dist_border_y = 0.15*100 #rang
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-
 elif crop_ccptn == "Darwinkel_original":
-  area = area_targeted
   dist_border_x = 0.15*100 #inside a rang
   dist_border_y = 0.15*100 #rang
-  crop_scheme = design_crop_Darwinkel(area, densite)
-  #dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
-  #dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
-
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 50
   dist_border_x = 0.20*100 #inside a rang
-  dist_border_y = 0.20*100 #rang 
-  crop_scheme = design_crop_mesh_for_nplants(densite, nb_plt_utiles , dist_border_x , dist_border_y)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
-
-
-
-nb_rangs = crop_scheme["nb_rang"]
-nb_plantes = crop_scheme["nplant_peupl"]
-dist_inter_rang = crop_scheme["dist_inter_rang"]
-dist_intra_rang = crop_scheme["dist_intra_rang"]
-dx = crop_scheme["dx"]
-dy = crop_scheme["dy"]
+  dist_border_y = 0.20*100 #rang
 
 genotype_proportion = "random"
 
@@ -1965,6 +1939,7 @@ if crop_ccptn == "classical":
   crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print crop_scheme
+
 elif crop_ccptn == "neo_Darwinkel":
   crop_scheme = adapting_crop_area(densite,area_min, area_max, dist_inter_rang, opt_plt_nb)
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
@@ -1973,8 +1948,6 @@ elif crop_ccptn == "neo_Darwinkel":
 elif crop_ccptn == "Darwinkel_original": 
   area = area_targeted
   crop_scheme = design_crop_Darwinkel(area, densite)
-  #dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
-  #dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
   plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
