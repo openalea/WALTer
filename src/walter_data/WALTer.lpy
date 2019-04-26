@@ -2628,7 +2628,8 @@ Seed:
   
   # Calculates the coordinates of each plant
   maillage, plant_map = plant_disposition(crop_scheme)
-  
+
+  # Buggy, better take the min/max of plant_map
   xmin = -(crop_scheme["dy"]*100)/2
   xmax = (crop_scheme["dy"]*100)/2
   ymin = -(crop_scheme["dx"]*100)/2
@@ -2649,9 +2650,8 @@ Seed:
   print "ymin : ", ymin, "ymax : ", ymax, "ymin_center", ymin_center, "ymax_center", ymax_center
   
   for num_plante in range(1,int(crop_scheme["nplant_peupl"]) + 1):
-    #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
-    x = plant_map[num_plante]["x"] - crop_scheme["map_middle_x"]
-    y = plant_map[num_plante]["y"] - crop_scheme["map_middle_y"]
+    x = plant_map[num_plante]["x"]
+    y = plant_map[num_plante]["y"]
     if genotype_proportion == "random":
       geno = random.choice(crop_genotype)    ## selection geno random
       genotype_map[num_plante] = geno

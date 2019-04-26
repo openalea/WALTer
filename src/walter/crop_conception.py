@@ -114,9 +114,12 @@ def design_crop_Darwinkel(area=1, density=150):
 
 
 # Geographical disposition of all plants on the soil (Sowing)
-def plant_disposition(crop_scheme):
+def plant_disposition(crop_scheme, center_plants=True):
     nb_rang, nb_plante_par_rang, dist_inter_rang, dist_intra_rang = crop_scheme["nb_rang"], crop_scheme[
         "nb_plante_par_rang"], crop_scheme["dist_inter_rang"], crop_scheme["dist_intra_rang"]
+    xmid, ymid = 0, 0
+    if center_plants:
+        xmid, ymid = crop_scheme["map_middle_x"], crop_scheme["map_middle_y"]
     maillage = []
     plant_map = {}
     num_plante = 0
@@ -127,9 +130,8 @@ def plant_disposition(crop_scheme):
         prov = []
         for plant_par_rang in range(int(nb_plante_par_rang)):
             x += (dist_intra_rang * 100)
-            z = 0.
             num_plante += 1
-            plant_map[num_plante] = {"x": x, "y": y}
+            plant_map[num_plante] = {"x": x - xmid, "y": y - ymid}
             prov.append(num_plante)
         maillage.append(prov)
     return maillage, plant_map
