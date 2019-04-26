@@ -27,7 +27,8 @@ def design_crop_classical(nb_plt_temp=1, nb_rang=1, densite=150, dist_inter_rang
                                    crop_scheme["dist_intra_rang"]) * 100) / 2
     return crop_scheme
 
-def design_crop_mesh_for_nplants (densite=150, nb_plt_utiles=1, dist_border_x=0, dist_border_y=0):
+
+def design_crop_mesh_for_nplants(densite=150, nb_plt_utiles=1, dist_border_x=0, dist_border_y=0):
     crop_scheme = {"density": densite}
     nb_rang_utiles = floor(sqrt(nb_plt_utiles))
     nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
@@ -110,6 +111,28 @@ def design_crop_Darwinkel(area=1, density=150):
     crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
     crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
     return crop_scheme
+
+
+# Geographical disposition of all plants on the soil (Sowing)
+def plant_disposition(crop_scheme):
+    nb_rang, nb_plante_par_rang, dist_inter_rang, dist_intra_rang = crop_scheme["nb_rang"], crop_scheme[
+        "nb_plante_par_rang"], crop_scheme["dist_inter_rang"], crop_scheme["dist_intra_rang"]
+    maillage = []
+    plant_map = {}
+    num_plante = 0
+    y = 0
+    for rang in range(int(nb_rang)):
+        x = 0
+        y += (dist_inter_rang * 100)
+        prov = []
+        for plant_par_rang in range(int(nb_plante_par_rang)):
+            x += (dist_intra_rang * 100)
+            z = 0.
+            num_plante += 1
+            plant_map[num_plante] = {"x": x, "y": y}
+            prov.append(num_plante)
+        maillage.append(prov)
+    return maillage, plant_map
 
 
 def crop_conception(crop_ccptn='Mesh_for_n_plants', densite=150, nb_rang=1,
