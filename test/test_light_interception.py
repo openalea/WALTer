@@ -81,15 +81,20 @@ def test_infinite():
 def test_check_light_balance():
     """test if total par intercepted is above or below incident par"""
     p = project.Project(name='light_balance')
-    params = p.csv_parameters('sim_scheme_test.csv')[0]
-    params.update(dict(write_debug_PAR=True, infinity_CARIBU=1))
-    lsys, lstring = p.run(**params)
-    crop_scheme = lsys.context().locals()['crop_scheme']
-    df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
-    control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
-    balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
-    assert all(balance <= 1)
-    p.remove(force=True)
+    try:
+        params = p.csv_parameters('sim_scheme_test.csv')[0]
+        params.update(dict(write_debug_PAR=True, infinity_CARIBU=1))
+        lsys, lstring = p.run(**params)
+        crop_scheme = lsys.context().locals()['crop_scheme']
+        # do we really need debug par dico df ? (simulation time is extremly long !)
+        df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
+        control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
+        balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
+        assert all(balance <= 1)
+    except:
+        raise
+    finally:
+        p.remove(force=True)
 
 
 def get_res_sky(lsys, lstring):

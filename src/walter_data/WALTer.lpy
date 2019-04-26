@@ -104,7 +104,7 @@ CARIBU_state         = "enabled"
 rep                  = 1
 write_debug_PAR = False
 CARIBU_screen_res = 2000
-
+show_caribu_stats = False # print checks small triangle problems / infos for screen_size setting
 caribu_recorder = CaribuRecorder()
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR", "CARIBU_screen_res"]
@@ -2421,7 +2421,8 @@ def EndEach(lstring, lscene):
             raw, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True, screen_size = CARIBU_screen_res)
           # The outputs are in micromolPAR.m-2 for Ei and Ea, and m2 for area
           # TODO: check these outputs are those expected or should be converted
-            caribu_recorder.record(c_scene, raw, show=True)
+            if show_caribu_stats:
+              caribu_recorder.record(c_scene, raw, show=True)
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
