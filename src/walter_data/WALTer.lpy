@@ -1103,55 +1103,6 @@ organ_type = ["Blade", "Internode", "Sheath","Peduncle", "Ear"]
 ############################# DEFINITION DE FONCTION ###############################
 ####################################################################################
 
-# Disposition des plantes sur la parcelle
-def crop_conception(densite, nb_rang, dist_inter_rang, nb_plante_min, nb_plante_max):
-  dx = nb_rang*dist_inter_rang
-  nb_rang_m2 = 1/dist_inter_rang
-  nb_plante_par_rang_m2 = densite/nb_rang_m2
-  dist_intra_rang = 1/nb_plante_par_rang_m2
-  nb_plt_p_rang_min = nb_min_plt/nb_rang
-  nb_plt_p_rang_max = nb_max_plt/nb_rang
-  crop_scheme["dx"],crop_scheme["dist_intra_rang"] = dx, dist_intra_rang
-  resultats = {}
-  if nb_min_plt == nb_max_plt == 1:
-    nb_plante_par_rang = 1
-    nb_rang = 1
-    dx, dy = dist_inter_rang, 1/nb_plante_par_rang_m2
-    nplant_peupl = 1
-    crop_scheme["dy"] = dy
-    crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
-  else:
-    if round(nb_plt_p_rang_max*dist_intra_rang,2)-round(nb_plt_p_rang_min*dist_intra_rang,2) < 0.01:
-      dy = round(nb_plt_p_rang_min*dist_intra_rang,2)
-      nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
-      nplant_peupl = nb_rang * nb_plante_par_rang
-      surface_sol = dx * dy
-      virtual_density = nplant_peupl / surface_sol
-      ecart_de_densite = abs(densite - virtual_density)/densite
-      resultats[ecart_de_densite] = (dx,dy)
-      crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
-    else:
-      for dy in np.arange(round(nb_plt_p_rang_min*dist_intra_rang,2), round(nb_plt_p_rang_max*dist_intra_rang,2), 0.01):
-        nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
-        nplant_peupl = nb_rang * nb_plante_par_rang
-        surface_sol = dx * dy
-        virtual_density = nplant_peupl / surface_sol
-        ecart_de_densite = abs(densite - virtual_density)/densite
-        resultats[ecart_de_densite] = (round(dx,2),round(dy,2))
-    # On recupere la combinaison de dx et dy pour lesquels il y'a le plus faible ecart de densite !
-      dy = round(resultats[min(resultats.keys())][1],2)
-      nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
-      nplant_peupl = nb_rang * nb_plante_par_rang
-      crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
-    crop_scheme["dy"] = dy
-    if min(resultats.keys())*100 > 5:
-      print "WARNING SIGNIFICANT ERROR IN DENSITY PREDICTION"
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  return crop_scheme
-
-
 # Geographical disposition of all plants on the soil (Sowing)
 def plant_disposition(nb_rang, nb_plante_par_rang, dist_inter_rang, dist_intra_rang):
   num_plante = 0
