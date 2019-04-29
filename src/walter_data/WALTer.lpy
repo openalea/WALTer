@@ -39,11 +39,11 @@ from walter import fitness
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
 
-from walter.light import caribu_scene, get_light, get_turtle_light
+from walter.light import CaribuScene, get_light, get_turtle_light
 from walter.light import CaribuRecorder
 
 from walter.crop_conception import design_crop_mesh_for_nplants, design_crop_Darwinkel, adapting_crop_area, \
-  design_crop_classical, plant_disposition
+  design_crop_classical, plant_disposition, domain, central_domain
 
 # CPL
 from collections import defaultdict
@@ -2183,7 +2183,8 @@ def EndEach(lstring, lscene):
           tz = dico_time_zone[location]
           light = get_turtle_light(current_PAR, sky_type=sky_type, turtle_sectors=turtle_sectors, add_sun=bool(add_sun),
                                    curent_date=date_current_day, longitude=longi, latitude=lat, altitude=alt, timezone=tz)
-          c_scene = caribu_scene(lscene, crop_scheme, light)
+          pattern = domain(crop_scheme)
+          c_scene = CaribuScene(scene=lscene, scene_unit="cm", light=light, pattern=pattern)
           res_sky= None
           try:
             raw, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True, screen_size = CARIBU_screen_res)
@@ -2628,22 +2629,18 @@ Seed:
   
   # Calculates the coordinates of each plant
   maillage, plant_map = plant_disposition(crop_scheme)
-
-  # Buggy, better take the min/max of plant_map
-  xmin = -(crop_scheme["dy"]*100)/2
-  xmax = (crop_scheme["dy"]*100)/2
-  ymin = -(crop_scheme["dx"]*100)/2
-  ymax = (crop_scheme["dx"]*100)/2
+  xmin, ymin, xmax, ymax = domain(crop_scheme)
+  xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme)
   
   #  xmin_center = xmin + ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  xmax_center = xmax - ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  ymin_center = ymin + ((crop_scheme["dist_inter_rang"]*100 * nb_rang_border) + y_position_hazard)
   #  ymax_center = ymax - ((crop_scheme["dist_inter_rang"]*100 * nb_rang_border) + y_position_hazard)
   #  
-  xmin_center = xmin + (dist_border_x + x_position_hazard)
-  xmax_center = xmax - (dist_border_x + x_position_hazard)
-  ymin_center = ymin + (dist_border_y + y_position_hazard)
-  ymax_center = ymax - (dist_border_y + y_position_hazard)
+  # xmin_center = xmin + (dist_border_x + x_position_hazard)
+  # xmax_center = xmax - (dist_border_x + x_position_hazard)
+  # ymin_center = ymin + (dist_border_y + y_position_hazard)
+  # ymax_center = ymax - (dist_border_y + y_position_hazard)
   
   
   print "xmin : ", xmin, "xmax : ", xmax, "xmin_center", xmin_center, "xmax_center", xmax_center

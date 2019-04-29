@@ -28,8 +28,8 @@ def design_crop_mesh_for_nplants(densite=150, nb_plt_utiles=1, dist_border_x=0, 
     nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
     d_intra = sqrt(1./densite)
     d_inter = d_intra
-    nb_rang = nb_rang_utiles + ceil((dist_border_x/100.)/d_inter) + ceil((dist_border_x/100.)/d_inter)
-    nb_plant_par_rang = nb_plant_par_rang_utiles + ceil((dist_border_y/100.)/d_intra) + ceil((dist_border_y/100.)/d_intra)
+    nb_rang = nb_rang_utiles + 2 * floor(dist_border_x / d_inter)
+    nb_plant_par_rang = nb_plant_par_rang_utiles + 2 * floor(dist_border_y / d_intra)
     dx = nb_rang*d_inter
     dy = nb_plant_par_rang*d_intra
     nplant_peupl = nb_rang*nb_plant_par_rang
@@ -122,6 +122,25 @@ def plant_disposition(crop_scheme, center_plants=True):
             prov.append(num_plante)
         maillage.append(prov)
     return maillage, plant_map
+
+
+def domain(crop_scheme):
+    """return extreme points (cm) of 2D domain of a walter centered plot"""
+    xmin = -(crop_scheme["dx"] * 100) / 2
+    xmax = (crop_scheme["dx"] * 100) / 2
+    ymin = -(crop_scheme["dy"] * 100) / 2
+    ymax = (crop_scheme["dy"] * 100) / 2
+    return xmin, ymin, xmax, ymax
+
+
+def central_domain(crop_scheme, dist_border_x=0, dist_border_y=0):
+    """return extreme points (cm) of 2D central domain of a walter centered plot"""
+    xmin, ymin, xmax, ymax = domain(crop_scheme)
+    xmin_center = xmin + dist_border_x * 100
+    xmax_center = xmax - dist_border_x * 100
+    ymin_center = ymin + dist_border_y * 100
+    ymax_center = ymax - dist_border_y * 100
+    return xmin_center, ymin_center, xmax_center, ymax_center
 
 
 def crop_conception(crop_ccptn='Mesh_for_n_plants', densite=150, nb_rang=1,

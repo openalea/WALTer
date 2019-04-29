@@ -7,12 +7,21 @@ def test_crop_mesh_for_nplants():
     assert cs['nb_plante_par_rang'] == 2
     assert cs['nplant_peupl'] == 4
     assert cs['dist_inter_rang'] == cs['dist_intra_rang'] == 0.5
+    assert cs['nplant_peupl'] / cs['surface_sol'] == 4
 
     cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=0.5, dist_border_y=0.5)
     assert cs['nb_rang'] == 4
     assert cs['nb_plante_par_rang'] == 4
     assert cs['nplant_peupl'] == 16
     assert cs['dist_inter_rang'] == cs['dist_intra_rang'] == 0.5
+    assert cs['nplant_peupl'] / cs['surface_sol'] == 4
+
+    cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=1, dist_border_y=1)
+    assert cs['nb_rang'] == 6
+    assert cs['nb_plante_par_rang'] == 6
+    assert cs['nplant_peupl'] == 36
+    assert cs['dist_inter_rang'] == cs['dist_intra_rang'] == 0.5
+    assert cs['nplant_peupl'] / cs['surface_sol'] == 4
 
 
 def test_plant_disposition():
@@ -37,3 +46,19 @@ def test_plant_disposition():
     y = [pos['y'] for pos in plant_map.values()]
     assert sum(x) == 0
     assert sum(y) == 0
+
+def test_domain():
+    cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=1, dist_border_x=0, dist_border_y=0)
+    xmin, ymin, xmax, ymax = ccptn.domain(cs)
+    assert xmin == ymin == -25
+    assert xmax == ymax == 25
+
+    cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=0, dist_border_y=0)
+    xmin, ymin, xmax, ymax = ccptn.domain(cs)
+    assert xmin == ymin == -50
+    assert xmax == ymax == 50
+
+    cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=0.5, dist_border_y=0.5)
+    xmin, ymin, xmax, ymax = ccptn.domain(cs)
+    assert xmin == ymin == -100
+    assert xmax == ymax == 100
