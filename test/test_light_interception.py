@@ -81,15 +81,20 @@ def test_infinite():
 def test_check_light_balance():
     """test if total par intercepted is above or below incident par"""
     p = project.Project(name='light_balance')
-    params = p.csv_parameters('sim_scheme_test.csv')[0]
-    params.update(dict(write_debug_PAR=True, infinity_CARIBU=1))
-    lsys, lstring = p.run(**params)
-    crop_scheme = lsys.context().locals()['crop_scheme']
-    df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
-    control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
-    balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
-    assert all(balance <= 1)
-    p.remove(force=True)
+    try:
+        params = p.csv_parameters('sim_scheme_test.csv')[0]
+        params.update(dict(write_debug_PAR=True, infinity_CARIBU=1))
+        lsys, lstring = p.run(**params)
+        crop_scheme = lsys.context().locals()['crop_scheme']
+        # do we really need debug par dico df ? (simulation time is extremly long !)
+        df = pandas.DataFrame(lsys.context().locals()['Debug_PAR_dico_df'])
+        control = df.groupby('Elapsed_time').agg({'Organ_PAR':'sum', 'Inc_PAR':'mean'})
+        balance = control.Organ_PAR / control.Inc_PAR / crop_scheme['surface_sol']
+        assert all(balance <= 1)
+    except:
+        raise
+    finally:
+        p.remove(force=True)
 
 
 def get_res_sky(lsys, lstring):
@@ -125,3 +130,32 @@ def projecion_screen_tuning():
     caribu_recorder = lsys.context().locals()['caribu_recorder']
     df = pandas.DataFrame(caribu_recorder.records_data())
     p.remove(force=True)
+def debug_dico_PAR_per_axis(lsys, lstring, res_sky=None):
+    """generate a dico_par_per_axis like dict for the current time"""
+
+    axis_census = lsys.context().locals()['axis_census']
+    tiller_surface = lsys.context().locals()['tiller_surface']
+    Temperature = lsys.context().locals()['Temperature']
+    dico_PAR_per_axis = {}
+    for num_plt in axis_census.keys():
+        if num_plt not in dico_PAR_per_axis:
+            dico_PAR_per_axis[num_plt] = {}
+        for axis in axis_census[num_plt].keys():
+            dico_PAR_per_axis[num_plt][axis] = 0
+    for id in res_sky['Ei'].keys():
+        new_ = lstring[id]
+        if ((new_.name == "Blade" and new_[0].photosynthetic == True) or
+                (new_.name in ("Sheath", "Internode", "Peduncle")) or
+                (new_.name == "Ear" and new_[0].emerged)):
+            if new_[0].tiller in axis_census[new_[0].num_plante].keys():
+                if tiller_surface[(lstring[id][0].num_plante, lstring[id][0].tiller)] < 0.00001:
+                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller] += 0
+                else:
+                    dico_PAR_per_axis[lstring[id][0].num_plante][lstring[id][0].tiller] += lstring[id][
+                                                                                              0].PAR \
+                                                                                           / Temperature / \
+                                                                                          tiller_surface[(
+                                                                                          lstring[id][0].num_plante,
+                                                                                          lstring[id][0].tiller)]
+    return dico_PAR_per_axis
+
