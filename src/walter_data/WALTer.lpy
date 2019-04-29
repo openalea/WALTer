@@ -89,8 +89,8 @@ scalez = 0.5
 #Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 #Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v2.0"
-WALTer_build = 23112017
+WALTer_version = "v3.0"
+WALTer_build = 29042019
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -4226,9 +4226,9 @@ interpretation:
 #  produce ;(4)lorient@g(Scaled(Vector3(1,1,StL.length),Leaf))
 
 Sheath(StS):
-  my_color = 6
+  my_color = 5
   if StS.photosynthetic == True:
-    my_color = 2
+    my_color = 1
   if StS.visible_length > epsilonL:
     # To represent only the longest blade and thus to avoid nested cylinders
     produce ;(my_color)_(StS.diameter/2)F(StS.visible_length)
@@ -4354,7 +4354,7 @@ Peduncle(StP):
 
 Internode(StI):
   if StI.photosynthetic == True:
-    my_color = 3
+    my_color = 1
   else:
     my_color = 5
   
