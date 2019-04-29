@@ -10,7 +10,7 @@ import re
 _rtol_PAR = 0.02 # windows and linux version of walter lead up to 2 percent PAR output difference
 
 
-def test_same_result():
+def test_same_result(keep_results=False):
     #assert : verify if the same wheat field have the same results for the same chosen parameters.
 
     p = project.Project(name='same') # Create the simulation directory
@@ -41,5 +41,6 @@ def test_same_result():
     except:
         raise
     finally:
-        p.remove(force=True)
+        if not keep_results:
+            p.remove(force=True)
 
