@@ -247,17 +247,17 @@ area_min, area_max = 1, 13
 opt_plt_nb = 10
 nb_plt_utiles = 50
 if crop_ccptn == "classical":
-  dist_border_x = 0.*100 #inside a rang
-  dist_border_y = 0.*100 #rang
+  dist_border_x = 0. #inside a rang
+  dist_border_y = 0. #rang
 elif crop_ccptn == "neo_Darwinkel":
-  dist_border_x = 0.2*100 #inside a rang
-  dist_border_y = 0.15*100 #rang
+  dist_border_x = 0.2 #inside a rang
+  dist_border_y = 0.15 #rang
 elif crop_ccptn == "Darwinkel_original":
-  dist_border_x = 0.15*100 #inside a rang
-  dist_border_y = 0.15*100 #rang
+  dist_border_x = 0.15 #inside a rang
+  dist_border_y = 0.15 #rang
 elif crop_ccptn == "Mesh_for_nplants":
-  dist_border_x = 0.20*100 #inside a rang
-  dist_border_y = 0.20*100 #rang
+  dist_border_x = 0.20 #inside a rang
+  dist_border_y = 0.20 #rang
 
 genotype_proportion = "random"
 
