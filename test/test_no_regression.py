@@ -6,7 +6,6 @@ from walter.data_access import get_data_dir
 from pathlib2 import Path
 import numpy.testing as np
 import re
-from time import sleep
 
 _rtol_PAR = 0.02 # windows and linux version of walter lead up to 2 percent PAR output difference
 
@@ -17,6 +16,7 @@ def _compare_list_of_files(p):
     list_of_file_ref = map(os.path.basename, glob.glob(reference_directory + '*.csv'))  # Listing of the different reference files
     list_of_result = map(os.path.basename, glob.glob(result_directory + '*.csv'))
     np.assert_array_equal(list_of_file_ref, list_of_result) # Check that the 2 lists are equal
+
 
 def _compare_file_content(p, rtol=_rtol_PAR):
     result_directory = str(p.output_path()) + os.sep
@@ -39,6 +39,7 @@ def _compare_file_content(p, rtol=_rtol_PAR):
         else:
             print(' \n The ' + my_file + ' file is non-existent ')
 
+
 def test_same_result(debug=False):
     #assert : verify if the same wheat field have the same results for the same chosen parameters.
 
@@ -47,17 +48,8 @@ def test_same_result(debug=False):
         directory = project.walter_data()
         params = p.csv_parameters(str(directory/'sim_scheme_ref.csv'))[0] # recovery of parameters
         p.run(**params)
-        try:
-            _compare_list_of_files(p)
-        except AssertionError: #on windows the test is executed before walter had time to write results
-            sleep(5)
-            _compare_list_of_files(p)
-
-        try:
-            _compare_file_content(p)
-        except AssertionError:
-            sleep(5)
-            _compare_file_content(p)
+        _compare_list_of_files(p)
+        _compare_file_content(p)
     except:
         raise
     finally:
