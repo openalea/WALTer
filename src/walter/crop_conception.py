@@ -19,12 +19,6 @@ def design_crop_classical(nb_plt_temp=1, nb_rang=1, densite=150, dist_inter_rang
     crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
     crop_scheme["dist_intra_rang"] = dist_intra
     crop_scheme["real_density"] = nplant_peupl / crop_scheme["surface_sol"]
-    crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (
-    crop_scheme["dist_inter_rang"]) * 100) + (
-                                   crop_scheme["dist_inter_rang"]) * 100) / 2
-    crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (
-    crop_scheme["dist_intra_rang"]) * 100) + (
-                                   crop_scheme["dist_intra_rang"]) * 100) / 2
     return crop_scheme
 
 
@@ -49,8 +43,6 @@ def design_crop_mesh_for_nplants(densite=150, nb_plt_utiles=1, dist_border_x=0, 
     crop_scheme["nplant_peupl"] = int(nplant_peupl)
     crop_scheme["real_density"] = nplant_peupl/crop_scheme["area"]
     crop_scheme["surface_sol"] = dx*dy
-    crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-    crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
     return crop_scheme
 
 
@@ -86,8 +78,6 @@ def adapting_crop_area(density=150, area_min=1, area_max=13, dist_inter=0.135, o
     crop_scheme["dist_intra_rang"] = dist_intra
     crop_scheme["nplant_peupl"] = nplant_peupl
     crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
-    crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-    crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
     return crop_scheme
 
 
@@ -108,8 +98,6 @@ def design_crop_Darwinkel(area=1, density=150):
     crop_scheme["nplant_peupl"] = int(nplant_peupl)
     crop_scheme["real_density"] = nplant_peupl/area
     crop_scheme["surface_sol"] = dx*dy
-    crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-    crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
     return crop_scheme
 
 
@@ -119,17 +107,16 @@ def plant_disposition(crop_scheme, center_plants=True):
         "nb_plante_par_rang"], crop_scheme["dist_inter_rang"], crop_scheme["dist_intra_rang"]
     xmid, ymid = 0, 0
     if center_plants:
-        xmid, ymid = crop_scheme["map_middle_x"], crop_scheme["map_middle_y"]
+        xmid = (nb_plante_par_rang - 1) * dist_intra_rang * 100 / 2
+        ymid = (nb_rang - 1) * dist_inter_rang * 100 / 2
     maillage = []
     plant_map = {}
     num_plante = 0
-    y = 0
     for rang in range(int(nb_rang)):
-        x = 0
-        y += (dist_inter_rang * 100)
+        y = dist_inter_rang * rang * 100
         prov = []
         for plant_par_rang in range(int(nb_plante_par_rang)):
-            x += (dist_intra_rang * 100)
+            x = dist_intra_rang * plant_par_rang * 100
             num_plante += 1
             plant_map[num_plante] = {"x": x - xmid, "y": y - ymid}
             prov.append(num_plante)
