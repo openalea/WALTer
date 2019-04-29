@@ -139,8 +139,8 @@ def central_domain(crop_scheme, dist_border_x=0, dist_border_y=0):
     xmin, ymin, xmax, ymax = domain(crop_scheme)
     d_intra, d_inter = crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"]
     # reproduce the same rule as design_crop_mesh_for_nplants
-    dbx =  d_intra * ceil(dist_border_x / d_intra)
-    dby = d_intra * ceil(dist_border_y / d_inter)
+    dbx = d_intra * ceil(dist_border_x / d_intra)
+    dby = d_inter * ceil(dist_border_y / d_inter)
     xmin_center = xmin + dbx * 100
     xmax_center = xmax - dbx * 100
     ymin_center = ymin + dby * 100
@@ -148,6 +148,7 @@ def central_domain(crop_scheme, dist_border_x=0, dist_border_y=0):
     return xmin_center, ymin_center, xmax_center, ymax_center
 
 
+# not used yet : common frontend to crop design functions
 def crop_conception(crop_ccptn='Mesh_for_n_plants', densite=150, nb_rang=1,
                     dist_inter_rang=.135, nb_plt_utiles=1, dist_border_x=0.,
                     dist_border_y=0, area_targeted=1, area_min=1, area_max=13,

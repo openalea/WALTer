@@ -87,7 +87,7 @@ def test_central_domain():
     assert xmin == ymin == -50
     assert xmax == ymax == 50
 
-    # dist_border > 0 : trigers creation of a border
+    # dist_border > 0 : triggers creation of a border
     dist_border_x = 1e-6
     dist_border_y = 1e-6
     cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
@@ -95,7 +95,7 @@ def test_central_domain():
     assert xmin == ymin == -50
     assert xmax == ymax == 50
 
-    # central zone still arround the four central plants if border increases
+    # central zone still around the four central plants if border increases
     dist_border_x = 1
     dist_border_y = 1
     cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
