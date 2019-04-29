@@ -76,20 +76,3 @@ class CaribuRecorder(object):
         return dict(zip(('resolution', 'ldiag', 'pixel_per_cm', 'pixel_per_triangle', 'confidence'),
                         (resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence)))
 
-
-def caribu_scene(lscene, crop_scheme, current_PAR):
-    """Create a caribu scene from walter lscene
-
-    Args:
-        lscene: walter scene (units: cm)
-        crop_scheme:
-        current_PAR: incident light (micromolPAR.m-2)
-        nb_azimuth:
-        nb_zenith:
-
-    Returns:
-
-    """
-    pattern = scene_pattern(crop_scheme)
-    return CaribuScene(scene=lscene, scene_unit="cm", light=current_PAR,
-                       pattern=pattern)
