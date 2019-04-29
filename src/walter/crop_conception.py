@@ -28,10 +28,11 @@ def design_crop_mesh_for_nplants(densite=150, nb_plt_utiles=1, dist_border_x=0, 
     nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
     d_intra = sqrt(1./densite)
     d_inter = d_intra
-    nb_rang = nb_rang_utiles + 2 * floor(dist_border_x / d_inter)
-    nb_plant_par_rang = nb_plant_par_rang_utiles + 2 * floor(dist_border_y / d_intra)
-    dx = nb_rang*d_inter
-    dy = nb_plant_par_rang*d_intra
+    # choosing dist_border > 0 triggers creation of a border
+    nb_rang = nb_rang_utiles + 2 * ceil(dist_border_x / d_inter)
+    nb_plant_par_rang = nb_plant_par_rang_utiles + 2 * ceil(dist_border_y / d_intra)
+    dy = nb_rang*d_inter
+    dx = nb_plant_par_rang*d_intra
     nplant_peupl = nb_rang*nb_plant_par_rang
     crop_scheme["area"] = dx*dy
     crop_scheme["nb_rang"] = int(nb_rang)
@@ -86,8 +87,8 @@ def design_crop_Darwinkel(area=1, density=150):
     nb_rang = floor(sqrt(area * density))
     nb_plant_par_rang = ceil(sqrt(area * density))
     d_intra = sqrt(area/(nb_rang*nb_plant_par_rang))
-    dx = nb_rang*d_intra
-    dy = nb_plant_par_rang*d_intra
+    dy = nb_rang*d_intra
+    dx = nb_plant_par_rang*d_intra
     nplant_peupl = nb_rang*nb_plant_par_rang
     crop_scheme["nb_rang"] = int(nb_rang)
     crop_scheme["nb_plante_par_rang"] = int(nb_plant_par_rang)
@@ -136,10 +137,14 @@ def domain(crop_scheme):
 def central_domain(crop_scheme, dist_border_x=0, dist_border_y=0):
     """return extreme points (cm) of 2D central domain of a walter centered plot"""
     xmin, ymin, xmax, ymax = domain(crop_scheme)
-    xmin_center = xmin + dist_border_x * 100
-    xmax_center = xmax - dist_border_x * 100
-    ymin_center = ymin + dist_border_y * 100
-    ymax_center = ymax - dist_border_y * 100
+    d_intra, d_inter = crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"]
+    # reproduce the same rule as design_crop_mesh_for_nplants
+    dbx =  d_intra * ceil(dist_border_x / d_intra)
+    dby = d_intra * ceil(dist_border_y / d_inter)
+    xmin_center = xmin + dbx * 100
+    xmax_center = xmax - dbx * 100
+    ymin_center = ymin + dby * 100
+    ymax_center = ymax - dby * 100
     return xmin_center, ymin_center, xmax_center, ymax_center
 
 
