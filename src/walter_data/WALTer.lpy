@@ -444,10 +444,10 @@ for geno in crop_genotype:
 # genotypic parameters are described by python dictionnaries in which the value is associated with the name of the genotype
 
 # leaf geometry, with control of inclination at meshing
-leaf_nb_segments=10
+leaf_nb_segments = 7
 
-scurv_Maxwell = 0.5
-curvature_Maxwell = 0.4
+scurv_Maxwell = 0.75
+curvature_Maxwell = 30
 
 var_register_leaf = ["leaf_nb_segments"]
 
@@ -837,18 +837,18 @@ Delta_flsp = 100 #Thermal time delay between the senescence of the flag blade an
 
 
 # Plant geometry
-Phi_zen_B_Maxwell = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Lely = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Soissons = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Renan = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Gigant_Maxwell = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Darwinkel_Maxwell = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Caphorn = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_Apache = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_A208 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_A210 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_F236 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
-Phi_zen_B_A398 = 40        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Maxwell = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Lely = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Soissons = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Renan = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Gigant_Maxwell = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Darwinkel_Maxwell = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Caphorn = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Apache = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A208 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A210 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_F236 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A398 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
 
 Phi_azi_B = 185       # Angle between the azimuth of two consecutive blades | old name : bl_azi_shift
 Phi_zen_T = 0         # Angle between the zenith of two consecutive tillers  | old name : till_zen_shift
