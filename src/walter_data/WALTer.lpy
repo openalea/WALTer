@@ -3,16 +3,14 @@
 ### Importation de libraries
 from __future__ import division
 import random
-from math import sqrt, exp, pi, floor, ceil, asin, acos, cos, sin, tan, log
 from openalea.plantgl.all import *
-import openalea.plantgl.all as pgl
 import pandas as pd
 import numpy as np
 
 import sys
 import os
-
-
+from math import sqrt, exp, pi, floor, ceil, asin, acos, cos, sin, tan, log
+from walter.leaf_shape import walter_leaf, walter_leaf_mesh, leaf_area, form_factor
 
 pj = os.path.join
 data_dir = os.getcwd()
@@ -46,7 +44,6 @@ from walter.crop_conception import design_crop_mesh_for_nplants, design_crop_Dar
   design_crop_classical, plant_disposition, domain, central_domain
 
 # CPL
-from collections import defaultdict
 
 # Date
 
@@ -89,14 +86,14 @@ scalez = 0.5
 #########################
 
 #Importation des figures creees dans des scenes
-scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
-scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
+#scene_house  =  Scene(pj(inputdir,'organ_shapes', 'Pentagon_up.bgeom'))
+#scene_square =  Scene(pj(inputdir,'organ_shapes','Square_up_volume.bgeom'))
 
-Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
-Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
+#Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
+#Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v2.0"
-WALTer_build = 23112017
+WALTer_version = "v3.0"
+WALTer_build = 29042019
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -107,6 +104,10 @@ CARIBU_state         = "enabled"
 rep                  = 1
 write_debug_PAR = False
 CARIBU_screen_res = 2000
+show_caribu_stats = False # print checks small triangle problems / infos for screen_size setting
+
+# minimal length for representing visible objects (1mm). 1e-3 apparently prevent generation of small leaves (pgl warning)
+epsilonL = 1e-1
 
 caribu_recorder = CaribuRecorder()
 
@@ -308,6 +309,31 @@ for geno in crop_genotype:
 ####################
 
 # genotypic parameters are described by python dictionnaries in which the value is associated with the name of the genotype
+
+# leaf geometry, with control of inclination at meshing
+leaf_nb_segments = 7
+
+scurv_Maxwell = 0.75
+curvature_Maxwell = 30
+
+var_register_leaf = ["leaf_nb_segments"]
+
+for geno in crop_genotype:
+  var_register_leaf.append("scurv_"+geno)
+  var_register_leaf.append("curvature_"+geno)
+
+for key, value, in params.iteritems():
+  if key in var_register_leaf:
+    exec(key+"=value")
+
+
+scurv = {"Maxwell" : scurv_Maxwell} 
+curvature = {"Maxwell" : curvature_Maxwell}
+
+for geno in crop_genotype:
+  scurv[geno] = eval("scurv_"+geno)
+  curvature[geno] = eval("curvature_"+geno)
+
 
 ### SIRIUS PARAMETERS ###
 
@@ -678,26 +704,26 @@ Delta_flsp = 100 #Thermal time delay between the senescence of the flag blade an
 
 
 # Plant geometry
-Phi_zen_B_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Lely = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Soissons = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Renan = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Gigant_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Darwinkel_Maxwell = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Caphorn = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_Apache = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_A208 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_A210 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_F236 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
-Phi_zen_B_A398 = 40        # Angle between blade inclination and Y axis | old name : bl_incl_shift
+Phi_zen_B_Maxwell = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Lely = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Soissons = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Renan = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Gigant_Maxwell = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Darwinkel_Maxwell = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Caphorn = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_Apache = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A208 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A210 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_F236 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
+Phi_zen_B_A398 = 10        # Angle between blade inclination and the stem | old name : bl_incl_shift
 
 Phi_azi_B = 185       # Angle between the azimuth of two consecutive blades | old name : bl_azi_shift
 Phi_zen_T = 0         # Angle between the zenith of two consecutive tillers  | old name : till_zen_shift
 Phi_azi_T = 40        # Angle between the azimuth of two consecutive tillers | old name : till_azi_shift
 
-Phi_zen_E = 0         # Angle between ear inclination and Y axis | old name : ear_zen_shift
+Phi_zen_E = 0         # Angle between ear inclination and the stem | old name : ear_zen_shift
 Phi_azi_S = 0         # Angle between seed azimuth and X axis | old name : seed_azi_shift
-Phi_zen_S = 0         # Angle between seed inclination and Y axis | old name : seed_zen_shift
+Phi_zen_S = 0         # Angle between seed inclination and the stem | old name : seed_zen_shift
 
 # Hazard parameters
 
@@ -845,7 +871,7 @@ for geno in crop_genotype:
 #######################
 
 sky_type    = "soc" # Parameter for type of sky : 'soc' (overcast sky) or 'clear_sky'
-turtle_sectors = 46 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 5, 16 or 46
+turtle_sectors = 16 # Parameter for the get_turtle_light function (number of sectors in the sky). Choices are : 1, 6, 16 or 46
 add_sun = 0 # trigger the addition of one sun position per hour in the light sources
 
 var_registerTurtleSky = ["sky_type", "turtle_sectors", "add_sun"]
@@ -955,7 +981,7 @@ global Apex_R_dico_df
 Apex_R_dico_df = {"Elapsed_time" :[], "DOY" : [], "Temperature" :[], "Temp_cum" :[], "Sum_temp" :[], "Num_plante":[], "Genotype" :[], "Num_cohorte":[], "Ln_final":[], "Num_talle" :[], "Date_epiaison" :[], "Epi_DOY" :[], "Date_de_flo" :[], "Mont_flag" :[], "Mont_DOY":[], "Flo_flag" :[], "Flo_DOY" :[], "Death_flag" :[], "Date_de_maturite" : [], "Mat_DOY" : []}
 
 global Blade_df
-Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[]}
+Blade_dico_df = {"Elapsed_time" :[], "Temp_cum" :[], "Temperature" :[], "Num_plante" :[], "Genotype" :[], "Num_talle" :[], "Num_cohorte" :[], "Num_rang" :[], "Blade_sumtemp" :[], "Blade_width" :[], "Blade_length" :[], "Blade_visible_length" :[], "Blade_final_length" :[], "Blade_visible_surface" :[], "Blade_surface" :[], "Blade_PAR" :[], "Senesc_flag" :[], "Photosynthetic" :[], "Form_factor" : []}
 
 global Internode_dico_df
 Internode_dico_df = {"Elapsed_time" :[],  "Temp_cum" :[],  "Temperature" :[],  "Num_plante" :[],  "Genotype" :[],  "Num_talle" :[], "Num_cohorte":[], "Num_rang" :[], "Internode_length" :[],  "Internode_final_length" :[], "Internode_surface" :[], "Internode_PAR" : [], "Photosynthetic" :[]}
@@ -1430,18 +1456,6 @@ def sheath_length(bld_lgt, a_sh_length, b_sh_length):
 # Calculating blade maximal width (from data of blade final length)
 def blade_width(bld_lgt, a_bl_width, b_bl_width):
   return (a_bl_width * bld_lgt) + b_bl_width
-
-#CALCULATION OF THE VISIBLE SURFACE OF A BLADE
-def visible_area(length_from_the_top, width_max, total_length):
-  if length_from_the_top <= total_length/2:
-    current_width = (width_max * length_from_the_top)/total_length/2
-    vis_area = (current_width * length_from_the_top) / 2
-  elif length_from_the_top > total_length/2:
-    triangle_area = width_max * total_length/4
-    rectangle_area = (width_max * (length_from_the_top - total_length/2))
-    vis_area = triangle_area + rectangle_area
-  return vis_area
-
 
 ### INTERNODE FINAL LENGTH ###
 
@@ -2063,7 +2077,8 @@ def EndEach(lstring, lscene):
         surface_plante[org[0].num_plante] += org[0].area
         
         # New method for the computation of GAI (only the visible parts of the leaves)
-        tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
+        if org[0].visible_length > epsilonL:
+          tiller_surface[(org[0].num_plante,org[0].tiller)] += org[0].visible_area
         
       if org.name == "Internode":
         if org[0].photosynthetic == True:
@@ -2190,7 +2205,8 @@ def EndEach(lstring, lscene):
             raw, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True, screen_size = CARIBU_screen_res)
           # The outputs are in micromolPAR.m-2 for Ei and Ea, and m2 for area
           # TODO: check these outputs are those expected or should be converted
-            caribu_recorder.record(c_scene, raw, show=True)
+            if show_caribu_stats:
+              caribu_recorder.record(c_scene, raw, show=True)
           except Exception as exception :
             #~ if exception.__class__.__name__ == "CaribuRunError"
             if type(exception).__name__ == "CaribuRunError":
@@ -2199,7 +2215,7 @@ def EndEach(lstring, lscene):
               error_default_file = open(pj(out_dir,folder_name, "error_default.txt"), "w")
             
             sys.stderr.write(str(exception))
-            exit(1)
+            sys.exit(1)
 
 #          except Exception:
 #            print '#'*80
@@ -2270,10 +2286,11 @@ def EndEach(lstring, lscene):
                     Blade_dico_df['Blade_visible_length'].append(lstring[id][0].visible_length)
                     Blade_dico_df['Blade_final_length'].append(lstring[id][0].final_length)
                     Blade_dico_df['Blade_visible_surface'].append(lstring[id][0].visible_area)
-                    Blade_dico_df['Blade_surface'].append((lstring[id][0].width*lstring[id][0].length*0.75))
+                    Blade_dico_df['Blade_surface'].append(lstring[id][0].area)
                     Blade_dico_df['Blade_PAR'].append(lstring[id][0].PAR)
                     Blade_dico_df['Senesc_flag'].append(lstring[id][0].senesc_flag)
                     Blade_dico_df['Photosynthetic'].append(lstring[id][0].photosynthetic)
+                    Blade_dico_df['Form_factor'].append(lstring[id][0].form_factor)
 
             par_per_axe = pd.DataFrame(PAR_per_organ).groupby(['Num_plante', 'Num_talle']).agg({'Organ_PAR': 'sum','Organ_surface': 'sum', 'tiller_surface':'mean'})
             for (nump, numt), row in par_per_axe.iterrows():
@@ -2408,7 +2425,7 @@ def End(lstring):
 
   if write_output_file["Blade"] == True:
     _Blade_df = pd.DataFrame(Blade_dico_df)
-    dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic"]
+    dF_labels = ["Elapsed_time", "Temp_cum" , "Temperature", "Num_plante", "Genotype", "Num_talle", "Num_cohorte", "Num_rang", "Blade_sumtemp", "Blade_width", "Blade_length", "Blade_visible_length","Blade_final_length", "Blade_visible_surface", "Blade_surface", "Blade_PAR", "Senesc_flag" , "Photosynthetic", "Form_factor"]
     Blade_df = _Blade_df.reindex(dF_labels, axis="columns", copy=False)
     Blade_df.to_csv(pj(out_dir,folder_name, "Blade.csv"), sep="\t", header=True, index=False)
 
@@ -2482,6 +2499,7 @@ def End(lstring):
                        "CARIBU_state" + "\t" + "All" + "\t" + "%s" % CARIBU_state + "\n" +
                        "SIRIUS_state" + "\t" + "All" + "\t" + "%s" % SIRIUS_state + "\n" +
                        "sky_type" + "\t" + "All" + "\t" + "%s" % sky_type + "\n" +
+                       "add_sun" + "\t" + "All" + "\t" + "%s" % add_sun + "\n" +
                        "turtle_sectors" + "\t" + "All" + "\t" + "%s" % turtle_sectors + "\n" +
                        "infinity_GAIp"  + "\t" + "All" + "\t" + "%s" % infinity_GAIp + "\n" +
                        "infinity_CARIBU" + "\t" + "All" + "\t" + "%s" % infinity_CARIBU + "\n" +
@@ -2538,7 +2556,8 @@ def End(lstring):
                        "blade_incl_hazard"  + "\t" + "All" + "\t" + "%s" % blade_incl_hazard + "\n" +
                        "blade_azi_hazard"  + "\t" + "All" + "\t" + "%s" % blade_azi_hazard + "\n" +
                        "till_zen_hazard"  + "\t" + "All" + "\t" + "%s" % till_zen_hazard + "\n" +
-                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" + 
+                       "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" +
+                       "leaf_nb_segments"  + "\t" + "All" + "\t" + "%s" % leaf_nb_segments + "\n" +
                        "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n")
   for geno in crop_genotype:
     fichier_params.write("Phl" + "\t" + "%s" % geno + "\t" + "%s" % Phl[geno] + "\n" +
@@ -2586,6 +2605,8 @@ def End(lstring):
                          "P_T" + "\t" + "%s" %  geno  + "\t" + "%s" % P_T[geno] + "\n" +
                          "Param_PlHeight" + "\t" + "%s" %  geno  + "\t" + "%s" % Param_PlHeight[geno] + "\n" + 
                          "Phi_zen_B" + "\t" + "%s" %  geno  + "\t" + "%s" % Phi_zen_B[geno] + "\n"+
+                         "Scurv" + "\t" + "%s" %  geno  + "\t" + "%s" % scurv[geno] + "\n"+
+                         "Curvature" + "\t" + "%s" %  geno  + "\t" + "%s" % curvature[geno] + "\n"+
                          "Param_Ln_final" + "\t" + "%s" %  geno  + "\t" + "%s" % param_Ln_final[geno] + "\n")
   fichier_params.close()
   print "Au revoir"
@@ -3666,6 +3687,16 @@ Leaf(StL):
         
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
         
+        #Ajout de la forme de feuille
+        ln_final = ceil(param_Ln_final[StL.geno])
+        if dico_stades[StL.num_plante][StL.tiller]["Ln_final"] != "undefined":
+          ln_final = dico_stades[StL.num_plante][StL.tiller]["Ln_final"]
+        rank_j = (ln_final - N_I_el[StL.geno]) + 1
+        rank_max = ln_final - N_B_r[StL.geno]
+        rank_flag = ln_final
+        StBl.leaf_shape = walter_leaf(nb_segment=leaf_nb_segments, rank=StL.n, rank_j=rank_j, rank_max=rank_max,
+                                      rank_flag=rank_flag, scurv=scurv[StL.geno], curvature=curvature[StL.geno])
+        StBl.form_factor = form_factor(StBl.leaf_shape)
         #Ajout du point de coupe pour repr�senter la s�nescence des limbes
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
         produce \(StL.azimuth)Sheath(StS)[CutPointBlade(StCPBl)Blade(StBl)]
@@ -3724,9 +3755,9 @@ Blade(StBl):
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][0] = True
             dico_stades[StBl.num_plante][StBl.tiller]["Senescence_flag_leaf"][1] = Tempcum
     
-    StBl.area = (StBl.width * StBl.length * 0.75)
-    StBl.visible_length = (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n]) #TODO a optimiser par incr�mentation
-    StBl.visible_area = visible_area(StBl.visible_length, StBl.width, StBl.final_length) #TODO a optimiser par incr�mentation
+    StBl.visible_length = min(StBl.final_length, (StBl.length + current_sheath_length[StBl.num_plante][StBl.tiller][StBl.n]) - (Sh_max[StBl.num_plante][StBl.tiller][StBl.n])) #TODO a optimiser par incr�mentation
+    StBl.area = leaf_area(StBl.leaf_shape, StBl.length, StBl.final_length, StBl.width, StBl.form_factor)
+    StBl.visible_area = leaf_area(StBl.leaf_shape, StBl.visible_length, StBl.final_length, StBl.width, StBl.form_factor) #TODO a optimiser par incr�mentation
     
     produce Blade(StBl)
 
@@ -3963,18 +3994,19 @@ interpretation:
 #  produce ;(4)lorient@g(Scaled(Vector3(1,1,StL.length),Leaf))
 
 Sheath(StS):
-  my_color = 6
+  my_color = 5
   if StS.photosynthetic == True:
-    my_color = 2
-  if StS.visible_length > 1e-6:
+    my_color = 1
+  if StS.visible_length > epsilonL:
     # To represent only the longest blade and thus to avoid nested cylinders
     produce ;(my_color)_(StS.diameter/2)F(StS.visible_length)
 
 
 
 Blade(StBl):
-  if StBl.visible_length > 1e-6:
+  if StBl.visible_length > epsilonL:
     if StBl.num_plante in plant_census: # for color between centyre and border plant
+      couleur = 1
       if StBl.n <=2 and StBl.tiller == (1,): #Les deux premi�res feuilles tester sur la taille des gaines
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno): # no inclinaison avant ligulation
           StBl.incl = 1
@@ -3982,32 +4014,27 @@ Blade(StBl):
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
           width = StBl.width
-        produce ;(1)+(StBl.incl)@g(Scaled(Vector3(width,0.25,StBl.visible_length),Blade_geo))
       else:
         if axis_census[StBl.num_plante].has_key(StBl.tiller):
           #print StBl.num_plante, StBl.tiller, axis_census[StBl.num_plante][StBl.tiller]["Stop_growth_flag"]
           if axis_census[StBl.num_plante][StBl.tiller]["Stop_growth_flag"] == True:
             couleur = 11
-          else:
-            couleur = 1
-        else:
-          couleur = 1
         #Si le limbe n'a pas fini de sortir de la grande gaine
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
           StBl.incl = 1
           if StBl.sumtemp < ED_B * phyll_adjust(StBl.geno):
-            produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno],0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]
           else:
-            produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno]-0.05,0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]-0.05
         # Si la ligule du limbe est apparente
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
+          width = StBl.width
           if StBl.photosynthetic == False:
-            produce ;(5)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
-          else:
-            produce ;(couleur)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
+            couleur = 5
     else:
       # Pour les plantes de bordures
+      couleur = 4
       if StBl.n <=2 and StBl.tiller == (1,): #Les deux premi�res feuilles tester sur la taille des gaines
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
           StBl.incl = 1
@@ -4015,23 +4042,22 @@ Blade(StBl):
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
           width = StBl.width
-        produce ;(4)+(StBl.incl)@g(Scaled(Vector3(width,0.25,StBl.visible_length),Blade_geo))
       else:
         #Si le limbe n'a pas fini de sortir de la grande gaine
         if StBl.sumtemp < (ED_B + ED_S) * phyll_adjust(StBl.geno):
           StBl.incl = 1
           if StBl.sumtemp < ED_B * phyll_adjust(StBl.geno):
-            produce ;(4)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno],0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]
           else:
-            produce ;(4)+(StBl.incl)@g(Scaled(Vector3(d_S[StBl.geno]-0.05,0.25,StBl.visible_length),Blade_geo))
+            width = d_S[StBl.geno]-0.05
         # Si la ligule du limbe est apparente
         else:
           StBl.incl = hazard_dict_organ[StBl.num_plante][StBl.tiller][StBl.n]["blade_inclination"]
+          width = StBl.width
           if StBl.photosynthetic == False:
-            produce ;(5)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
-          else:
-            produce ;(4)+(StBl.incl)@g(Scaled(Vector3(StBl.width,0.25,StBl.visible_length),Blade_geo))
-
+            couleur = 5
+    mesh = walter_leaf_mesh(StBl.leaf_shape, StBl.final_length, width, StBl.visible_length, StBl.incl)
+    produce ;(couleur) @g(mesh)
 
 #Blade(StBl):
 #  if StBl.n <=2:
@@ -4082,25 +4108,25 @@ Ear(StE):
       ear_color = 6
     else:
       ear_color = 7
-  if StE.visible_length > 1e-6:
+  if StE.visible_length > epsilonL:
     produce ;(ear_color)&(StE.zenith)_(StE.diameter/2)F(StE.visible_length)
 
 Peduncle(StP):
   color = 5
   if StP.photosynthetic == True:
     color = 7
-  if StP.visible_length > 1e-6:
+  if StP.visible_length > epsilonL:
     produce ;(color)_(StP.diameter/2)F(StP.visible_length)
     
 
 
 Internode(StI):
   if StI.photosynthetic == True:
-    my_color = 3
+    my_color = 1
   else:
     my_color = 5
   
-  if StI.visible_length > 1e-6:
+  if StI.visible_length > epsilonL:
     produce ;(my_color)_(StI.diameter/2)F(StI.visible_length)
 
 
