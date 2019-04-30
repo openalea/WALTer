@@ -2651,7 +2651,7 @@ Seed:
   # Calculates the coordinates of each plant
   maillage, plant_map = plant_disposition(crop_scheme)
   xmin, ymin, xmax, ymax = domain(crop_scheme)
-  xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme)
+  xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme, dist_border_x, dist_border_y)
   
   #  xmin_center = xmin + ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  xmax_center = xmax - ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
