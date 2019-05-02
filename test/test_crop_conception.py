@@ -118,3 +118,12 @@ def test_central_and_border_plants():
     dist_border_y = 0.2
     plant_census, border_plants = ccptn.central_and_border_plants(cs, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
     assert plant_census == border_plants
+
+
+def test_neighbour():
+    cs = ccptn.design_crop_mesh_for_nplants(densite=4, nb_plt_utiles=4, dist_border_x=0, dist_border_y=0)
+    maillage, plant_map = ccptn.plant_disposition(cs)
+    nb_voisins, dico_voisins = ccptn.set_neighbour(maillage, cs, 0.5)
+    assert nb_voisins[0] == 5
+    for p in dico_voisins:
+        assert len(dico_voisins[p]) == 5
