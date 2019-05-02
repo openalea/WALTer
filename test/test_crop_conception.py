@@ -102,3 +102,19 @@ def test_central_domain():
     xmin, ymin, xmax, ymax = ccptn.central_domain(cs, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
     assert xmin == ymin == -50
     assert xmax == ymax == 50
+
+
+def test_central_and_border_plants():
+    cs = ccptn.design_crop_mesh_for_nplants(nb_plt_utiles=50, dist_border_x=0.2, dist_border_y=0.2)
+    plant_census, border_plants = ccptn.central_and_border_plants(cs, dist_border_x=0.2, dist_border_y=0.2)
+    _, plant_map = ccptn.plant_disposition(cs)
+    assert len(plant_map) == 182
+    assert len(plant_census) == 56
+    assert len(border_plants) == 182 - 56
+
+    # all plant in border case
+    cs = ccptn.design_crop_classical()
+    dist_border_x = 0.2
+    dist_border_y = 0.2
+    plant_census, border_plants = ccptn.central_and_border_plants(cs, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
+    assert plant_census == border_plants

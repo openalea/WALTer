@@ -41,7 +41,7 @@ from walter.light import CaribuScene, get_light, get_turtle_light
 from walter.light import CaribuRecorder
 
 from walter.crop_conception import design_crop_mesh_for_nplants, design_crop_Darwinkel, adapting_crop_area, \
-  design_crop_classical, plant_disposition, domain, central_domain
+  design_crop_classical, plant_disposition, domain, central_domain, central_and_border_plants
 
 # CPL
 
@@ -1024,6 +1024,7 @@ dead_sheath_length            = {}
 current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomere
 dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "portee" du voisinage
 maillage                      = []              # Tableau representant la disposition des individus en nombre de plante
+plant_census                  = []
 border_plants                 = []
 surface_sol                   = {}              # Dico regroupant la surface de sol inherente a chaque individu
 GAI_prox                      = {}              # Dico regroupant le GAI d'un sous-peuplement constitue d'une plante cible ainsi que de ses voisins
@@ -1925,27 +1926,23 @@ for geno in crop_genotype:
 crop_scheme = design_crop_classical()
 if crop_ccptn == "classical":
   crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print crop_scheme
 
 elif crop_ccptn == "neo_Darwinkel":
   crop_scheme = adapting_crop_area(densite,area_min, area_max, dist_inter_rang, opt_plt_nb)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print crop_scheme
 
 elif crop_ccptn == "Darwinkel_original": 
   area = area_targeted
   crop_scheme = design_crop_Darwinkel(area, densite)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
   crop_scheme = design_crop_mesh_for_nplants(densite, nb_plt_utiles , dist_border_x , dist_border_y)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 
-
+plant_census, border_plants = central_and_border_plants(crop_scheme, dist_border_x, dist_border_y)
 nb_rangs = crop_scheme["nb_rang"] #RESTE !
 nb_plantes = crop_scheme["nplant_peupl"]
 dist_inter_rang = crop_scheme["dist_inter_rang"]
@@ -2679,13 +2676,7 @@ Seed:
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[genotype_map[num_plante]]["mean"],Dse[genotype_map[num_plante]]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
-    
-    #Determining which plant is in the border, which plant is not
-    if positions[num_plante]["x"] <= xmin_center or positions[num_plante]["x"] >= xmax_center:
-      border_plants.append(num_plante)
-    if num_plante not in border_plants:
-      if positions[num_plante]["y"] <= ymin_center or positions[num_plante]["y"] >= ymax_center:
-        border_plants.append(num_plante)
+
     
     #Dictionnary initialisation
     
@@ -2781,9 +2772,7 @@ Seed:
   
   print "border plants : ", border_plants
   
-  if border_plants != plant_census: #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
-    for brd_plt in border_plants:
-      plant_census.remove(brd_plt)
+  #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
   print "plant census 2 : ",plant_census
   crop_scheme["nb_useful_plt"] = len(plant_census)
   nb_plantes_utiles = crop_scheme["nb_useful_plt"] 

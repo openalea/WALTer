@@ -148,6 +148,25 @@ def central_domain(crop_scheme, dist_border_x=0, dist_border_y=0):
     return xmin_center, ymin_center, xmax_center, ymax_center
 
 
+def central_and_border_plants(crop_scheme, dist_border_x, dist_border_y):
+    """create list of plants within and outside central domain.
+    In the case all plants are border plants they are also all considered as central plants"""
+    plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
+    border_plants = []
+    xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
+    _, positions = plant_disposition(crop_scheme, center_plants=True)
+    for num_plante in plant_census:
+        # Determining which plant is in the border, which plant is not
+        if positions[num_plante]["x"] <= xmin_center or positions[num_plante]["x"] >= xmax_center:
+            border_plants.append(num_plante)
+        if num_plante not in border_plants:
+            if positions[num_plante]["y"] <= ymin_center or positions[num_plante]["y"] >= ymax_center:
+                border_plants.append(num_plante)
+    if border_plants != plant_census:
+        for brd_plt in border_plants:
+            plant_census.remove(brd_plt)
+    return plant_census, border_plants
+
 # not used yet : common frontend to crop design functions
 def crop_conception(crop_ccptn='Mesh_for_n_plants', densite=150, nb_rang=1,
                     dist_inter_rang=.135, nb_plt_utiles=1, dist_border_x=0.,
