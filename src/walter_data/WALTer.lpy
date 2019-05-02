@@ -37,8 +37,11 @@ from walter import fitness
 ### Rayonnement ###
 #from vplants.fractalysis.light.directLight import diffuseInterception      #Importation de Fractalysis : obsolete
 
-from walter.light import caribu_scene, get_light, get_turtle_light
+from walter.light import CaribuScene, get_light, get_turtle_light
 from walter.light import CaribuRecorder
+
+from walter.crop_conception import design_crop_mesh_for_nplants, design_crop_Darwinkel, adapting_crop_area, \
+  design_crop_classical, plant_disposition, domain, central_domain, central_and_border_plants
 
 # CPL
 
@@ -149,98 +152,6 @@ def phyll_adjust(geno):
     phyllo = Phl[geno] * (1 - Rp * min(sowing_DOY,SDWS))
   return phyllo
 
-def adapting_crop_area(density, area_min, area_max, dist_inter, opt_plt_nb):
-  #print "density : ",density, "opt : ",opt_plt_nb, "area_max", area_max
-  if density < (opt_plt_nb/area_max):
-    area_temp = area_max
-    plt_nb_temp = density*area_temp
-  #elif (opt_plt_nb/area_max) < density < 55:
-  #  area_temp = (50/density)
-  #  plt_nb_temp = density*area_temp
-  elif density > (opt_plt_nb/area_min):
-    area_temp = area_min
-    plt_nb_temp = density*area_temp
-  else:
-    #a = (area_max - area_min)/((opt_plt_nb/area_max) - (opt_plt_nb/area_min))
-    #b = area_min - a*(opt_plt_nb/area_min)
-    #area = a * density + b
-    area_temp = (opt_plt_nb/density)
-    plt_nb_temp = density*area_temp
-  nb_rang = int(ceil(sqrt(area_temp)/dist_inter))
-  dy = nb_rang * dist_inter
-  dx = (area_temp/dy)
-  nb_plante_par_rang = int(plt_nb_temp/nb_rang)
-  dist_intra = dx/nb_plante_par_rang
-  nplant_peupl = int(nb_rang*nb_plante_par_rang)
-  crop_scheme["dx"] = dx
-  crop_scheme["dy"] = dy
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["nb_rang"] = nb_rang
-  crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
-  crop_scheme["dist_intra_rang"] = dist_intra
-  crop_scheme["nplant_peupl"] = nplant_peupl
-  crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-
-
-
-#def crop_conception2(densite, dx, dy, dist_inter_rang, area_max):
-#  if dx*dy > area_max:
-#    print "ATTENTION LES DIMENSIONS DE LA PARCELLE SONT TROP GRANDES!"
-#    dx, dy = sqrt(area_max)-0.01, sqrt(area_max)-0.01
-#  nb_rang_m2 = 1/dist_inter_rang
-#  nb_plante_par_rang_m2 = densite/nb_rang_m2
-#  crop_scheme["nb_rang"] = int(floor(dx*nb_rang_m2))
-#  crop_scheme["nb_plante_par_rang"] = int(floor(dy*nb_plante_par_rang_m2))
-#  crop_scheme["dist_intra_rang"] = dy/crop_scheme["nb_plante_par_rang"]
-#  crop_scheme["nplant_peupl"] = crop_scheme["nb_plante_par_rang"]*crop_scheme["nb_rang"]
-#  print crop_scheme
-#  return crop_scheme
-
-def design_crop_Darwinkel(area, density):
-  nb_rang = floor(sqrt(area * density))
-  nb_plant_par_rang = ceil(sqrt(area * density))
-  d_intra = sqrt(area/(nb_rang*nb_plant_par_rang))
-  dx = nb_rang*d_intra
-  dy = nb_plant_par_rang*d_intra
-  nplant_peupl = nb_rang*nb_plant_par_rang
-  crop_scheme["nb_rang"] = int(nb_rang)
-  crop_scheme["nb_plante_par_rang"] = int(nb_plant_par_rang)
-  crop_scheme["dist_inter_rang"] = d_intra
-  crop_scheme["dist_intra_rang"] = d_intra
-  crop_scheme["dx"] = dx
-  crop_scheme["dy"] = dy
-  crop_scheme["nplant_peupl"] = int(nplant_peupl)
-  crop_scheme["real_density"] = nplant_peupl/area
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  return crop_scheme
-
-def design_crop_mesh_for_nplants (density, nb_plt_utiles, dist_border_x, dist_border_y):
-  nb_rang_utiles = floor(sqrt(nb_plt_utiles))
-  nb_plant_par_rang_utiles = ceil(sqrt(nb_plt_utiles))
-  d_intra = sqrt(1/density)
-  d_inter = d_intra
-  nb_rang = nb_rang_utiles + ceil((dist_border_x/100)/d_inter) + ceil((dist_border_x/100)/d_inter)
-  nb_plant_par_rang = nb_plant_par_rang_utiles + ceil((dist_border_y/100)/d_intra) + ceil((dist_border_y/100)/d_intra)
-  dx = nb_rang*d_inter
-  dy = nb_plant_par_rang*d_intra
-  nplant_peupl = nb_rang*nb_plant_par_rang
-  crop_scheme["area"] = dx*dy
-  crop_scheme["nb_rang"] = int(nb_rang)
-  crop_scheme["nb_plante_par_rang"] = int(nb_plant_par_rang)
-  crop_scheme["dist_inter_rang"] = d_intra
-  crop_scheme["dist_intra_rang"] = d_intra
-  crop_scheme["dx"] = dx
-  crop_scheme["dy"] = dy
-  crop_scheme["nplant_peupl"] = int(nplant_peupl)
-  crop_scheme["real_density"] = nplant_peupl/crop_scheme["area"]
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  return crop_scheme
 
 # When using WALTer with the population genetics model, the names of the genotypes are defined in the sim_scheme.csv parameter file
 # In the sim_scheme parameter file, the parameter genotypes must be the names of the different genotypes only separated by a comma
@@ -320,8 +231,7 @@ dico_time_zone = {'Gif_sur_Yvette': "Europe/Paris", 'Le_Pin_aux_Haras': "Europe/
 ########################################
 
 crop_ccptn = "Mesh_for_nplants"
-area_targeted = 1
-nb_rang = 1
+
 
 var_register0 = ["crop_ccptn", "infinity_CARIBU"]
 
@@ -329,70 +239,25 @@ for key, value, in params.iteritems():
   if key in var_register0:
     exec(key+"=value")
 
-
+#default values relative to crop_conception (registered later on before crop_scheme init)
+area_targeted = 1
+nb_rang = 1
+nb_plt_temp = 1
+area_min, area_max = 1, 13
+opt_plt_nb = 10
+nb_plt_utiles = 50
 if crop_ccptn == "classical":
-  nb_plt_temp = 1
-  nb_rang = 1
-  dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
-  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
-  area = nb_plt_temp/crop_scheme["density"]
-  dy = nb_rang * dist_inter_rang
-  dx = area/dy
-  nb_plante_par_rang = int(nb_plt_temp/nb_rang)
-  dist_intra = dx/nb_plante_par_rang
-  nplant_peupl = int(nb_rang*nb_plante_par_rang)
-  dist_border_x = 0.*100 #inside a rang
-  dist_border_y = 0.*100 #rang
-  crop_scheme["nplant_peupl"] = nplant_peupl
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  crop_scheme["dx"] = dx
-  crop_scheme["dy"] = dy
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["nb_rang"] = nb_rang
-  crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
-  crop_scheme["dist_intra_rang"] = dist_intra
-  crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
+  dist_border_x = 0. #inside a rang
+  dist_border_y = 0. #rang
 elif crop_ccptn == "neo_Darwinkel":
-  area_min, area_max = 1, 13
-  dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
-  opt_plt_nb = 10
-  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
-  adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)
-  dist_border_x = 0.2*100 #inside a rang
-  dist_border_y = 0.15*100 #rang
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-
+  dist_border_x = 0.2 #inside a rang
+  dist_border_y = 0.15 #rang
 elif crop_ccptn == "Darwinkel_original":
-  area = area_targeted
-  dist_border_x = 0.15*100 #inside a rang
-  dist_border_y = 0.15*100 #rang
-  crop_scheme = {"area" : area, "density" : densite}
-  #border_prop = 0.8
-  design_crop_Darwinkel(crop_scheme["area"], crop_scheme["density"])
-  #dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
-  #dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
-
+  dist_border_x = 0.15 #inside a rang
+  dist_border_y = 0.15 #rang
 elif crop_ccptn == "Mesh_for_nplants":
-  nb_plt_utiles = 50
-  dist_border_x = 0.20*100 #inside a rang
-  dist_border_y = 0.20*100 #rang 
-  crop_scheme = {"density" : densite}
-  design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
-
-
-
-nb_rangs = crop_scheme["nb_rang"]
-nb_plantes = crop_scheme["nplant_peupl"]
-dist_inter_rang = crop_scheme["dist_inter_rang"]
-dist_intra_rang = crop_scheme["dist_intra_rang"]
-dx = crop_scheme["dx"]
-dy = crop_scheme["dy"]
+  dist_border_x = 0.20 #inside a rang
+  dist_border_y = 0.20 #rang
 
 genotype_proportion = "random"
 
@@ -1159,6 +1024,7 @@ dead_sheath_length            = {}
 current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomere
 dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "portee" du voisinage
 maillage                      = []              # Tableau representant la disposition des individus en nombre de plante
+plant_census                  = []
 border_plants                 = []
 surface_sol                   = {}              # Dico regroupant la surface de sol inherente a chaque individu
 GAI_prox                      = {}              # Dico regroupant le GAI d'un sous-peuplement constitue d'une plante cible ainsi que de ses voisins
@@ -1238,82 +1104,6 @@ organ_type = ["Blade", "Internode", "Sheath","Peduncle", "Ear"]
 ####################################################################################
 ############################# DEFINITION DE FONCTION ###############################
 ####################################################################################
-
-# Disposition des plantes sur la parcelle
-def crop_conception(densite, nb_rang, dist_inter_rang, nb_plante_min, nb_plante_max):
-  dx = nb_rang*dist_inter_rang
-  nb_rang_m2 = 1/dist_inter_rang
-  nb_plante_par_rang_m2 = densite/nb_rang_m2
-  dist_intra_rang = 1/nb_plante_par_rang_m2
-  nb_plt_p_rang_min = nb_min_plt/nb_rang
-  nb_plt_p_rang_max = nb_max_plt/nb_rang
-  crop_scheme["dx"],crop_scheme["dist_intra_rang"] = dx, dist_intra_rang
-  resultats = {}
-  if nb_min_plt == nb_max_plt == 1:
-    nb_plante_par_rang = 1
-    nb_rang = 1
-    dx, dy = dist_inter_rang, 1/nb_plante_par_rang_m2
-    nplant_peupl = 1
-    crop_scheme["dy"] = dy
-    crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
-  else:
-    if round(nb_plt_p_rang_max*dist_intra_rang,2)-round(nb_plt_p_rang_min*dist_intra_rang,2) < 0.01:
-      dy = round(nb_plt_p_rang_min*dist_intra_rang,2)
-      nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
-      nplant_peupl = nb_rang * nb_plante_par_rang
-      surface_sol = dx * dy
-      virtual_density = nplant_peupl / surface_sol
-      ecart_de_densite = abs(densite - virtual_density)/densite
-      resultats[ecart_de_densite] = (dx,dy)
-      crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
-    else:
-      for dy in np.arange(round(nb_plt_p_rang_min*dist_intra_rang,2), round(nb_plt_p_rang_max*dist_intra_rang,2), 0.01):
-        nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
-        nplant_peupl = nb_rang * nb_plante_par_rang
-        surface_sol = dx * dy
-        virtual_density = nplant_peupl / surface_sol
-        ecart_de_densite = abs(densite - virtual_density)/densite
-        resultats[ecart_de_densite] = (round(dx,2),round(dy,2))
-    # On recupere la combinaison de dx et dy pour lesquels il y'a le plus faible ecart de densite !
-      dy = round(resultats[min(resultats.keys())][1],2)
-      nb_plante_par_rang = floor(dy * nb_plante_par_rang_m2)
-      nplant_peupl = nb_rang * nb_plante_par_rang
-      crop_scheme["nb_plante_par_rang"], crop_scheme["nplant_peupl"] = int(nb_plante_par_rang), int(nplant_peupl)
-    crop_scheme["dy"] = dy
-    if min(resultats.keys())*100 > 5:
-      print "WARNING SIGNIFICANT ERROR IN DENSITY PREDICTION"
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
-  return crop_scheme
-
-
-# Geographical disposition of all plants on the soil (Sowing)
-def plant_disposition(nb_rang, nb_plante_par_rang, dist_inter_rang, dist_intra_rang):
-  num_plante = 0
-  y = 0
-  for rang in range(int(nb_rang)):
-    x = 0
-    y += (dist_inter_rang * 100)
-    prov = []
-    for plant_par_rang in range(int(nb_plante_par_rang)):
-      x += (dist_intra_rang * 100)
-      z = 0.
-      num_plante += 1
-      plant_map[num_plante] = {"x":x,"y":y}
-      prov.append(num_plante)
-    maillage.append(prov)
-  return(maillage)
-  return(plant_map)
-
-
-
-# fonction qui permet de centrer les plantes sur le rep�re orthonorm�
-def plant_translation(x_plant, y_plant, x_middle, y_middle):
-  new_coordinates = {}
-  new_coordinates["x"] = x_plant - x_middle
-  new_coordinates["y"] = y_plant - y_middle
-  return(new_coordinates)
 
 # Physical calculation of daylength
 def duree_du_jour(lat, J):
@@ -2133,51 +1923,26 @@ DelayTipToHS = {"Maxwell" : DelayTipToHS_Maxwell, "Darwinkel_Maxwell" : DelayTip
 for geno in crop_genotype:
   DelayTipToHS[geno] = eval("DelayTipToHS_"+geno)
  
-
+crop_scheme = design_crop_classical()
 if crop_ccptn == "classical":
-  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
-  area = nb_plt_temp/crop_scheme["density"]
-  dy = nb_rang * dist_inter_rang
-  dx = area/dy
-  nb_plante_par_rang = int(nb_plt_temp/nb_rang)
-  dist_intra = dx/nb_plante_par_rang
-  nplant_peupl = int(nb_rang*nb_plante_par_rang)
-  crop_scheme["nplant_peupl"] = nplant_peupl
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
-  crop_scheme["dx"] = dx
-  crop_scheme["dy"] = dy
-  crop_scheme["surface_sol"] = dx*dy
-  crop_scheme["nb_rang"] = nb_rang
-  crop_scheme["nb_plante_par_rang"] = nb_plante_par_rang
-  crop_scheme["dist_intra_rang"] = dist_intra
-  crop_scheme["real_density"] = nplant_peupl/crop_scheme["surface_sol"]
-  crop_scheme["map_middle_y"] = ((crop_scheme["nb_rang"] * (crop_scheme["dist_inter_rang"])*100) + (crop_scheme["dist_inter_rang"])*100)/2
-  crop_scheme["map_middle_x"] = ((crop_scheme["nb_plante_par_rang"] * (crop_scheme["dist_intra_rang"])*100) + (crop_scheme["dist_intra_rang"])*100)/2
+  crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
   print crop_scheme
+
 elif crop_ccptn == "neo_Darwinkel":
-  crop_scheme = {"dist_inter_rang":dist_inter_rang, "density":densite}
-  adapting_crop_area(crop_scheme["density"],area_min, area_max, crop_scheme["dist_inter_rang"], opt_plt_nb)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  crop_scheme = adapting_crop_area(densite,area_min, area_max, dist_inter_rang, opt_plt_nb)
   print crop_scheme
 
 elif crop_ccptn == "Darwinkel_original": 
   area = area_targeted
-  crop_scheme = {"area" : area, "density" : densite}
-  #border_prop = 0.8
-  design_crop_Darwinkel(crop_scheme["area"], crop_scheme["density"])
-  #dist_border_x = ((crop_scheme["dy"]/crop_scheme["dx"]) * (border_prop/2)) * crop_scheme["dx"] #inside a rang
-  #dist_border_y = ((crop_scheme["dx"]/crop_scheme["dy"]) * (border_prop/2)) * crop_scheme["dy"] #rang
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  crop_scheme = design_crop_Darwinkel(area, densite)
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 elif crop_ccptn == "Mesh_for_nplants":
-  crop_scheme = {"density" : densite}
-  design_crop_mesh_for_nplants(crop_scheme["density"], nb_plt_utiles , dist_border_x , dist_border_y)
-  plant_census = range(1,crop_scheme["nplant_peupl"] + 1)
+  crop_scheme = design_crop_mesh_for_nplants(densite, nb_plt_utiles , dist_border_x , dist_border_y)
   print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
 
 
-
+plant_census, border_plants = central_and_border_plants(crop_scheme, dist_border_x, dist_border_y)
 nb_rangs = crop_scheme["nb_rang"] #RESTE !
 nb_plantes = crop_scheme["nplant_peupl"]
 dist_inter_rang = crop_scheme["dist_inter_rang"]
@@ -2430,7 +2195,8 @@ def EndEach(lstring, lscene):
           tz = dico_time_zone[location]
           light = get_turtle_light(current_PAR, sky_type=sky_type, turtle_sectors=turtle_sectors, add_sun=bool(add_sun),
                                    curent_date=date_current_day, longitude=longi, latitude=lat, altitude=alt, timezone=tz)
-          c_scene = caribu_scene(lscene, crop_scheme, light)
+          pattern = domain(crop_scheme)
+          c_scene = CaribuScene(scene=lscene, scene_unit="cm", light=light, pattern=pattern)
           res_sky= None
           try:
             raw, res_sky = c_scene.run(simplify=True, infinite = bool(infinity_CARIBU), direct = True, screen_size = CARIBU_screen_res)
@@ -2880,31 +2646,27 @@ Seed:
   fichier_parcelle.write("X" + "\t" + "Y" + "\t" + "Num_plante" + "\t" + "Genotype" + "\n")
   
   # Calculates the coordinates of each plant
-  plant_disposition(crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"], crop_scheme["dist_inter_rang"], crop_scheme["dist_intra_rang"])
-  
-  xmin = -(crop_scheme["dy"]*100)/2
-  xmax = (crop_scheme["dy"]*100)/2
-  ymin = -(crop_scheme["dx"]*100)/2
-  ymax = (crop_scheme["dx"]*100)/2
+  maillage, plant_map = plant_disposition(crop_scheme)
+  xmin, ymin, xmax, ymax = domain(crop_scheme)
+  xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme, dist_border_x, dist_border_y)
   
   #  xmin_center = xmin + ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  xmax_center = xmax - ((crop_scheme["dist_intra_rang"] * 100 * nb_plante_par_rang_border) + x_position_hazard)
   #  ymin_center = ymin + ((crop_scheme["dist_inter_rang"]*100 * nb_rang_border) + y_position_hazard)
   #  ymax_center = ymax - ((crop_scheme["dist_inter_rang"]*100 * nb_rang_border) + y_position_hazard)
   #  
-  xmin_center = xmin + (dist_border_x + x_position_hazard)
-  xmax_center = xmax - (dist_border_x + x_position_hazard)
-  ymin_center = ymin + (dist_border_y + y_position_hazard)
-  ymax_center = ymax - (dist_border_y + y_position_hazard)
+  # xmin_center = xmin + (dist_border_x + x_position_hazard)
+  # xmax_center = xmax - (dist_border_x + x_position_hazard)
+  # ymin_center = ymin + (dist_border_y + y_position_hazard)
+  # ymax_center = ymax - (dist_border_y + y_position_hazard)
   
   
   print "xmin : ", xmin, "xmax : ", xmax, "xmin_center", xmin_center, "xmax_center", xmax_center
   print "ymin : ", ymin, "ymax : ", ymax, "ymin_center", ymin_center, "ymax_center", ymax_center
   
   for num_plante in range(1,int(crop_scheme["nplant_peupl"]) + 1):
-    #Calculation of new coordinats of this plant, taking into account a centering of the crop around the 0
-    x = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["x"]
-    y = plant_translation(plant_map[num_plante]["x"], plant_map[num_plante]["y"],crop_scheme["map_middle_x"], crop_scheme["map_middle_y"])["y"]
+    x = plant_map[num_plante]["x"]
+    y = plant_map[num_plante]["y"]
     if genotype_proportion == "random":
       geno = random.choice(crop_genotype)    ## selection geno random
       genotype_map[num_plante] = geno
@@ -2914,13 +2676,7 @@ Seed:
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[genotype_map[num_plante]]["mean"],Dse[genotype_map[num_plante]]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
-    
-    #Determining which plant is in the border, which plant is not
-    if positions[num_plante]["x"] <= xmin_center or positions[num_plante]["x"] >= xmax_center:
-      border_plants.append(num_plante)
-    if num_plante not in border_plants:
-      if positions[num_plante]["y"] <= ymin_center or positions[num_plante]["y"] >= ymax_center:
-        border_plants.append(num_plante)
+
     
     #Dictionnary initialisation
     
@@ -3016,9 +2772,7 @@ Seed:
   
   print "border plants : ", border_plants
   
-  if border_plants != plant_census: #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
-    for brd_plt in border_plants:
-      plant_census.remove(brd_plt)
+  #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
   print "plant census 2 : ",plant_census
   crop_scheme["nb_useful_plt"] = len(plant_census)
   nb_plantes_utiles = crop_scheme["nb_useful_plt"] 

@@ -15,8 +15,8 @@ Nb_rang	All	2
 Nb_plantes	All	4
 Area_targeted	All	1
 Nb_plantes_utiles	All	4
-dist_border_x	All	10
-dist_border_y	All	10
+dist_border_x	All	0.1
+dist_border_y	All	0.1
 Genotypes_nb	All	1
 CARIBU_state	All	enabled
 SIRIUS_state	All	disabled
