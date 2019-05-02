@@ -2646,7 +2646,7 @@ Seed:
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[genotype_map[num_plante]]["mean"],Dse[genotype_map[num_plante]]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
-
+    
     #Dictionnary initialisation
     
     ## Individual scale
