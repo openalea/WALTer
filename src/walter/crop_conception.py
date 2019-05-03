@@ -167,6 +167,41 @@ def central_and_border_plants(crop_scheme, dist_border_x, dist_border_y):
             plant_census.remove(brd_plt)
     return plant_census, border_plants
 
+
+def set_neighbour(maillage, crop_scheme, radius=1, toric="True"):
+    # TODO prendre en compte l'alea de positionnement des graines dans la determination des voisins dune plante cible
+    d_intra, d_inter = crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"]
+    nb_rang, nb_plante_par_rang = crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"]
+    nb_voisins_glob = {}
+    dico_voisins = {}
+    voisins = []
+    neighbour_indexes = []
+    ncol = int(round(2 * radius / d_inter)) + 1
+    nrow = int(round(2 * radius / d_intra)) + 1
+    for j in range(ncol):
+        for i in range(nrow):
+            delta_j = j - int(round(radius / d_inter))
+            delta_i = i - int(round(radius / d_intra))
+            d_to_cible = sqrt((delta_j * d_inter) ** 2 + (delta_i * d_intra) ** 2)
+            if d_to_cible <= radius:
+                neighbour_indexes.append((delta_j, delta_i))
+    nb_voisins_glob[0] = len(neighbour_indexes)
+    #####
+    for num_col in range(nb_rang):
+        for num_ligne in range(nb_plante_par_rang):
+            plante_cible = maillage[num_col][num_ligne]
+            for (deltaj, deltai) in neighbour_indexes:
+                if toric == "True":
+                    voisins.append(maillage[(num_col + deltaj) % nb_rang][(num_ligne + deltai) % nb_plante_par_rang])
+                else:
+                    if (0 <= num_col + deltaj < nb_rang) and (0 <= num_ligne + deltai < nb_plante_par_rang):
+                        voisins.append(maillage[(num_col + deltaj)][(num_ligne + deltai)])
+            dico_voisins[plante_cible] = voisins
+            voisins = []
+
+    return nb_voisins_glob, dico_voisins
+
+
 # not used yet : common frontend to crop design functions
 def crop_conception(crop_ccptn='Mesh_for_n_plants', densite=150, nb_rang=1,
                     dist_inter_rang=.135, nb_plt_utiles=1, dist_border_x=0.,

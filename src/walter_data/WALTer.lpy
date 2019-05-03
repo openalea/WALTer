@@ -41,7 +41,7 @@ from walter.light import CaribuScene, get_light, get_turtle_light
 from walter.light import CaribuRecorder
 
 from walter.crop_conception import design_crop_mesh_for_nplants, design_crop_Darwinkel, adapting_crop_area, \
-  design_crop_classical, plant_disposition, domain, central_domain, central_and_border_plants
+  design_crop_classical, plant_disposition, domain, central_domain, central_and_border_plants, set_neighbour
 
 # CPL
 
@@ -1023,7 +1023,6 @@ current_sheath_length         = {}              # Dico regroupant les tailles ac
 dead_sheath_length            = {}
 current_internode_length      = {}              # Dico regroupant les tailles actuelles de gaines par individu, par talle, par phytomere
 dico_voisins                  = {}              # Dico regroupant la liste de totues les plantes voisines en fonction de la "portee" du voisinage
-maillage                      = []              # Tableau representant la disposition des individus en nombre de plante
 plant_census                  = []
 border_plants                 = []
 surface_sol                   = {}              # Dico regroupant la surface de sol inherente a chaque individu
@@ -1122,36 +1121,6 @@ def read_meteo(dico_meteo,start_day,start_hour,PAS):
     val2 += dico_meteo[mykey][1]
   # val1 = RG ; val2 = Rd/Rg
   return val1,val2/PAS
-
-# Choose the neighbours of a plant
-def set_neighbour(maillage, nb_rang, nb_plante_par_rang, d_intra, d_inter, dGAIprox, infin):
-  #TODO prendre en compte l'alea de positionnement des graines dans la determination des voisins dune plante cible
-  voisins=[]
-  neighbour_indexes=[]
-  ncol = int(round(2*dGAIprox/d_inter)) + 1
-  nrow = int(round(2*dGAIprox/d_intra)) + 1
-  for j in range(ncol):
-    for i in range(nrow):
-      delta_j = j - int(round(dGAIprox/d_inter))
-      delta_i = i -int(round(dGAIprox/d_intra))
-      d_to_cible = sqrt( (delta_j*d_inter)**2 + (delta_i*d_intra)**2 )
-      if d_to_cible <= dGAIprox:
-        neighbour_indexes.append((delta_j, delta_i))
-  nb_voisins_glob[0] = len(neighbour_indexes)
-  #####
-  num_plante = 0
-  for num_col in range(nb_rang):
-    for num_ligne in range(nb_plante_par_rang):
-      num_plante += 1
-      plante_cible = maillage[num_col][num_ligne]
-      for (deltaj,deltai) in neighbour_indexes:
-        if infin == "True":
-          voisins.append( maillage[(num_col+deltaj)%nb_rang][(num_ligne+deltai)%nb_plante_par_rang] )
-        else:
-          if (0 <= num_col+deltaj < nb_rang) and (0 <= num_ligne+deltai < nb_plante_par_rang):
-            voisins.append( maillage[(num_col+deltaj)][(num_ligne+deltai)] )
-      dico_voisins[plante_cible] = voisins
-      voisins=[]
 
 
 #SCHEDULING OF EVENTS
@@ -1943,6 +1912,8 @@ elif crop_ccptn == "Mesh_for_nplants":
 
 
 plant_census, border_plants = central_and_border_plants(crop_scheme, dist_border_x, dist_border_y)
+maillage, plant_map = plant_disposition(crop_scheme)
+nb_voisins_glob, dico_voisins = set_neighbour(maillage, crop_scheme, dGAIp, infinity_GAIp)
 nb_rangs = crop_scheme["nb_rang"] #RESTE !
 nb_plantes = crop_scheme["nplant_peupl"]
 dist_inter_rang = crop_scheme["dist_inter_rang"]
@@ -2149,7 +2120,7 @@ def EndEach(lstring, lscene):
   # Calcul du GAI de proximite
   for num_plt in range(1,crop_scheme["nplant_peupl"] + 1):
     surface_peupl = 0
-    for num_voisin in dico_voisins[num_plante]:
+    for num_voisin in dico_voisins[num_plt]:
       surface_peupl += surface_plante_visible[num_voisin]
     GAI_prox[num_plt] = surface_peupl/(nb_voisins_glob[0] * (crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))  # On multiplie par 100 pour une conversion de m_squ � cm_squ
     GAI_ind[num_plt] = surface_plante_visible[num_plt]/((crop_scheme["dist_inter_rang"]*100)*(crop_scheme["dist_intra_rang"] * 100))
@@ -2646,7 +2617,6 @@ Seed:
   fichier_parcelle.write("X" + "\t" + "Y" + "\t" + "Num_plante" + "\t" + "Genotype" + "\n")
   
   # Calculates the coordinates of each plant
-  maillage, plant_map = plant_disposition(crop_scheme)
   xmin, ymin, xmax, ymax = domain(crop_scheme)
   xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme, dist_border_x, dist_border_y)
   
@@ -2676,7 +2646,6 @@ Seed:
     
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[genotype_map[num_plante]]["mean"],Dse[genotype_map[num_plante]]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
-
     
     #Dictionnary initialisation
     
@@ -2778,7 +2747,6 @@ Seed:
   nb_plantes_utiles = crop_scheme["nb_useful_plt"] 
   print crop_scheme["nb_useful_plt"]," plantes utiles sur ",crop_scheme["nplant_peupl"]
   print "All plants in border : ",border_plants == plant_census
-  set_neighbour(maillage, crop_scheme["nb_rang"], crop_scheme["nb_plante_par_rang"], crop_scheme["dist_intra_rang"], crop_scheme["dist_inter_rang"], dGAIp, infinity_GAIp)
   
   #d�terminer la plante la plus pr�coce
   global earliest_plant
