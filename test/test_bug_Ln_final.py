@@ -14,3 +14,13 @@ def test_bug_Ln_final():
     finally:
         p.remove(force=True)
 
+def test_unedfined_Ln_final():
+    p = project.Project()
+    try:
+        param = p.csv_parameters('sim_scheme_test_undefined_ln_final.csv')[0]
+        lsys, lstring = p.run(**param)
+        assert lstring
+    except:
+        raise
+    finally:
+        p.remove(force=True)
