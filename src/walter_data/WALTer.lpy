@@ -1126,6 +1126,20 @@ def read_meteo(dico_meteo,start_day,start_hour,PAS):
 #SCHEDULING OF EVENTS
 ########################
 
+def tiller_ln_final(cohort, Ln_final_MS):
+    """ Final number of leaves on a tiller
+    Parameters
+    ----------
+    cohort (int) : Cohort number of the tiller
+    Ln_final_MS (int) : Final number of leaves on the main stem of the bearing plant
+
+    Returns
+    -------
+    Final number of leaves on the tiller (int)
+    """
+    lnf_till = Ln_final_MS - cohort - 1
+    return lnf_till
+
 # Determining the cohort number of the axis
 def cohort_number(tiller):
   return (len(tiller) + sum(tiller)) - 3
@@ -1370,8 +1384,8 @@ def proba_debourr(tiller, GAIprox, geno, n, Ln_final):
   if tiller == (1,1):
     return P_CT[geno]
   else:
-    #NENC = (Ln_final - liste_geno[geno]["NENL"])+1
-    NENC = (Ln_final - 4)
+    NENC = (Ln_final - N_I_el[geno])+1 # NENC is the rank of the first elongated internode
+    #NENC = (Ln_final - 4)
     if GAIprox < GAI_c[geno]:
       if n < NENC:
         return P_T[geno]
@@ -3484,14 +3498,7 @@ Bud_R(StBuR):
     if Tempcum >= leaf_emerg_date(StBuR.tiller[len(StBuR.tiller)-1] + 2,StBuR.tiller[0:len(StBuR.tiller)-1] , StBuR.geno, StBuR.num_plante) and StBuR.emerg == False:
       StBuR.emerg = True
       StBuR.Tmoy = StBuR.sumtemp / StBuR.nb_j # TODO inutile
-      #if StBuR.tiller in liste_talles:
-        #StBuR.p_debourr = 1
-      #else:
-        #StBuR.p_debourr = 0
-      if type(dico_stades[StBuR.num_plante][StBuR.tiller]["Ln_final"]) != int:
-        StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], 100)
-      else:
-        StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], dico_stades[StBuR.num_plante][StBuR.tiller[0:len(StBuR.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle m�re
+      StBuR.p_debourr = proba_debourr(StBuR.tiller, GAI_prox[StBuR.num_plante], StBuR.geno, StBuR.tiller[-1], tiller_ln_final(cohort_number(StBuR.tiller[0:len(StBuR.tiller)-1]), dico_stades[StBuR.num_plante][(1,)]["Ln_final"])) # Only tillers on short internodes can emerge. Testing if the internode is elongated using the final number of leaves on the bearing tiller
       
       # Enregistrement des informations
       if write_output_file["Proba"]:
