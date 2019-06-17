@@ -3651,17 +3651,15 @@ Leaf(StL):
         
         StS.gr_sheath = StS.final_length / (ED_S * phyll_adjust(StL.geno)) #TODO correction
         
-        #Ajout de la forme de feuille
-        ln_final = ceil(param_Ln_final[StL.geno])
-        if dico_stades[StL.num_plante][StL.tiller]["Ln_final"] != "undefined":
-          ln_final = dico_stades[StL.num_plante][StL.tiller]["Ln_final"]
+        # Shape of the blades
+        ln_final = tiller_ln_final(cohort_number(StL.tiller), dico_stades[StL.num_plante][(1,)]["Ln_final"])
         rank_j = (ln_final - N_I_el[StL.geno]) + 1
         rank_max = ln_final - N_B_r[StL.geno]
         rank_flag = ln_final
         StBl.leaf_shape = walter_leaf(nb_segment=leaf_nb_segments, rank=StL.n, rank_j=rank_j, rank_max=rank_max,
                                       rank_flag=rank_flag, scurv=scurv[StL.geno], curvature=curvature[StL.geno])
         StBl.form_factor = form_factor(StBl.leaf_shape)
-        #Ajout du point de coupe pour repr�senter la s�nescence des limbes
+        # Adding a cutting point to represent the senescence of the blades
         StCPBl = CutPointBlade(StL.num_plante, StL.geno, StL.tiller, StL.n)
         produce \(StL.azimuth)Sheath(StS)[CutPointBlade(StCPBl)Blade(StBl)]
       else:
