@@ -3377,11 +3377,7 @@ Bud(StBu):
           #else:
             #StBu.p_debourr = 0
           
-          # TODO c'est quand m�me sale...
-          if type(dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"]) != int:
-            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], 100)
-          else:
-            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle m�re
+          StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], tiller_ln_final(cohort_number(StBu.tiller[0:len(StBu.tiller)-1]), dico_stades[StBu.num_plante][(1,)]["Ln_final"])) #On consulte le nombre final de feuilles de la talle m�re
           
           # Enregistrement des informations
           if write_output_file["Proba"]:
@@ -3436,10 +3432,7 @@ Bud(StBu):
             #StBu.p_debourr = 1
           #else:
             #StBu.p_debourr = 0
-          if type(dico_stades[StBu.num_plante][StBu.tiller]["Ln_final"]) != int:
-            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], 100)
-          else:
-            StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], dico_stades[StBu.num_plante][StBu.tiller[0:len(StBu.tiller)-1]]["Ln_final"]) #On consulte le nombre final de feuilles de la talle m�re
+          StBu.p_debourr = proba_debourr(StBu.tiller, GAI_prox[StBu.num_plante], StBu.geno, StBu.tiller[-1], tiller_ln_final(cohort_number(StBu.tiller[0:len(StBu.tiller)-1]), dico_stades[StBu.num_plante][(1,)]["Ln_final"])) #On consulte le nombre final de feuilles de la talle m�re
           # Enregistrement des informations
           if write_output_file["Proba"]:
             Proba_dico_df["Elapsed_time"].append(elapsed_time)
@@ -3629,7 +3622,10 @@ Leaf(StL):
             StS.length = 0.0
           ## Sur les talles, la longueur du limbe est initialis�e � la longueur de la plus longue gaine pr�sente sur l'axe parent
           else:
-            StBl.length = max([current_sheath_length[StBl.num_plante][StBl.tiller[0:len(StBl.tiller)-1]][x] for x in range(1, StBl.n + 4)])
+            try:
+              StBl.length = max([current_sheath_length[StBl.num_plante][StBl.tiller[0:len(StBl.tiller)-1]][x] for x in range(1, StBl.n + 4)])
+            except KeyError:
+              StBl.length = max([current_sheath_length[StBl.num_plante][StBl.tiller[0:len(StBl.tiller)-1]][x] for x in range(1, StBl.n + 3)])
             StS.length = 0.0
         elif current_sheath_length[StL.num_plante][StL.tiller][StL.n-2] > StBl.final_length:
           StBl.length = StBl.final_length
