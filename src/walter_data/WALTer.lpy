@@ -2098,7 +2098,7 @@ def EndEach(lstring, lscene):
       if delta_H[num_plt][axis] <= 0:
         tiller_surface[(num_plt,axis)] = leaf_contrib + stem_contrib
         ear_contrib = 0
-      elif delta_H[num_plt][axis] > L_E[genotype_map[num_plt]]:
+      elif delta_H[num_plt][axis] >= L_E[genotype_map[num_plt]]:
         ear_contrib = L_E[genotype_map[num_plt]] * d_E[genotype_map[num_plt]] * pi/2
         tiller_surface[(num_plt,axis)] = leaf_contrib + stem_contrib + ear_contrib + peduncle_contrib
       elif 0 < delta_H[num_plt][axis] < L_E[genotype_map[num_plt]]:
