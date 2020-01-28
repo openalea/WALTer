@@ -210,7 +210,8 @@ experimental_conditions = {
 "Sparkes_2003":{"sowing_date" : datetime.date(2002,9,20), "year" : "2003","location" : "Nottingham","meteo" : "Nottingham","dist_inter_rang" :0.135, "genotype" : ["Maxwell"], "Ln_final":{"Maxwell":11}},
 "Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
 "Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
-"Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics}
+"Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics},
+"Perfomix2019":{"sowing_date":datetime.date(1900,10,15), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.64, "genotype" : ["AUBUSSON"], "Ln_final":{"AUBUSSON":11}}
 }
 
 liste_expe = experimental_conditions.keys()
