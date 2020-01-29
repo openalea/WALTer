@@ -211,7 +211,7 @@ experimental_conditions = {
 "Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
 "Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
 "Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics},
-"Perfomix2019":{"sowing_date":datetime.date(1900,10,15), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.64, "genotype" : ["AUBUSSON"], "Ln_final":{"AUBUSSON":11}}
+"Perfomix2019":{"sowing_date":datetime.date(1900,10,30), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.64, "genotype" : ["ACCROC","AUBUSSON","EXPERT","BERGAMO"], "Ln_final":{"AUBUSSON":11, "ACCROC":11,"EXPERT":13,"BERGAMO":13}}
 }
 
 liste_expe = experimental_conditions.keys()
@@ -2646,7 +2646,14 @@ Seed:
   print "xmin : ", xmin, "xmax : ", xmax, "xmin_center", xmin_center, "xmax_center", xmax_center
   print "ymin : ", ymin, "ymax : ", ymax, "ymin_center", ymin_center, "ymax_center", ymax_center
   
-  for num_plante in range(1,int(crop_scheme["nplant_peupl"]) + 1):
+
+  if genotype_proportion != "random" and genotype_proportion != "equal" and genotype_proportion != "genetics":
+    df_distrib = pd.read_csv(pj(data_dir, genotype_proportion), header = 0, delimiter = "\t", index_col = False)
+    data_distrib = np.array(df_distrib)
+
+
+  for num_plante in range(1,int(crop_scheme["nplant_peupl"])+1):
+
     x = plant_map[num_plante]["x"]
     y = plant_map[num_plante]["y"]
     if genotype_proportion == "random":
@@ -2655,7 +2662,11 @@ Seed:
     elif genotype_proportion == "equal" or genotype_proportion == "genetics":
       geno = genotype_list[num_plante-1]
       genotype_map[num_plante] = geno
-    
+    else:
+      geno = str(data_distrib[num_plante-1,1])
+      genotype_map[num_plante] = geno
+
+      
     Dse_heterogeneous[num_plante] = max(0,random.normalvariate(Dse[genotype_map[num_plante]]["mean"],Dse[genotype_map[num_plante]]["sd"] ))
     positions[num_plante] = {"x" : x + random.uniform(-x_position_hazard, x_position_hazard) ,"y" : y + random.uniform(-y_position_hazard, y_position_hazard),"z" : 0}
     
