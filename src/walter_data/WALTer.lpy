@@ -211,7 +211,7 @@ experimental_conditions = {
 "Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
 "Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
 "Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics},
-"Perfomix2019":{"sowing_date":datetime.date(1900,10,30), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.64, "genotype" : ["ACCROC","AUBUSSON","EXPERT","BERGAMO"], "Ln_final":{"AUBUSSON":11, "ACCROC":11,"EXPERT":13,"BERGAMO":13}}
+"Perfomix2019":{"sowing_date":datetime.date(1900,10,30), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.07, "genotype" : ["ACCROC","AUBUSSON","EXPERT","BERGAMO","BAGOU","BELEPI","BOREGAR","KALAHARI"], "Ln_final":{"AUBUSSON":11, "ACCROC":11,"EXPERT":13,"BERGAMO":13, "BAGOU":12, "BELEPI":12, "BOREGAR":12, "KALAHARI":12}}
 }
 
 liste_expe = experimental_conditions.keys()
