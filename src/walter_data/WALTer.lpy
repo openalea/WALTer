@@ -211,7 +211,9 @@ experimental_conditions = {
 "Association" : {"sowing_date" : datetime.date(2013,10,30),"year" : "2014","location" : "Gif_sur_Yvette","meteo" : "Gif_sur_Yvette", "dist_inter_rang" : 0.175, "genotype" : ["Gigant_Maxwell","Darwinkel_Maxwell"] , "Ln_final":{"Gigant_Maxwell":11,"Darwinkel_Maxwell":11}},
 "Sensitivity_Analysis" : {"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : ["Maxwell"] , "Ln_final":{"Maxwell":11.3}},
 "Genetics":{"sowing_date" : datetime.date(1900,10,15),"year" : "1901","location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.175, "genotype" : genotypes , "Ln_final": Ln_final_genetics},
-"Perfomix2019":{"sowing_date":datetime.date(1900,10,30), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.07, "genotype" : ["ACCROC","AUBUSSON","EXPERT","BERGAMO","BAGOU","BELEPI","BOREGAR","KALAHARI"], "Ln_final":{"AUBUSSON":11, "ACCROC":11,"EXPERT":13,"BERGAMO":13, "BAGOU":12, "BELEPI":12, "BOREGAR":12, "KALAHARI":12}}
+"Perfomix2019_pure":{"sowing_date" : datetime.date(1900,10,30), "year":1901,"location" : "Grignon","meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.07, "genotype" : genotypes , "Ln_final": Ln_final_genetics},
+"Perfomix2019_mix1":{"sowing_date":datetime.date(1900,10,30), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.07, "genotype" : ["ACCROC","AUBUSSON","EXPERT","BERGAMO"], "Ln_final":{"AUBUSSON":11, "ACCROC":11,"EXPERT":13,"BERGAMO":13}},
+"Perfomix2019_mix2":{"sowing_date":datetime.date(1900,10,30), "year":"1901","location" : "Grignon", "meteo" : "Climat_moy_AS", "dist_inter_rang" : 0.07, "genotype" : ["BAGOU","BELEPI","BOREGAR","KALAHARI"], "Ln_final":{"BAGOU":12, "BELEPI":12, "BOREGAR":12, "KALAHARI":12}}
 }
 
 liste_expe = experimental_conditions.keys()
@@ -2650,7 +2652,9 @@ Seed:
   if genotype_proportion != "random" and genotype_proportion != "equal" and genotype_proportion != "genetics":
     df_distrib = pd.read_csv(pj(data_dir, genotype_proportion), header = 0, delimiter = "\t", index_col = False)
     data_distrib = np.array(df_distrib)
-
+    print crop_scheme
+    print "data_distrib=", data_distrib
+    print plant_map
 
   for num_plante in range(1,int(crop_scheme["nplant_peupl"])+1):
 
