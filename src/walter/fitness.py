@@ -35,7 +35,7 @@ def flo_date(Transiflo_dico, nb_days = 30, nb_days_after = 0):
 # TODO : change to : range(date_flo_el-nb_days, date_flo_el), where date_flo_el is in elapsed time instead of DOY
 
 
-def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0):
+def fitness(PAR_dict, Axes_dict, geno_dict, flo_date_dict, a_k=1, b_k=0):
     """
     Computes fitness for each plant in the simulation
 
@@ -58,14 +58,15 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0):
     """
 
     PARdf = pd.DataFrame(PAR_dict) # Translate the PAR_dict dict into a dataframe
+    Axes_df = pd.DataFrame(Axes_dict) # Translate the Axes_dict dict into a dataframe
 
     i = 0
-    PARdf_last_day = PARdf.loc[PARdf['Temp_cum'] == max(PARdf['Temp_cum'])]
+    Axes_df_last_day = Axes_df.loc[Axes_df['Temp_cum'] == max(Axes_df['Temp_cum'])]
 
     for plante in PARdf.Num_plante.unique(): # For each plant in the PARdf dataframe
         PARdfplante = PARdf[PARdf.Num_plante == plante] # Take a subset of the dataframe, corresponding to the plant
-        PARdfplante_last_day = PARdf_last_day[PARdf_last_day.Num_plante == plante]
-        for axis in PARdfplante_last_day.Num_talle.unique(): # For each axis of the plant (only the axes that will be on the plant until the end)
+        Axes_df_plante_last_day = Axes_df_last_day[Axes_df_last_day.Num_plante == plante]
+        for axis in Axes_df_plante_last_day.Num_talle.unique(): # For each axis of the plant (only the axes that will be on the plant until the end)
             i = i+1
             PARdfaxe = PARdfplante[PARdfplante.Num_talle == axis] # Take a subset of the dataframe, corresponding to the axis
             if i == 1:

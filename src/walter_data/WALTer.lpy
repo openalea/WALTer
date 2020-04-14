@@ -2605,7 +2605,7 @@ def End(lstring):
   if write_output_file["Fitness"] == True:
     if CARIBU_state != "disabled" and len(PAR_per_axes_dico['Num_plante']) >=1:
       Flo_date_dict = fitness.flo_date(Transiflo_dico = dico_stades, nb_days = n_days_fitness_before, nb_days_after = n_days_fitness_after)
-      Fitness_dict = fitness.fitness(PAR_dict = PAR_per_axes_dico, geno_dict = genotype_map, flo_date_dict = Flo_date_dict, a_k = a_fitness, b_k = b_fitness)
+      Fitness_dict = fitness.fitness(PAR_dict = PAR_per_axes_dico, Axes_dict = Peraxes_dico_df, geno_dict = genotype_map, flo_date_dict = Flo_date_dict, a_k = a_fitness, b_k = b_fitness)
       Fitness_dict.to_csv(path_or_buf = pj(out_dir, folder_name, 'Fitness.csv'), sep='\t', index=True) # Saving WALTer's Fitness_dict as a csv file
     else:
       print "The Fitness could not be computed because CARIBU_state = disabled or the model has not run for enough days"
