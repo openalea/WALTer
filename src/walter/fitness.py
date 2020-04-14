@@ -62,10 +62,12 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
     PARdf = pd.DataFrame(PAR_dict) # Translate the PAR_dict dict into a dataframe
 
     i = 0
+    PARdf_last_day = PARdf.loc[PARdf['Temp_cum'] == max(PARdf['Temp_cum'])]
 
     for plante in PARdf.Num_plante.unique(): # For each plant in the PARdf dataframe
         PARdfplante = PARdf[PARdf.Num_plante == plante] # Take a subset of the dataframe, corresponding to the plant
-        for axis in PARdfplante.Num_talle.unique(): # For each axis of the plant
+        PARdfplante_last_day = PARdf_last_day[PARdf.Num_plante == plante]
+        for axis in PARdfplante_last_day.Num_talle.unique(): # For each axis of the plant (only the axes that will be on the plant until the end)
             i = i+1
             PARdfaxe = PARdfplante[PARdfplante.Num_talle == axis] # Take a subset of the dataframe, corresponding to the axis
             if i == 1:
