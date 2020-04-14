@@ -52,7 +52,7 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
     b_k:
         Coefficient for the calculation of the number of kernels
     nb_days: (int)
-        Number of days before flowering considered in the computation of the fitness
+        Number of days considered in the computation of the fitness
 
     Returns
     -------
@@ -71,21 +71,21 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
             i = i+1
             PARdfaxe = PARdfplante[PARdfplante.Num_talle == axis] # Take a subset of the dataframe, corresponding to the axis
             if i == 1:
-                PAR_fitness = PARdfaxe[PARdfaxe.DOY.isin(flo_date_dict[plante][axis])] # PAR_fitness is a selection of PARdfaxe with only the lines corresponding to the 30 days preceding flowering for each axis of each plant
+                PAR_fitness = PARdfaxe[PARdfaxe.DOY.isin(flo_date_dict[plante][axis])] # PAR_fitness is a selection of PARdfaxe with only the lines corresponding to the days used for the computation of the fitness for each axis of each plant
             else:
-                PARdfaxe_bons_jours = PARdfaxe[PARdfaxe.DOY.isin(flo_date_dict[plante][axis])] # Select only the lines corresponding to the 30 days preceding flowering for this axis of this plant
+                PARdfaxe_bons_jours = PARdfaxe[PARdfaxe.DOY.isin(flo_date_dict[plante][axis])] # Select only the lines corresponding to the days used for the computation of the fitness for this axis of this plant
                 PAR_fitness = PAR_fitness.append(PARdfaxe_bons_jours) # Append your selection to the PAR_fitness Dataframe
 
 
-    Final_PAR_fitness = PAR_fitness.groupby(['Num_plante','Num_talle']).agg('sum')[['Sum_PAR', 'Temperature']] # For each axis of each plant, sum the intercepted PAR and the temperature for every days considered
-    Final_PAR_fitness['Fitness_by_axis'] = Final_PAR_fitness['Sum_PAR']/Final_PAR_fitness['Temperature'] # (Fischer, 1985) The fitness (number of kernels) is proportional to the ratio mean(PAR)/mean(Temperature)
+    Final_PAR_fitness = PAR_fitness.groupby(['Num_plante','Num_talle']).agg('sum')[['Abs_int_PAR', 'Temperature']] # For each axis of each plant, sum the intercepted PAR and the temperature for every days considered
+    Final_PAR_fitness['Fitness_by_axis'] = Final_PAR_fitness['Abs_int_PAR']/Final_PAR_fitness['Temperature'] # (Fischer, 1985) The fitness (number of kernels) is proportional to the ratio mean(PAR)/mean(Temperature)
     Final_PAR_fitness['Number_of_kernels'] = a_k*Final_PAR_fitness['Fitness_by_axis']+b_k # (Fischer, 1985) The fitness (number of kernels) is a*(mean(PAR)/mean(Temperature))+b
 
     for plante, axis in Final_PAR_fitness.index: # For each plant in the simulation
         Final_PAR_fitness.loc[plante, 'genotype'] = geno_dict[plante] # Add a column to the Final_PAR_fitness dataframe with the genotype corresponding to the plant
 
 
-    WALTer_output_for_GenoWALT = ((Final_PAR_fitness.groupby('Num_plante').agg('sum')['Sum_PAR'])/nb_days)/(PAR_fitness.groupby('Num_plante').agg('mean')['Temperature'])
+    WALTer_output_for_GenoWALT = ((Final_PAR_fitness.groupby('Num_plante').agg('sum')['Abs_int_PAR'])/nb_days)/(PAR_fitness.groupby('Num_plante').agg('mean')['Temperature'])
     WALTer_output_for_GenoWALT = WALTer_output_for_GenoWALT.to_frame()
     WALTer_output_for_GenoWALT.columns = ['PAR_fitness_by_plant']
     for plante in WALTer_output_for_GenoWALT.index: # For each plant in the simulation
