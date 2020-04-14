@@ -6,7 +6,7 @@ during a key period of the development
 
 import pandas as pd
 
-def flo_date(Transiflo_dico, nb_days=30):
+def flo_date(Transiflo_dico, nb_days = 30, nb_days_after = 0):
     """
     Identify days to consider for the fitness
 
@@ -16,18 +16,20 @@ def flo_date(Transiflo_dico, nb_days=30):
         Flowering dates of each axis of each plant (typically dico_stades)
     nb_days: (int)
         Number of days before flowering considered in the computation of the fitness
+    nb_days_after: (int)
+        Number of days after flowering (including the day of flowering) considered in the computation of the fitness
 
     Returns
     -------
         A dict with the days to consider for the computation of the fitness for each axis of each plant
     """
 
-    Flo_date_dict = {} # Initializing an empty dictionary that will be filled with the flowwoing loop
+    Flo_date_dict = {} # Initializing an empty dictionary that will be filled with the following loop
     for plante, val in Transiflo_dico.items(): # For each plant in the dico_stade dict
         Flo_date_dict[plante] = {} # There is a key for each plant in the Flo_date_dict
         for axis, val2 in val.items(): # For each axis in dico_stade dict
             date_flo = val2["Flo"][2] # Flowering date in DOY
-            Flo_date_dict[plante][axis] = range(date_flo-nb_days, date_flo) # For each axis of each plant, the dict is filled with a list of DOYs for which the PAR must be summed
+            Flo_date_dict[plante][axis] = range(date_flo - nb_days, date_flo + nb_days_after) # For each axis of each plant, the dict is filled with a list of DOYs for which the PAR must be summed
     return Flo_date_dict
 # WARNING in extreme cases, the line above might not work. If date_flo-nb_days < 0, there would be DOYs such as 0, -1, -2 etc... in the list. 0 should be 365, -1 = 364 etc...
 # TODO : change to : range(date_flo_el-nb_days, date_flo_el), where date_flo_el is in elapsed time instead of DOY
