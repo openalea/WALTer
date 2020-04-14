@@ -35,7 +35,7 @@ def flo_date(Transiflo_dico, nb_days = 30, nb_days_after = 0):
 # TODO : change to : range(date_flo_el-nb_days, date_flo_el), where date_flo_el is in elapsed time instead of DOY
 
 
-def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
+def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0):
     """
     Computes fitness for each plant in the simulation
 
@@ -51,8 +51,6 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
         Coefficient for the calculation of the number of kernels
     b_k:
         Coefficient for the calculation of the number of kernels
-    nb_days: (int)
-        Number of days considered in the computation of the fitness
 
     Returns
     -------
@@ -85,7 +83,7 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
         Final_PAR_fitness.loc[plante, 'genotype'] = geno_dict[plante] # Add a column to the Final_PAR_fitness dataframe with the genotype corresponding to the plant
 
 
-    WALTer_output_for_GenoWALT = ((Final_PAR_fitness.groupby('Num_plante').agg('sum')['Abs_int_PAR'])/nb_days)/(PAR_fitness.groupby('Num_plante').agg('mean')['Temperature'])
+    WALTer_output_for_GenoWALT = Final_PAR_fitness.groupby('Num_plante').agg('sum')['Number_of_kernels'] # The fitness of a plant is the sum of the fitness of its axes
     WALTer_output_for_GenoWALT = WALTer_output_for_GenoWALT.to_frame()
     WALTer_output_for_GenoWALT.columns = ['PAR_fitness_by_plant']
     for plante in WALTer_output_for_GenoWALT.index: # For each plant in the simulation
