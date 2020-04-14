@@ -92,8 +92,8 @@ scalez = 0.5
 #Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 #Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v3.0"
-WALTer_build = 29042019
+WALTer_version = "v3.0.5"
+WALTer_build = 14042020
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
