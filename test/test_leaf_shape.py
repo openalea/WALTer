@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import map
+from past.utils import old_div
 from walter.leaf_shape import walter_sr, walter_xy, walter_leaf, leaf_area, walter_leaf_mesh, mesh_area
 from walter.cereals_leaf import blade_elt_area, form_factor
 from walter.cereals_fitting import fit2, simplify, leaf_to_mesh_2d, plantgl_shape
@@ -34,9 +37,9 @@ def test_nb_segment():
     leaf_ref = walter_leaf(nb_segment=100)
     ffref = form_factor(leaf_ref)
     nseg = (2,5,10,20)
-    leaves = map(walter_leaf,nseg)
-    ff = map(form_factor, leaves)
-    rel_err = abs(array(ff) - ffref) / ffref
+    leaves = list(map(walter_leaf,nseg))
+    ff = list(map(form_factor, leaves))
+    rel_err = old_div(abs(array(ff) - ffref), ffref)
     max_err = array([1e-6]*len(nseg))
     assert all(rel_err < max_err)
 

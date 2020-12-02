@@ -2,6 +2,8 @@
 
 ### Importation de libraries
 from __future__ import division
+from __future__ import print_function
+
 import random
 from openalea.plantgl.all import *
 import pandas as pd
@@ -113,7 +115,7 @@ caribu_recorder = CaribuRecorder()
 
 var_register1 = ["expe_related","densite","CARIBU_state","rep", "write_debug_PAR", "CARIBU_screen_res"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register1:
     exec(key+"=value")
 
@@ -126,7 +128,7 @@ hazard_emerg = True
 
 var_register_hazard = ["hazard_plant_xy","hazard_plant_azi","hazard_axis","hazard_organ","hazard_emerg"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_hazard:
     exec(key+"=value")
 
@@ -139,7 +141,7 @@ write_lstring = False
 
 which_output_files = pd.read_csv(pj(data_dir, "which_output_files.csv"), sep="\t")
 write_output_file = {"GAI":which_output_files.GAIp[0], "Peraxes":which_output_files.Peraxes[0], "Proba":which_output_files.Proba[0], "Apex_Sirius":which_output_files.Apex_sirius[0], "Apex":which_output_files.Apex[0], "Apex_R":which_output_files.Apex_R[0], "Blade":which_output_files.Blade[0], "Internode":which_output_files.Internode[0], "Sheath":which_output_files.Sheath[0], "Ear":which_output_files.Ear[0], "Peduncle":which_output_files.Peduncle[0], "PAR_per_axes":which_output_files.PAR_per_axes[0], "Fitness":which_output_files.Fitness[0], "Lstring":which_output_files.Lstring[0], "Lscene":which_output_files.Lscene[0]}
-print "ce qu'on ecrit:", write_output_file["Lscene"]
+print("ce qu'on ecrit:", write_output_file["Lscene"])
 
 
 #########################
@@ -162,7 +164,7 @@ genotype_numbers = str()
 
 var_register_genotypes = ["genotypes","genotype_numbers"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_genotypes:
     exec(key+"=value")
 
@@ -178,7 +180,7 @@ for geno in genotypes:
 
 Ln_final_genetics = {}
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_Ln_final_genetics:
     exec(key + "=value")
 
@@ -238,7 +240,7 @@ crop_ccptn = "Mesh_for_nplants"
 
 var_register0 = ["crop_ccptn", "infinity_CARIBU"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register0:
     exec(key+"=value")
 
@@ -266,7 +268,7 @@ genotype_proportion = "random"
 
 var_register_genotype_proportion = ["genotype_proportion"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_genotype_proportion:
     exec(key+"=value")
 
@@ -297,7 +299,7 @@ if SIRIUS_state == "disabled":
 
 var_register_Ln_final = ["Ln_final_Maxwell","Ln_final_Soissons","Ln_final_Lely","Ln_final_Gigant_Maxwell","Ln_final_Darwinkel_Maxwell","Ln_final_Apache","Ln_final_Renan","Ln_final_Caphorn","Ln_final_A208","Ln_final_A210","Ln_final_F236","Ln_final_A398"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_Ln_final:
     exec(key+"=value")
 
@@ -325,7 +327,7 @@ for geno in crop_genotype:
   var_register_leaf.append("scurv_"+geno)
   var_register_leaf.append("curvature_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_leaf:
     exec(key+"=value")
 
@@ -381,7 +383,7 @@ for geno in crop_genotype:
   var_register_phyll_adjust.append("VBEE_"+geno)
   var_register_phyll_adjust.append("SLDL_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_phyll_adjust:
     exec(key+"=value")
 
@@ -406,7 +408,7 @@ var_registerHeight = ["Param_PlHeight_Maxwell","Param_PlHeight_Soissons","Param_
 for geno in crop_genotype:
   var_registerHeight.append("Param_PlHeight_"+geno)
   
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerHeight:
     exec(key+"=value")
 
@@ -451,7 +453,7 @@ for geno in crop_genotype:
   var_register_till_prob.append("P_T_"+geno)
   var_register_till_prob.append("P_CT_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_till_prob:
     exec(key+"=value")
 
@@ -481,7 +483,7 @@ for geno in crop_genotype:
   var_registerDSE.append("Dse_mean_"+geno)
   var_registerDSE.append("Dse_sd_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerDSE:
     exec(key+"=value")
 
@@ -594,7 +596,7 @@ for geno in crop_genotype:
   var_register_geometry.append("d_E_"+geno)
   var_register_geometry.append("L_E_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_geometry:
     exec(key+"=value")
 
@@ -678,7 +680,7 @@ for geno in crop_genotype:
   var_register_death.append("t2_sen_"+geno)
   var_register_death.append("t3_sen_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_death:
     exec(key+"=value")
 
@@ -773,7 +775,7 @@ var_registerGAI = ["GAI_c_Soissons","GAI_c_Maxwell", "GAI_c_Darwinkel_Maxwell", 
 for geno in crop_genotype:
   var_registerGAI.append("GAI_c_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerGAI:
     exec(key+"=value")
 
@@ -788,7 +790,7 @@ L_b_S = 2      # Buried length of the first sheath (in cm) | old name : L_burrie
 
 var_registerdGAIp = ["dGAIp"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerdGAIp:
     exec(key+"=value")
 
@@ -805,7 +807,7 @@ var_registerT_beg = ["t_beg_reg_Soissons","t_beg_reg_Maxwell","t_beg_reg_Darwink
 for geno in crop_genotype:
   var_registerT_beg.append("t_beg_reg_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerT_beg:
     exec(key+"=value")
 
@@ -833,7 +835,7 @@ for geno in crop_genotype:
   var_registerPARt.append("PAR_t_"+geno)
 
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerPARt:
     exec(key+"=value")
 
@@ -860,7 +862,7 @@ var_registerDelta_prot = ["Delta_prot_Soissons","Delta_prot_Maxwell", "Delta_pro
 for geno in crop_genotype:
   var_registerDelta_prot.append("Delta_prot_"+geno)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerDelta_prot:
     exec(key+"=value")
 
@@ -878,7 +880,7 @@ turtle_sectors = 16 # Parameter for the get_turtle_light function (number of sec
 add_sun = 0 # trigger the addition of one sun position per hour in the light sources
 
 var_registerTurtleSky = ["sky_type", "turtle_sectors", "add_sun"]
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_registerTurtleSky:
     exec(key+"=value")
 
@@ -890,7 +892,7 @@ b_fitness = 0
 
 var_register_fitness = ["n_days_fitness", "a_fitness", "b_fitness"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register_fitness:
     exec(key+"=value")
 
@@ -1118,7 +1120,7 @@ def read_meteo(dico_meteo,start_day,start_hour,PAS):
   val2 = 0
   for i in range(PAS):
     mykey = (start_day,start_hour+i)
-    #print mykey, i, start_hour
+    #print(mykey, i, start_hour)
     val1 += dico_meteo[mykey][0]
     val2 += dico_meteo[mykey][1]
   # val1 = RG ; val2 = Rd/Rg
@@ -1155,7 +1157,7 @@ def synchrone_correspondance(tiller):
     for l in range(1,len(tiller)):
       new_tiller = tiller[0:len(tiller)-1]
       new_n = tiller[-1] + 2 + (n-1)
-      #print new_tiller, new_n
+      #print(new_tiller, new_n)
       tiller = new_tiller
       n = new_n
       l += 1
@@ -1243,7 +1245,7 @@ def SSI_tiller(Tht, tiller, Ln_final, phyllo, n1, n3, ts1, ts3, Dse, DelayTipToH
   elif Tht > real_ts3:
     a = 0
     b = Ln_final
-  #~ print "Tht : ", Tht,"Ts0 : ", real_ts0[0]
+  #~ print("Tht : ", Tht,"Ts0 : ", real_ts0[0])
   return max(0,((a * Tht) + b))
 
 # Emergence date
@@ -1362,8 +1364,8 @@ def nb_emerged_leaves(tempcum, tiller, geno, Ln_final):
 
 # Temporary date of senescence (in case of NOT knowing the final leaf number on the axis)
 def date_senescence_fake(n, t0):
-  #calcul interm�diaires pour la premi�re phase de s�nescence
-  #print "/|\ Date de s�nescence douteuse !"
+  #calcul intermediaires pour la premiere phase de senescence
+  #print("/|\ Date de senescence douteuse !")
   return t0 + n/0.015
 
 # Setting a delay of floral transition of tiller according to the cohort number
@@ -1455,19 +1457,19 @@ def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):
     alpha_a = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) # n�gatif si NENL=5
     beta_a = -4 * (ranNENL+1) * ( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) # est positif quand h > l_ear
     if alpha_a >= 0:
-        print 'NENL =  ' + str(ranNENL) + '    unextected NENL?'
+        print( 'NENL =  ' + str(ranNENL) + '    unextected NENL?')
         if alpha_a == 0:
-            print 'a range problem : division by 0'
+            print( 'a range problem : division by 0')
             posrange_a = [np.nan, np.nan]
         elif beta_a*alpha_a > 0:
-            print 'a range problem : square root of negative number'
+            print( 'a range problem : square root of negative number')
             posrange_a = [np.nan, np.nan]
         elif beta_a*alpha_a < 0:
             val_a = -sqrt(-beta_a / alpha_a )            
             posrange_a = [-100, val_a] # would actually be -infinity
     elif alpha_a < 0:
         if beta_a*alpha_a > 0:
-            print 'a range problem : square root of negative number'
+            print( 'a range problem : square root of negative number')
             posrange_a = [np.nan, np.nan]
         elif beta_a*alpha_a < 0:
             val_a = -sqrt(-beta_a / alpha_a ) # val_a is the value for which delta = 0, a < 0            
@@ -1476,19 +1478,19 @@ def getRangeHeightPar(ranh,ranNENL,rangeno,leaf_nf):
     alpha_b = (ranNENL+1)**2*(ranNENL+2)*( (ranNENL+2) - (2/3)*(2*ranNENL+3) ) 
     beta_b = (-2/3)*(ranNENL+1)*(ranNENL+2)*(2*ranNENL+3)*( l_ear - ranh + l_short*(leaf_nf - ranNENL) ) 
     if alpha_b >= 0: 
-        print 'NENL =  ' + str(ranNENL) + '    unextected NENL?'
+        print('NENL =  ' + str(ranNENL) + '    unextected NENL?')
         if alpha_b == 0:
-            print 'b range problem : division by 0'
+            print('b range problem : division by 0')
             posrange_b = [np.nan, np.nan]
         elif beta_b*alpha_b > 0:
-            print 'b range problem : square root of negative number'
+            print('b range problem : square root of negative number')
             posrange_b = [np.nan, np.nan]
         elif beta_b*alpha_b < 0:
             val_b = -sqrt(-beta_b / alpha_b )            
             posrange_b = [val_b, 100] # would actually be +infinity         
     elif alpha_b < 0: # is what we have for NENL = 5    
         if beta_b*alpha_b > 0:
-            print 'b range problem : square root of negative number'
+            print('b range problem : square root of negative number')
             posrange_b = [np.nan, np.nan]
         elif beta_b*alpha_b < 0:
             val_b = sqrt(-beta_b / alpha_b ) # val_b is the value for which delta = 0, b > 0       
@@ -1814,7 +1816,7 @@ dist_inter_rang = experimental_conditions[expe_related]["dist_inter_rang"]
 
 var_register2 = ["location", "meteo"]
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register2:
     exec(key+"=value")
 
@@ -1835,12 +1837,12 @@ for geno in crop_genotype:
   var_register.append("Phi_zen_B_"+geno)
   var_register.append("Phl_"+geno)
 
-print 'params'
-print params
+print( 'params')
+print(params)
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register:
-    print key, value
+    print( key, value)
     exec(key+"=value")
 
 nb_rang = int(nb_rang)
@@ -1894,7 +1896,7 @@ for geno in range (0,len(crop_genotype)):
   var_register3.append("Pls_"+crop_genotype[geno])
   var_register3.append("DelayTipToHS_"+crop_genotype[geno])
 
-for key, value, in params.iteritems():
+for key, value, in params.items():
   if key in var_register3:
     exec(key+"=value")
 
@@ -1911,20 +1913,20 @@ for geno in crop_genotype:
 crop_scheme = design_crop_classical()
 if crop_ccptn == "classical":
   crop_scheme = design_crop_classical(nb_plt_temp, nb_rang, densite, dist_inter_rang)
-  print crop_scheme
+  print(crop_scheme)
 
 elif crop_ccptn == "neo_Darwinkel":
   crop_scheme = adapting_crop_area(densite,area_min, area_max, dist_inter_rang, opt_plt_nb)
-  print crop_scheme
+  print(crop_scheme)
 
 elif crop_ccptn == "Darwinkel_original": 
   area = area_targeted
   crop_scheme = design_crop_Darwinkel(area, densite)
-  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+  print("dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y)
 
 elif crop_ccptn == "Mesh_for_nplants":
   crop_scheme = design_crop_mesh_for_nplants(densite, nb_plt_utiles , dist_border_x , dist_border_y)
-  print "dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y
+  print("dist_border_x : ",dist_border_x, "dist_border_y : ",dist_border_y)
 
 
 plant_census, border_plants = central_and_border_plants(crop_scheme, dist_border_x, dist_border_y)
@@ -1958,7 +1960,7 @@ out_dir = pj(data_dir, "output")
 
 
 
-print "ID : ",ID
+print("ID : ",ID)
 
 try:
   if not os.path.exists(out_dir):
@@ -1974,8 +1976,10 @@ try:
     if not os.path.exists(pj(out_dir, folder_name, "Lstrings")):
       os.mkdir(pj(out_dir, folder_name, "Lstrings"))
   
-except Exception, e:
-  print(e)
+except Exception:
+  import sys
+  exc = sys.exc_info()[1]
+  print(exc)
   pass
 
 
@@ -2030,7 +2034,7 @@ def StartEach(lstring):
   Temperature = current_temperature              # Temperature moyenne du jour apres elapsed time jours passes
   Tempcum += max(Tbase,Temperature)
   
-  print "date : ", date_current_day, "|", location,"|", "Experiment : ", expe_related,"|", "densite : ", densite,"|", "num_jour : ",elapsed_time,"|", "tempcum : ",int(Tempcum),"|", "DOY : ",DOY,"|", "len : ",len(lstring), "|","T : ", current_temperature,"|", "PAR : ", current_PAR
+  print( "date : ", date_current_day, "|", location,"|", "Experiment : ", expe_related,"|", "densite : ", densite,"|", "num_jour : ",elapsed_time,"|", "tempcum : ",int(Tempcum),"|", "DOY : ",DOY,"|", "len : ",len(lstring), "|","T : ", current_temperature,"|", "PAR : ", current_PAR)
   #daily_seed = rep + elapsed_time
   #random.seed(daily_seed)
 
@@ -2172,7 +2176,7 @@ def EndEach(lstring, lscene):
     if type(lscene) != None:
       if len(lscene) > 0:
         if beginning_CARIBU < Tempcum < ending_CARIBU:
-          print "The date : ", str(datetime.datetime.now())
+          print( "The date : ", str(datetime.datetime.now()))
           # light = get_light(current_PAR, nb_azimuth, nb_zenith)
           # 46 direction sky
           longi = dico_longitudes[location]
@@ -2326,7 +2330,7 @@ def EndEach(lstring, lscene):
                 date_emergence_max = axis_census[num_plt][tal]["emerg_date"]
             #date_emergence_max = max(axis_census[num_plt].values())["emerg_date"]
             
-            for axis, value in axis_census[num_plt].iteritems():
+            for axis, value in axis_census[num_plt].items():
               if axis != (1,): #No regression is considered on the main stem
                 
                 # On d�limite les bords de la fen�tre glissante
@@ -2385,7 +2389,7 @@ def End(lstring):
   ####################################
   #   ECRITURE DANS DES FICHIERS     #
   ####################################
-  print "Aloha"
+  print( "Aloha")
 
   if write_output_file["Apex_Sirius"] == True:
     _Apex_Sirius_df = pd.DataFrame(Apex_Sirius_dico_df)
@@ -2591,7 +2595,7 @@ def End(lstring):
                          "Curvature" + "\t" + "%s" %  geno  + "\t" + "%s" % curvature[geno] + "\n"+
                          "Param_Ln_final" + "\t" + "%s" %  geno  + "\t" + "%s" % param_Ln_final[geno] + "\n")
   fichier_params.close()
-  print "Au revoir"
+  print( "Au revoir")
   fichier_individual= open(pj(out_dir,folder_name, "Individual_heterogeneity.csv"), "w")
   fichier_individual.write("Parameter" + "\t" + "Num_plante" + "\t" + "Dse" + "\n" )
   for numplt in range(1,crop_scheme["nplant_peupl"] + 1):
@@ -2610,7 +2614,7 @@ def End(lstring):
       Fitness_dict = fitness.fitness(PAR_dict=PAR_per_axes_dico, geno_dict=genotype_map, flo_date_dict=Flo_date_dict, a_k=a_fitness, b_k=b_fitness, nb_days=n_days_fitness)
       Fitness_dict.to_csv(path_or_buf = pj(out_dir, folder_name, 'Fitness.csv'), sep='\t', index=True) # Saving WALTer's Fitness_dict as a csv file
     else:
-      print "The Fitness could not be computed because CARIBU_state = disabled or the model has not run for enough days"
+      print( "The Fitness could not be computed because CARIBU_state = disabled or the model has not run for enough days")
 
 Axiom:Seed
 
@@ -2645,16 +2649,16 @@ Seed:
   # ymax_center = ymax - (dist_border_y + y_position_hazard)
   
   
-  print "xmin : ", xmin, "xmax : ", xmax, "xmin_center", xmin_center, "xmax_center", xmax_center
-  print "ymin : ", ymin, "ymax : ", ymax, "ymin_center", ymin_center, "ymax_center", ymax_center
+  print( "xmin : ", xmin, "xmax : ", xmax, "xmin_center", xmin_center, "xmax_center", xmax_center)
+  print( "ymin : ", ymin, "ymax : ", ymax, "ymin_center", ymin_center, "ymax_center", ymax_center)
   
 
   if genotype_proportion != "random" and genotype_proportion != "equal" and genotype_proportion != "genetics":
     df_distrib = pd.read_csv(pj(data_dir, genotype_proportion), header = 0, delimiter = "\t", index_col = False)
     data_distrib = np.array(df_distrib)
-    print crop_scheme
-    print "data_distrib=", data_distrib
-    print plant_map
+    print( crop_scheme)
+    print( "data_distrib=", data_distrib)
+    print( plant_map)
 
   for num_plante in range(1,int(crop_scheme["nplant_peupl"])+1):
 
@@ -2765,14 +2769,14 @@ Seed:
     StCPB = CutPointBud(num_plante,geno,tiller_init)
     nproduce CutPointBud(StCPB)Apex(StA)
   
-  print "border plants : ", border_plants
+  print( "border plants : ", border_plants)
   
   #TODO ajouter un nom plus explicite pour les plantes du centre/bordure.
-  print "plant census 2 : ",plant_census
+  print( "plant census 2 : ",plant_census)
   crop_scheme["nb_useful_plt"] = len(plant_census)
   nb_plantes_utiles = crop_scheme["nb_useful_plt"] 
-  print crop_scheme["nb_useful_plt"]," plantes utiles sur ",crop_scheme["nplant_peupl"]
-  print "All plants in border : ",border_plants == plant_census
+  print( crop_scheme["nb_useful_plt"]," plantes utiles sur ",crop_scheme["nplant_peupl"])
+  print( "All plants in border : ",border_plants == plant_census)
   
   #d�terminer la plante la plus pr�coce
   global earliest_plant
@@ -2781,7 +2785,7 @@ Seed:
   minimal_emergence = min(Dse_heterogeneous.values())
   maximal_emergence = max(Dse_heterogeneous.values())
   
-  for key, value in Dse_heterogeneous.iteritems():
+  for key, value in Dse_heterogeneous.items():
     if value == minimal_emergence:
       earliest_plant = key
     if value == maximal_emergence:
@@ -2800,7 +2804,7 @@ Seed:
   else:
     beginning_CARIBU = (leaf_emerg_date(earliest_t_beg_reg, (1,), earliest_geno, earliest_plant) + 1.6 * shortest_phyllo) - 100
   ending_CARIBU = (leaf_emerg_date(ceil(max(param_Ln_final.values())),(1,), latest_geno, latest_plant) +  2.98 * longest_phyllo) +100
-  print "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU
+  print( "Beginning CARIBU : ",beginning_CARIBU, "Ending CARIBU : ", ending_CARIBU)
   useGroup(2)
 
 
