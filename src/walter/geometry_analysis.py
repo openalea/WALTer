@@ -15,7 +15,7 @@ def structured_scene(lstring, lscene):
 
     Returns
     -------
-     mtg or equivalentpandas that tag geometry with label of different elements
+     mtg or equivalent pandas that tag geometry with label of different elements
     """
     pass
 
@@ -59,15 +59,31 @@ def surface(geometry):
 
     Returns
     -------
-
+		real surface per structure
     """
 
-def gap_fraction():
+def gap_fraction(geometry):
     """
+    
+    Parameters
+    ----------
+    geometry
+
+    Returns
+    -------
+    	gap fraction of per structure
     """
 
 def dominance_propability():
-    """ may be mutual_shading"""
+    """ may be mutual_shading
+    Parameters
+    ----------
+    geometry (plant)
+
+    Returns
+    -------
+    Difference in projected surface for a plant with and without its neighbours
+    """
 
 def bounding_cylinder(geometry):
     """
@@ -93,3 +109,16 @@ def equivalent_cylinder(geometry):
     -------
 
     """
+    
+def distribution_LAI(geometry)
+    """ Repartition of LAI along z axis at a given time
+
+    Parameters
+    ----------
+    geometry
+
+    Returns
+    -------
+	data frame with z coordinates and corresponding LAI (Ea?)
+    """
+
