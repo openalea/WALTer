@@ -50,7 +50,7 @@ def total_proj_surface(scene, direction=None):
         plant projected surface on the ground with occlusions (holes are filled), i.e when plant triangles are projected on xy plan it is the surface within edges
     """
 
-def foliage_proj_surface(scene, direction=None):
+def real_proj_surface(scene, direction=None):
     """
 
     Parameters
@@ -60,7 +60,7 @@ def foliage_proj_surface(scene, direction=None):
 
     Returns
     -------
-        plant projected surface on the ground without occlusions (holes are not filled), i.e surface projection of all leaf triangles for a given plant
+        plant projected surface on the ground without occlusions (holes are not filled), i.e surface projection of all triangles (maybe juste leaf triangles?) for a given plant
     """
 
 def surface(geometry):
