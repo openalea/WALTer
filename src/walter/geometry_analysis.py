@@ -37,17 +37,30 @@ def query(scene, plant=None, genotype=None, organ=None):
 ###############################################################################
 
 
-def proj_surface(scene, direction=None):
+def total_proj_surface(scene, direction=None):
     """
 
     Parameters
     ----------
-    geometry
-    direction
+    plant geometry
+    radiation direction (vertical by default)
 
     Returns
     -------
-        projected surface per structure (int)
+        plant projected surface on the ground with occlusions (holes are filled), i.e when plant triangles are projected on xy plan it is the surface within edges
+    """
+
+def foliage_proj_surface(scene, direction=None):
+    """
+
+    Parameters
+    ----------
+    plant geometry
+    radiation direction (vertical by default)
+
+    Returns
+    -------
+        plant projected surface on the ground without occlusions (holes are not filled), i.e surface projection of all leaf triangles for a given plant
     """
 
 def surface(geometry):
@@ -59,8 +72,22 @@ def surface(geometry):
 
     Returns
     -------
-		real surface per structure
+		real surface per structure, maybe specify scale of the surface (organ or plant), get total leaf surface of one plant for example
     """
+
+
+def foliage_exposed_surface(geometry):
+    """
+
+    Parameters
+    ----------
+    geometry
+
+    Returns
+    -------
+		leaf exposed surface (that will intercept light and do photosynthesis) for a given plant
+    """
+
 
 def gap_fraction(geometry):
     """
@@ -71,7 +98,7 @@ def gap_fraction(geometry):
 
     Returns
     -------
-    	gap fraction of per structure
+    	gap fraction per structure
     """
 
 def dominance_propability(geometry):
@@ -119,6 +146,6 @@ def distribution_LAI(geometry):
 
     Returns
     -------
-	data frame with z coordinates and corresponding LAI (Ea?)
+	data frame with z coordinates and corresponding LAI (Ea?) for a given plant
     """
 
