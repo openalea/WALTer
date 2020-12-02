@@ -74,8 +74,8 @@ def gap_fraction(geometry):
     	gap fraction of per structure
     """
 
-def dominance_propability():
-    """ may be mutual_shading
+def dominance_propability(geometry):
+    """ may be mutual shading
     Parameters
     ----------
     geometry (plant)
@@ -99,7 +99,7 @@ def bounding_cylinder(geometry):
 
 
 def equivalent_cylinder(geometry):
-    """A cylinder that has equivalent property of geometry, witto interseption
+    """A cylinder that has equivalent property of geometry, witto interception
 
     Parameters
     ----------
@@ -110,7 +110,7 @@ def equivalent_cylinder(geometry):
 
     """
     
-def distribution_LAI(geometry)
+def distribution_LAI(geometry):
     """ Repartition of LAI along z axis at a given time
 
     Parameters
