@@ -3,10 +3,31 @@ from alinea.caribu.CaribuScene import CaribuScene
 import pandas
 import numpy
 from openalea.plantgl.all import Scene
+from scipy.spatial.distance import pdist
+
 
 
 def plant_position(num_plante, plant_map):
     return plant_map[num_plante]['x'], plant_map[num_plante]['y']
+
+
+def condensed_index(i, j, n):
+    assert i != j, "no diagonal elements in condensed matrix"
+    if i < j:
+        i, j = j, i
+    return n*j - j*(j+1)//2 + i - 1 - j
+
+
+def neighbours(plant_map, radius):
+    df = pandas.DataFrame(plant_map.values(), index = plant_map.keys())
+    df = pandas.concat([df, radius], axis=1)
+    dm = pdist(df)
+    n = len(df)
+    nbrs = {}
+    for i, pid in enumerate(df.index):
+        drad = [(j, dm[condensed_index(i, j, n)], radius.iloc[j]) for j in range(n) if j != i]
+        nbrs[int(pid)] = [df.index[j] for j, d, r in drad if radius[pid] + r > d]
+    return nbrs
 
 
 def plant_pattern(num_plante, crop_scheme, plant_map):

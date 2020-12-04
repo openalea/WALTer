@@ -21,7 +21,10 @@ def test_analyse(nbj=30):
     crop_scheme = lsys.context().locals()['crop_scheme']
     plant_map = lsys.context().locals()['plant_map']
     df = gac.analyse(lscene, lstring, crop_scheme, plant_map)
+    neighbours = gac.neighbours(plant_map, df['Ri'])
+    df['Ri_neighbours'] = ['[' + ','.join(neighbours[i]) + ']' for i in neighbours]
     return df
+
 
 
 
