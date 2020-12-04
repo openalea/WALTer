@@ -15,7 +15,7 @@ def structured_scene(lstring, lscene):
 
     Returns
     -------
-     mtg or equivalentpandas that tag geometry with label of different elements
+     mtg or equivalent pandas that tag geometry with label of different elements
     """
     pass
 
@@ -37,17 +37,30 @@ def query(scene, plant=None, genotype=None, organ=None):
 ###############################################################################
 
 
-def proj_surface(scene, direction=None):
+def total_proj_surface(scene, direction=None):
     """
 
     Parameters
     ----------
-    geometry
-    direction
+    plant geometry
+    radiation direction (vertical by default)
 
     Returns
     -------
-        projected surface per structure (int)
+        plant projected surface on the ground with occlusions (holes are filled), i.e when plant triangles are projected on xy plan it is the surface within edges
+    """
+
+def real_proj_surface(scene, direction=None):
+    """
+
+    Parameters
+    ----------
+    plant geometry
+    radiation direction (vertical by default)
+
+    Returns
+    -------
+        plant projected surface on the ground without occlusions (holes are not filled), i.e surface projection of all triangles (maybe juste leaf triangles?) for a given plant
     """
 
 def surface(geometry):
@@ -59,15 +72,45 @@ def surface(geometry):
 
     Returns
     -------
-
+		real surface per structure, maybe specify scale of the surface (organ or plant), get total leaf surface of one plant for example
     """
 
-def gap_fraction():
-    """
+
+def foliage_exposed_surface(geometry):
     """
 
-def dominance_propability():
-    """ may be mutual_shading"""
+    Parameters
+    ----------
+    geometry
+
+    Returns
+    -------
+		leaf exposed surface (that will intercept light and do photosynthesis) for a given plant
+    """
+
+
+def gap_fraction(geometry):
+    """
+    
+    Parameters
+    ----------
+    geometry
+
+    Returns
+    -------
+    	gap fraction per structure
+    """
+
+def dominance_propability(geometry):
+    """ may be mutual shading
+    Parameters
+    ----------
+    geometry (plant)
+
+    Returns
+    -------
+    Difference in projected surface for a plant with and without its neighbours
+    """
 
 def bounding_cylinder(geometry):
     """
@@ -83,7 +126,7 @@ def bounding_cylinder(geometry):
 
 
 def equivalent_cylinder(geometry):
-    """A cylinder that has equivalent property of geometry, witto interseption
+    """A cylinder that has equivalent property of geometry, witto interception
 
     Parameters
     ----------
@@ -93,3 +136,16 @@ def equivalent_cylinder(geometry):
     -------
 
     """
+    
+def distribution_LAI(geometry):
+    """ Repartition of LAI along z axis at a given time
+
+    Parameters
+    ----------
+    geometry
+
+    Returns
+    -------
+	data frame with z coordinates and corresponding LAI (Ea?) for a given plant
+    """
+
