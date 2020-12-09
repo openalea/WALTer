@@ -1,69 +1,174 @@
 import math
+import os
+import pandas as pd
+import csv
+import numpy as np
+from scipy.spatial.distance import pdist
 
-def compute_Pci(density,kb,Sfi):
-    Sd = 1 / density
-    Pci = 1 - math.exp(-kb * Sfi / Sd)
-    return(Pci)
+
+def condensed_index(i, j, n):
+    assert i != j, "no diagonal elements in condensed matrix"
+    if i < j:
+        i, j = j, i
+    return n*j - j*(j+1)//2 + i - 1 - j
 
 
-def compute_Pioverj(hi, hj, K=0.5):
-    Pioverj = 1 / (1 + math.exp(-K*(hi-hj)))
+def neighbours(surfaces, plant_map, option_radius):
+    if option_radius == "density":
+        radius = pd.DataFrame(surfaces[:,7], index = surfaces[:,0], columns=["radius"])
+    elif option_radius == "equivalent_cylinder_projection":
+        radius = pd.DataFrame(math.sqrt(surfaces[:,3]/matyh.pi), index = surfaces[:,0], columns=["radius"])
+    elif option_radius == "bounding_cylinder_projection":
+        radius = pd.DataFrame(surfaces[:,5], index = surfaces[:,0], columns=["radius"])
+    else:
+        print("Unknown radius option, Rd by default")
+        radius = pd.DataFrame(surfaces[:,7], index = surfaces[:,0], columns=["radius"])
+    df = pd.DataFrame(plant_map.values(), index = plant_map.keys())
+    df = pd.concat([df, radius], axis=1)
+    dm = pdist(df)
+    n = len(df)
+    nbrs = {}
+    for i, pid in enumerate(df.index):
+        drad = [(j, dm[condensed_index(i, j, n)], radius["radius"].iloc[j]) for j in range(n) if j != i]
+        nbrs[int(pid)] = [df.index[j] for j, d, r in drad if radius["radius"][pid] + r > d]
+    return(nbrs)
+
+
+def make_dico(dirname, option_radius="density"):
+    os.chdir(dirname)
+    with open('plant_map.csv', mode='r') as infile:
+        reader = csv.reader(infile, delimiter="\t")
+        plant_map = dict((eval(rows[0]),eval(rows[1])) for rows in reader)
+
+    for elt in plant_map:
+        plant_map[elt]["x"] *= 1e-02
+        plant_map[elt]["y"] *= 1e-02
+
+    with open('crop_scheme.csv', mode='r') as infile:
+        reader = csv.reader(infile, delimiter="\t")
+        crop_scheme = dict((rows[0],eval(rows[1])) for rows in reader)
+
+
+    file = open("test_caribu_surfaces.csv","rb")
+    df=pd.read_csv(file,delimiter=',',index_col=False)
+    file.close()
+    surfaces = np.array(df)
+    dict_info = {}
+    for i in range(0,np.shape(surfaces)[0]):
+        idx = surfaces[i,0]
+        dict_info[idx]={}
+        dict_info[idx]["S"] = surfaces[i,1]
+        dict_info[idx]["Sp_within"] = surfaces[i,2]
+        dict_info[idx]["Sp_isolated"] = surfaces[i,3]
+        dict_info[idx]["Sp_selfsim"] = surfaces[i,4]
+        dict_info[idx]["Ri"] = surfaces[i,5]
+        dict_info[idx]["Hi"] = surfaces[i,6]
+        dict_info[idx]["Rd"] = surfaces[i,7]
+    nbrs = neighbours(surfaces,plant_map,option_radius)
+    return(plant_map, crop_scheme, dict_info, nbrs)
+
+
+def compute_Sp(i,dict_info,option_radius="density"):
+    """ Test for i = 1 and i = 2 with 4 different options """
+    if option_radius == "density":
+        dict_info[i]["Rp"] = dict_info[i]["Rd"]
+        dict_info[i]["Sp"] = math.pi * pow(dict_info[i]["Rd"],2)
+    elif option_radius == "equivalent_cylinder_projection":
+        dict_info[i]["Sp"] = dict_info[i]["Sp_isolated"]
+        dict_info[i]["Rp"] = math.sqrt(dict_info[i]["Sp_isolated"]/math.pi)
+    elif option_radius == "bounding_cylinder_projection":
+        dict_info[i]["Rp"] = dict_info[i]["Ri"]
+        dict_info[i]["Sp"] = math.pi * pow(dict_info[i]["Ri"],2)
+    else:
+        print("Warning, wrong surface option, computation of Sp with Rd radius")
+        dict_info[i]["Rp"] = dict_info[i]["Rd"]
+        dict_info[i]["Sp"] = math.pi * pow(dict_info[i]["Rd"],2)
+
+def compute_Pc(kb,i,dict_info):
+    dict_info[i]["Pc"] = 1 - math.exp(-kb * dict_info[i]["S"] / dict_info[i]["Sp"])
+
+def compute_Pioverj(i, j, dict_info):
+    hi = dict_info[i]["Hi"]
+    hj = dict_info[j]["Hi"]
+    beta = min(hi, hj)
+    Pioverj = pow(beta,2)/(2*hi*hj) + (hi-beta) / hi
     return(Pioverj)
 
-
-def compute_Probai(density,kb,Sfi,hi,hj,K=0.5):
-    Pci = compute_Pci(density,kb,Sfi)
-    Pioverj = compute_Pioverj(hi,hj,K)
-    return(Pci, Pioverj)
-
-
-def triple_intersection(neighbours, xi, yi, Spi):
-    if len(neighbours) < 2:
+def triple_intersection(nbrs, plant_map, dict_info, i):
+    if len(nbrs[i]) < 2:
         return(0)
     else:
-        for j in neighbours:
-            for k in neighbours:
+        for j in nbrs[i]:
+            for k in nbrs[i]:
                 if k > j:
-                    rspi = math.sqrt(Spi/math.pi)
-                    rspj = math.sqrt(neighbours[j]["Sp"]/math.pi)
-                    rspk = math.sqrt(neighbours[k]["Sp"]/math.pi)
 
-                    dij = math.sqrt(pow((xi - neighbours[j]["x"]),2) + pow((yi - neighbours[j]["y"]),2))
-                    dik = math.sqrt(pow((xi - neighbours[k]["x"]),2) + pow((yi - neighbours[k]["y"]),2))
-                    djk = math.sqrt(pow((neighbours[j]["x"] - neighbours[k]["x"]),2) + pow((neighbours[j]["y"] - neighbours[k]["y"]),2))
+                    rspi = dict_info[i]["Rp"]
+                    rspj = dict_info[j]["Rp"]
+                    rspk = dict_info[k]["Rp"]
+
+
+                    dij = math.sqrt(pow((plant_map[i]["x"] - plant_map[j]["x"]),2) + pow((plant_map[i]["y"] - plant_map[j]["y"]),2))
+                    dik = math.sqrt(pow((plant_map[i]["x"] - plant_map[k]["x"]),2) + pow((plant_map[i]["y"] - plant_map[k]["y"]),2))
+                    djk = math.sqrt(pow((plant_map[j]["x"] - plant_map[k]["x"]),2) + pow((plant_map[j]["y"] - plant_map[k]["y"]),2))
                     if rspi+rspj > dij and rspi+rspk > dik and rspj+rspk > djk:
                         return(1)
         return(0)
 
+def double_partitioning_trigo(i, nbrs, dict_info,plant_map):
+    Sfu = 0.0
+    Sponlyi = dict_info[i]["Sp"]
+    rspi = dict_info[i]["Rp"]
+    for j in nbrs[i]:
+        d = math.sqrt(pow((plant_map[i]["x"] - plant_map[j]["x"]),2) + pow((plant_map[i]["y"] - plant_map[j]["y"]),2))
+        rspj = dict_info[j]["Rp"]
+        test = rspi + rspj - d
+        if test <= 0:
+            Spij = 0
+        else:
+            # Spij = 2 * rspi * (acos(1-test/(2*rspi)) * sqrt(test/rspi - (test/rspi)^2)*(1-test/(2*rspi)) )
+            di = (pow(rspi,2) + pow(d,2) -pow(rspj,2)) / (2*d)
+            dj = d - di
 
-def default_neighbours(density):
-    neighbours = {}
-    neighbours[2] = {}
-    neighbours[3] = {}
-    neighbours[2]["x"] = 0.0
-    neighbours[3]["x"] = 0.05
-    neighbours[2]["y"] = 0.0
-    neighbours[3]["y"] = 0.05
-    neighbours[2]["Sp"] = neighbours[3]["Sp"] = 1 / density
-    neighbours[2]["height"] = neighbours[3]["height"] = 50.0
-    neighbours[2]["Pc"] = neighbours[3]["Pc"] = 1.0
-    return(neighbours)
+            Spij = math.acos(di/rspi) * pow(rspi,2) - di*math.sqrt(pow(rspi,2)-pow(di,2)) + math.acos(dj/rspj) * pow(rspj,2) - dj*math.sqrt(pow(rspj,2)-pow(dj,2))
+
+        Pioverj = compute_Pioverj(i, j, dict_info)
+        Sfu += Spij * dict_info[i]["Pc"] *((1-dict_info[j]["Pc"]) + dict_info[j]["Pc"] * Pioverj)
+        Sponlyi -= Spij
+
+    Sfu += Sponlyi * dict_info[i]["Pc"]
+    return(Sfu)
+
+def computeSfu(i,nbrs,dict_info,plant_map, timestep):
+    if len(nbrs[i]) == 0:
+        Sfu = dict_info[i]["Sp"] * dict_info[i]["Pc"]
+        print("No intersection")
+    else:
+        triple_check = triple_intersection(nbrs, plant_map, dict_info, i)
+        if triple_check == 0:
+            print("1 intersection")
+            Sfu = double_partitioning_trigo(i, nbrs, dict_info,plant_map)
+        else:
+            print("> 1 intersection")
+            Sfu = partitioning(i,nbrs, dict_info,timestep,type)
+    return(Sfu)
 
 
-
-def Get_Rho_List(t,i,Spi,xi,yi,neighbours):
+def Get_Rho_List(t,i,nbrs, plant_map,dict_info):
     # rho1 and rho 2 for plant i
-    dsqri = math.sqrt(Spi/math.pi - pow(t,2))
-    rho1 = yi - dsqri
-    rho2 = yi + dsqri
+    Rp = dict_info[i]["Rp"]
+    Sp = dict_info[i]["Sp"]
+
+    dsqri = math.sqrt(pow(Rp,2) - pow(t,2))
+    rho1 = plant_map[i]["y"] - dsqri
+    rho2 = plant_map[i]["y"] + dsqri
     Rho_List = [(i,rho1),(i,rho2)]
 
-    for j in neighbours:
-        dsqrj2 = neighbours[j]["Sp"]/math.pi - pow((t + xi - neighbours[j]["x"]),2)
+    for j in nbrs[i]:
+        dsqrj2 = Rp - pow((t + plant_map[i]["x"] - plant_map[j]["x"]),2)
         if dsqrj2 > 0:
             dsqrj = math.sqrt(dsqrj2)
-            rho1_temp = neighbours[j]["y"] - dsqrj
-            rho2_temp = neighbours[j]["y"] + dsqrj
+            rho1_temp = plant_map[j]["y"] - dsqrj
+            rho2_temp = plant_map[j]["y"] + dsqrj
 
             if rho1_temp < rho2 and rho1_temp > rho1:
                 Rho_List.append((j,rho1_temp))
@@ -72,46 +177,31 @@ def Get_Rho_List(t,i,Spi,xi,yi,neighbours):
     return(rho1, rho2, Rho_List)
 
 
-def Get_Prob(i, Pci, hi, neighbours, li, lo,type):
+def Get_Prob(i, dict_info, li, lo):
     prob = 1.0
-    if type == "homogeneous":
-        for it1 in li:
-            if it1 == i:
-                prob *= Pci
-            else:
-                prob *= neighbours[it1]["Pc"]
-        if len(lo) > 0:
-            for it2 in lo:
-                if it2 == i:
-                    print("weird")
-                    prob *= (1 - Pci)
-                else:
-                    prob *= (1 - neighbours[it2]["Pc"])
-        prob /= len(li)
-    else:
+    prob_temp = 1.0
+    norm = 0.0
+    for it1 in li:
+        if it1 == i:
+            prob *= dict_info[it1]["Pc"]
+        else:
+            Pij = compute_Pioverj(i, it1, dict_info)
+            prob *=  dict_info[it1]["Pc"] * Pij
+    for it2 in lo:
+        prob *= (1-dict_info[it2]["Pc"])
+    for it3 in li:
         prob_temp = 1.0
-        norm = 0.0
-        for it1 in li:
-            if it1 == i:
-                prob *= Pci
-            else:
-                Pij = compute_Pioverj(hi,neighbours[it1]["height"])
-                prob *=  neighbours[it1]["Pc"] * Pij
-        for it2 in lo:
-            prob *= (1-neighbours[it2]["Pc"])
-        for it3 in li:
-            prob_temp = 1.0
-            for it4 in li:
-                if it3 != it4: # then Piover = 1 and focus plant is not in its own neighbour vector
-                    if it3 == i:
-                        Pij = compute_Pioverj(hi,neighbours[it4]["height"])
-                    elif it4 == i:
-                        Pij = compute_Pioverj(neighbours[it3]["height"],hi)
-                    else:
-                        Pij = compute_Pioverj(neighbours[it3]["height"],neighbours[it4]["height"])
-                    prob_temp *= Pij
-            norm += prob_temp
-        prob /= norm
+        for it4 in li:
+            if it3 != it4: # then Piover = 1 and focus plant is not in its own neighbour vector
+                if it3 == i:
+                    Pij = compute_Pioverj(i,it4,dict_info)
+                elif it4 == i:
+                    Pij = compute_Pioverj(it3,i,dict_info)
+                else:
+                    Pij = compute_Pioverj(it3,it4,dict_info)
+                prob_temp *= Pij
+        norm += prob_temp
+    prob /= norm
     return(prob)
 
 def float_range(start, stop, step):
@@ -123,15 +213,15 @@ def float_range(start, stop, step):
 
 
 
-def partitioning(i,Spi,Pci, neighbours,timestep,type):
+def partitioning(i,nbrs, dict_info,plant_map,timestep):
     Sfu = 0.0
-    deltat = math.sqrt(Spi/math.pi) # radius of spi
+    deltat = dict_info[i]["Rp"]
     dt = deltat / timestep
     beg = (-deltat + dt/2)
     trange = float_range(beg,deltat-dt,dt)
     for t in trange:
         print(t)
-        rho1, rho2, Rho_List = Get_Rho_List(t,i,Spi,xi,yi,neighbours)
+        rho1, rho2, Rho_List = Get_Rho_List(t,i,nbrs, plant_map,dict_info)
         Rho_List.sort(key=lambda tup: tup[1])
         rhog = rho1
         rhod = rho2
@@ -160,7 +250,7 @@ def partitioning(i,Spi,Pci, neighbours,timestep,type):
 
                 for k in range(0,l_a):
                     partition_IN[k].append(i)
-                    prob += Get_Prob(i, Pci, hi, neighbours,partition_IN[k], partition_OUT[k],type)
+                    prob += Get_Prob(i, dict_info, partition_IN[k], partition_OUT[k])
                 Sfu += dSint*prob
             test = 0
             for idx in idx_list:
@@ -174,15 +264,22 @@ def partitioning(i,Spi,Pci, neighbours,timestep,type):
                     idx_list.remove(rho_idx)
     return(Sfu)
 
-Pci=1.0
-density = 160.0
-kb = 1.95
-Sfi = 2.0
-hi = 50.0
-neighbours = default_neighbours(density)
-xi = 0.05
-yi=0.0
-Spi=1/density
-test = partitioning(i,Spi,Pci,neighbours,50.0,"heterogeneous")
+# sfu11 = double_partitioning_trigo(1, nbrs, dict_info,plant_map)
+# sfu12 = computeSfu(1,nbrs,dict_info,plant_map, 50.0)
+# print(sfu11 == sfu12)
+# sfu21 = double_partitioning_trigo(2, nbrs, dict_info,plant_map)
+# sfu22 = computeSfu(2,nbrs,dict_info,plant_map, 50.0)
+# print(sfu21 == sfu22)
+
+def LightCompetition(kb, dict_info,plant_map, nbrs,timestep, option_radius = "density"):
+    for i in plant_map:
+        compute_Sp(i,dict_info)
+        compute_Pc(kb,i,dict_info)
+    for i in plant_map:
+        print(i)
+        dict_info[i]["Sfu"] = computeSfu(i,nbrs,dict_info,plant_map,timestep)
 
 
+dirname = "/home/meije/Documents/test5"
+plant_map, crop_scheme, dict_info, nbrs = make_dico(dirname, "density")
+LightCompetition(0.95, dict_info, plant_map, nbrs,50.0, "density")
