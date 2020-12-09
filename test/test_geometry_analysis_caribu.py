@@ -22,9 +22,16 @@ def test_analyse(dirname, name, nbj=30):
     p, lsys, lstring, lscene = test1(dirname, name, nbj)
     crop_scheme = lsys.context().locals()['crop_scheme']
     plant_map = lsys.context().locals()['plant_map']
+    with open('plant_map.csv', 'w') as f:
+    	for key in plant_map.keys():
+    		f.write("%s\t%s\n"%(key,plant_map[key]))
+    with open('crop_scheme.csv', 'w') as f:
+    	for key in crop_scheme.keys():
+    		f.write("%s\t%s\n"%(key,crop_scheme[key]))
     df = gac.analyse(lscene, lstring, crop_scheme, plant_map)
     neighbours = gac.neighbours(plant_map, df['Ri'])
     df['Ri_neighbours'] = ['[' + ','.join(neighbours[i]) + ']' for i in neighbours]
+    df.to_csv("test_caribu_surfaces.csv")
     return df
 
 
