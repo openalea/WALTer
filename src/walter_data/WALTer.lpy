@@ -881,8 +881,8 @@ for key, value, in params.iteritems():
 
 PAS               = 24
 
-n_days_fitness_before = 30
-n_days_fitness_after = 0
+n_days_fitness_before = 44
+n_days_fitness_after = 1
 a_fitness = 1
 b_fitness = 0
 
