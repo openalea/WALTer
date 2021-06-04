@@ -93,7 +93,7 @@ scalez = 0.5
 #Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
 WALTer_version = "v3.0.5"
-WALTer_build = 14042020
+WALTer_build = "04062021"
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -2538,7 +2538,11 @@ def End(lstring):
                        "till_zen_hazard"  + "\t" + "All" + "\t" + "%s" % till_zen_hazard + "\n" +
                        "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" +
                        "leaf_nb_segments"  + "\t" + "All" + "\t" + "%s" % leaf_nb_segments + "\n" +
-                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n")
+                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n" +
+                       "n_days_fitness_before" + "\t" + "All" + "\t" + "%s" % n_days_fitness_before + "\n" +
+                       "n_days_fitness_after" + "\t" + "All" + "\t" + "%s" % n_days_fitness_after + "\n" +
+                       "a_fitness" + "\t" + "All" + "\t" + "%s" % a_fitness + "\n" +
+                       "b_fitness" + "\t" + "All" + "\t" + "%s" % b_fitness + "\n")
   for geno in crop_genotype:
     fichier_params.write("Phl" + "\t" + "%s" % geno + "\t" + "%s" % Phl[geno] + "\n" +
                          "corrected_Phl" + "\t" + "%s" % geno + "\t" + "%s" % phyll_adjust(geno) + "\n" +
