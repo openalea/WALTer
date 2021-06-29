@@ -4,9 +4,14 @@ from openalea.plantgl.all import Scene
 
 def test1():
     p = project.Project(name='zero_light')
+
     params = p.csv_parameters('sim_scheme_fast_test.csv')[0]
-    params.update(dict(nbj=100, ))
-    p.which_outputs = dict(Lstring= 1, Lscene=1)
+    params.update(dict(nbj=100 ))
+    #new_output = p.which_outputs
+    
+    #p.which_outputs = dict(Lstring= 1, Lscene=1)
+    
+    #assert( len(p.which_outputs) > 2)
     lsys, lstring = p.run(**params)
     lscene = lsys.sceneInterpretation(lstring)
     p.deactivate()

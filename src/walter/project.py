@@ -6,7 +6,7 @@ from __future__ import division
 from builtins import zip
 from builtins import str
 from builtins import object
-from past.utils import old_div
+from os.path import join
 import os
 import sys
 PY2 = (sys.version_info.major == 2)
@@ -39,7 +39,7 @@ def cwd():
 def check_cwd():
     """ does the current dir looks like a walter project dir ?"""
     dir = cwd()
-    return (old_div(dir, 'input')).exists() and (old_div(dir, 'output')).exists() and (old_div(dir, 'which_output_files.csv')).exists()
+    return (dir / 'input').exists() and (dir/'output').exists() and (dir/'which_output_files.csv').exists()
 
 
 class Project(object):
@@ -63,18 +63,18 @@ class Project(object):
         self.copy_input()
         self.generate_output()
         data = walter_data()
-        if not (old_div(data, 'WALTer.lpy')).exists():
+        if not (data/'WALTer.lpy').exists():
             raise ImportError('could not locate walter.lpy source code')
-        self.walter = str(old_div(data, 'WALTer.lpy'))
+        self.walter = str(data/'WALTer.lpy')
 
         csv = 'which_output_files.csv'
-        if not (old_div(self.dirname, csv)).exists():
-            (old_div(walter_data(), csv)).copy(self.dirname)
+        if not (self.dirname/csv).exists():
+            (walter_data()/csv).copy(self.dirname)
         self._outputs = {}  # needed for first call to which_output
 
         itable = 'index-table.json'
-        if (old_div(self.dirname, itable)).exists():
-            self.itable = OrderedDict(self.read_itable(old_div(self.dirname, itable)))
+        if (self.dirname/itable).exists():
+            self.itable = OrderedDict(self.read_itable(self.dirname/itable))
         else:
             self.itable = OrderedDict()
         self._combi_params = {}
@@ -83,8 +83,8 @@ class Project(object):
         """ Copy the input dir from WALTer if it is not present.
         """
         data = walter_data()
-        input_src = old_div(data, 'input')
-        input_dest = old_div(self.dirname, 'input')
+        input_src = data/'input'
+        input_dest = self.dirname/'input'
         if not input_dest.exists():
             input_src.copytree(input_dest, symlinks=True)
             # TODO add log: copy input
@@ -94,7 +94,7 @@ class Project(object):
     def generate_output(self):
         """ Generate output dir if not present.
         """
-        output = old_div(self.dirname, 'output')
+        output = self.dirname/'output'
         if not output.exists():
             output.mkdir()
 
@@ -117,7 +117,7 @@ class Project(object):
     @property
     def which_outputs(self):
         if not self._outputs:
-            df = pd.read_csv(old_div(self.dirname,'which_output_files.csv'), sep='\t')
+            df = pd.read_csv(self.dirname/'which_output_files.csv', sep='\t')
             outs = df.to_dict(orient='records')[0]
             self._outputs = outs
 
@@ -125,15 +125,19 @@ class Project(object):
 
     @which_outputs.setter
     def which_outputs(self, outputs):
+        if not self._outputs:
+            # init outputs
+            self.which_outputs
+
         self._outputs.update(outputs)
         # Write the which_output_files
         df = pd.DataFrame.from_dict(data=[outputs], orient='columns')
-        df.to_csv(path_or_buf=old_div(self.dirname,'which_output_files.csv'), sep='\t', index=False)
+        df.to_csv(path_or_buf=(self.dirname/'which_output_files.csv'), sep='\t', index=False)
 
     @property
     def combi_params(self):
-        if (old_div(self.dirname,'combi_params.csv')).exists():
-            self._combi_params = pd.read_csv(old_div(self.dirname,'combi_params.csv'), sep='\t')
+        if (self.dirname/'combi_params.csv').exists():
+            self._combi_params = pd.read_csv(self.dirname/'combi_params.csv', sep='\t')
         return self._combi_params
 
     @staticmethod
@@ -169,11 +173,11 @@ class Project(object):
             json.dump(itable, out)
 
     def update_itable(self):
-        path = str(old_div(self.dirname, 'index-table.json'))
+        path = str(self.dirname/'index-table.json')
         self.write_itable(self.itable, path)
 
         # update combi_parameters.csv
-        path = str(old_div(self.dirname, 'combi_params.csv'))
+        path = str(self.dirname/'combi_params.csv')
 
         parameters = list(self.itable.values())
         allkeys = set().union(*parameters)
@@ -254,7 +258,7 @@ class Project(object):
             time_start = time.time()
             lstring = lsys.iterate()
             time_stop = time.time()
-            with open(old_div(self.output_path(sim_id = sim_id),"Simulation_time.txt"), 'w') as time_file:
+            with open(self.output_path(sim_id = sim_id)/"Simulation_time.txt", 'w') as time_file:
                 time_file.write(str(time_stop - time_start))
 
         return lsys, lstring
@@ -313,4 +317,4 @@ class Project(object):
             sid = list(self.itable.keys())[index]
         else:
             sid = sim_id
-        return old_div(old_div(self.dirname, 'output'), sid)
+        return self.dirname/'output'/sid

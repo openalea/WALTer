@@ -1624,6 +1624,8 @@ class Seed:
     self.num_plante = num_plante
     self.geno = geno
 
+  def __repr__(self):
+    return 'Seed('+repr(self.num_plante)+', '+repr(self.geno)+')'
 
 class Organ_Base:
   def __init__(self, num_plante, geno, tiller, n):
