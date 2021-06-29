@@ -1,6 +1,6 @@
 Parameter	Genotype	Value
-WALTer_version	All	v3.0
-WALTer_build	All	29042019
+WALTer_version	All	v3.0.5
+WALTer_build	All	04062021
 Related_experiment	All	Mariem
 Crop_conception	All	classical
 Sowing_date	All	2010-10-26
@@ -81,6 +81,10 @@ till_zen_hazard	All	7
 till_azi_hazard	All	90
 leaf_nb_segments	All	7
 genotype_proportion	All	random
+n_days_fitness_before	All	44
+n_days_fitness_after	All	1
+a_fitness	All	1
+b_fitness	All	0
 Phl	Maxwell	99
 corrected_Phl	Maxwell	99
 Pls	Maxwell	44.5
