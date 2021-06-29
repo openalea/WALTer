@@ -92,8 +92,8 @@ scalez = 0.5
 #Sheath_geo = Scaled(Vector3(scalex,scaley,scalez),scene_square[0].geometry)
 #Blade_geo  = Scaled(Vector3(scalex,scaley,scalez),scene_house[0].geometry)
 
-WALTer_version = "v3.0"
-WALTer_build = 29042019
+WALTer_version = "v3.0.5"
+WALTer_build = "04062021"
 
 ##########################################
 ####     BUILDING OUR SIMULATION      ####
@@ -884,11 +884,12 @@ for key, value, in params.iteritems():
 
 PAS               = 24
 
-n_days_fitness = 30
+n_days_fitness_before = 44
+n_days_fitness_after = 1
 a_fitness = 1
 b_fitness = 0
 
-var_register_fitness = ["n_days_fitness", "a_fitness", "b_fitness"]
+var_register_fitness = ["n_days_fitness_before", "n_days_fitness_after", "a_fitness", "b_fitness"]
 
 for key, value, in params.iteritems():
   if key in var_register_fitness:
@@ -2540,7 +2541,11 @@ def End(lstring):
                        "till_zen_hazard"  + "\t" + "All" + "\t" + "%s" % till_zen_hazard + "\n" +
                        "till_azi_hazard"  + "\t" + "All" + "\t" + "%s" % till_azi_hazard + "\n" +
                        "leaf_nb_segments"  + "\t" + "All" + "\t" + "%s" % leaf_nb_segments + "\n" +
-                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n")
+                       "genotype_proportion"  + "\t" + "All" + "\t" + "%s" % genotype_proportion + "\n" +
+                       "n_days_fitness_before" + "\t" + "All" + "\t" + "%s" % n_days_fitness_before + "\n" +
+                       "n_days_fitness_after" + "\t" + "All" + "\t" + "%s" % n_days_fitness_after + "\n" +
+                       "a_fitness" + "\t" + "All" + "\t" + "%s" % a_fitness + "\n" +
+                       "b_fitness" + "\t" + "All" + "\t" + "%s" % b_fitness + "\n")
   for geno in crop_genotype:
     fichier_params.write("Phl" + "\t" + "%s" % geno + "\t" + "%s" % Phl[geno] + "\n" +
                          "corrected_Phl" + "\t" + "%s" % geno + "\t" + "%s" % phyll_adjust(geno) + "\n" +
@@ -2606,8 +2611,8 @@ def End(lstring):
 
   if write_output_file["Fitness"] == True:
     if CARIBU_state != "disabled" and len(PAR_per_axes_dico['Num_plante']) >=1:
-      Flo_date_dict = fitness.flo_date(Transiflo_dico=dico_stades, nb_days=n_days_fitness)
-      Fitness_dict = fitness.fitness(PAR_dict=PAR_per_axes_dico, geno_dict=genotype_map, flo_date_dict=Flo_date_dict, a_k=a_fitness, b_k=b_fitness, nb_days=n_days_fitness)
+      Flo_date_dict = fitness.flo_date(Transiflo_dico = dico_stades, nb_days = n_days_fitness_before, nb_days_after = n_days_fitness_after)
+      Fitness_dict = fitness.fitness(PAR_dict = PAR_per_axes_dico, Axes_dict = Peraxes_dico_df, geno_dict = genotype_map, flo_date_dict = Flo_date_dict, a_k = a_fitness, b_k = b_fitness)
       Fitness_dict.to_csv(path_or_buf = pj(out_dir, folder_name, 'Fitness.csv'), sep='\t', index=True) # Saving WALTer's Fitness_dict as a csv file
     else:
       print "The Fitness could not be computed because CARIBU_state = disabled or the model has not run for enough days"
