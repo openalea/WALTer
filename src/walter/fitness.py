@@ -3,7 +3,10 @@ Computation of the fitness of each plant in WALTer
 based on the amount of light intercepted and the mean temperature
 during a key period of the development
 """
+from __future__ import division
 
+from builtins import range
+from past.utils import old_div
 import pandas as pd
 
 def flo_date(Transiflo_dico, nb_days=30):
@@ -23,11 +26,11 @@ def flo_date(Transiflo_dico, nb_days=30):
     """
 
     Flo_date_dict = {} # Initializing an empty dictionary that will be filled with the flowwoing loop
-    for plante, val in Transiflo_dico.items(): # For each plant in the dico_stade dict
+    for plante, val in list(Transiflo_dico.items()): # For each plant in the dico_stade dict
         Flo_date_dict[plante] = {} # There is a key for each plant in the Flo_date_dict
-        for axis, val2 in val.items(): # For each axis in dico_stade dict
+        for axis, val2 in list(val.items()): # For each axis in dico_stade dict
             date_flo = val2["Flo"][2] # Flowering date in DOY
-            Flo_date_dict[plante][axis] = range(date_flo-nb_days, date_flo) # For each axis of each plant, the dict is filled with a list of DOYs for which the PAR must be summed
+            Flo_date_dict[plante][axis] = list(range(date_flo-nb_days, date_flo)) # For each axis of each plant, the dict is filled with a list of DOYs for which the PAR must be summed
     return Flo_date_dict
 # WARNING in extreme cases, the line above might not work. If date_flo-nb_days < 0, there would be DOYs such as 0, -1, -2 etc... in the list. 0 should be 365, -1 = 364 etc...
 # TODO : change to : range(date_flo_el-nb_days, date_flo_el), where date_flo_el is in elapsed time instead of DOY
@@ -74,14 +77,14 @@ def fitness(PAR_dict, geno_dict, flo_date_dict, a_k=1, b_k=0, nb_days=30):
 
 
     Final_PAR_fitness = PAR_fitness.groupby(['Num_plante','Num_talle']).agg('sum')[['Sum_PAR', 'Temperature']] # For each axis of each plant, sum the intercepted PAR and the temperature for every days considered
-    Final_PAR_fitness['Fitness_by_axis'] = Final_PAR_fitness['Sum_PAR']/Final_PAR_fitness['Temperature'] # (Fischer, 1985) The fitness (number of kernels) is proportional to the ratio mean(PAR)/mean(Temperature)
+    Final_PAR_fitness['Fitness_by_axis'] = old_div(Final_PAR_fitness['Sum_PAR'],Final_PAR_fitness['Temperature']) # (Fischer, 1985) The fitness (number of kernels) is proportional to the ratio mean(PAR)/mean(Temperature)
     Final_PAR_fitness['Number_of_kernels'] = a_k*Final_PAR_fitness['Fitness_by_axis']+b_k # (Fischer, 1985) The fitness (number of kernels) is a*(mean(PAR)/mean(Temperature))+b
 
     for plante, axis in Final_PAR_fitness.index: # For each plant in the simulation
         Final_PAR_fitness.loc[plante, 'genotype'] = geno_dict[plante] # Add a column to the Final_PAR_fitness dataframe with the genotype corresponding to the plant
 
 
-    WALTer_output_for_GenoWALT = ((Final_PAR_fitness.groupby('Num_plante').agg('sum')['Sum_PAR'])/nb_days)/(PAR_fitness.groupby('Num_plante').agg('mean')['Temperature'])
+    WALTer_output_for_GenoWALT = old_div((old_div((Final_PAR_fitness.groupby('Num_plante').agg('sum')['Sum_PAR']),nb_days)),(PAR_fitness.groupby('Num_plante').agg('mean')['Temperature']))
     WALTer_output_for_GenoWALT = WALTer_output_for_GenoWALT.to_frame()
     WALTer_output_for_GenoWALT.columns = ['PAR_fitness_by_plant']
     for plante in WALTer_output_for_GenoWALT.index: # For each plant in the simulation

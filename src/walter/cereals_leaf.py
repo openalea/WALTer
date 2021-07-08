@@ -1,7 +1,13 @@
 """ Parametric leaf used for simple maize"""
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from builtins import map
+from builtins import zip
+from past.utils import old_div
 import numpy
 from math import pi, cos, sin, radians
-import cereals_fitting as fitting
+from . import cereals_fitting as fitting
 import openalea.plantgl.all as pgl
 from scipy.integrate import trapz
 from scipy.optimize import brentq
@@ -35,7 +41,7 @@ def leaf_shape_perez(nb_segment = 100,insertion_angle=50, l=0.5, curvature=50):
     # curvature: leaf angular curvature (tip angle - insertion angle) 
 
     def _curvature(s, coef_curv):
-        return ((1 + coef_curv) * (s**2)) / (1 + coef_curv * (s**2))
+        return old_div(((1 + coef_curv) * (s**2)), (1 + coef_curv * (s**2)))
 
     #inputs
 
@@ -68,7 +74,7 @@ def leaf_shape_perez(nb_segment = 100,insertion_angle=50, l=0.5, curvature=50):
     dy = numpy.array([0] + (coef_l * numpy.cos(angle_simu)).tolist())[:-1]
     x, y = numpy.cumsum(dx), numpy.cumsum(dy)
     length = numpy.sum(numpy.sqrt(dx**2 + dy**2))
-    return x / length, y / length
+    return old_div(x, length), old_div(y, length)
 
 
 def sr_prevot(nb_segment=10, alpha=-2.3):
@@ -99,22 +105,22 @@ def sr_dornbush(nb_segment=10, klig=0.6, swmax=0.55, f1=0.64, f2=0.92):
     c1 = 1. / f1 - 1
     c2 = brentq(lambda x: klig - f2 + (1 -klig) * (1 + 1. / x) - 1. / numpy.log(1 + x), 1, 1e9)
     ntop = int(nb_segment * swmax)
-    offset = 1. / nb_segment / 2
+    offset = old_div(1. / nb_segment, 2)
     st = numpy.array(numpy.linspace(1 - swmax, 1 - offset, ntop).tolist() + [1])
-    rt = numpy.power((1 - st) / swmax, c1)
+    rt = numpy.power(old_div((1 - st), swmax), c1)
     nbase = nb_segment - ntop
-    offset = 1. / nb_segment / 10
+    offset = old_div(1. / nb_segment, 10)
     sb = numpy.array([0] + numpy.linspace(offset, 1 - swmax, nbase)[:-1].tolist())
-    rb = klig + (1 - klig) * numpy.log(1 + c2 * sb / (1 - swmax)) / numpy.log(1 + c2)
+    rb = klig + old_div((1 - klig) * numpy.log(1 + old_div(c2 * sb, (1 - swmax))), numpy.log(1 + c2))
     return numpy.array(sb.tolist() + st.tolist()), numpy.array(rb.tolist() + rt.tolist())
 
 
 def leaf_morpho_rel(nb_segment=10, w0=0.5, lm=0.5):
     a0 = w0
-    c0 = (w0 - 1) / (lm ** 2)
+    c0 = old_div((w0 - 1), (lm ** 2))
     b0 = -2 * c0 * lm
 
-    c1 = -1 / (1 - lm) ** 2
+    c1 = old_div(-1, (1 - lm) ** 2)
     b1 = -2 * c1 * lm
     a1 = -b1 - c1
 
@@ -171,7 +177,7 @@ def blade_elt_area(s, r, Lshape=1, Lwshape=1, sr_base=0, sr_top=1):
     sr_top = min([1, max([sr_base, sr_top])])
     sre = [sr for sr in zip(s, r) if (sr_base < sr[0] < sr_top)]
     if len(sre) > 0:
-        se, re = zip(*sre)
+        se, re = list(zip(*sre))
         snew = [sr_base] + list(se) + [sr_top]
         rnew = [numpy.interp(sr_base, s, r)] + list(re) + [numpy.interp(sr_top, s, r)]
     else:
@@ -203,7 +209,7 @@ def arrange_leaf(leaf, stem_diameter=0, inclination=1, relative=True):
 
     """
 
-    x, y, s, r = map(numpy.array, leaf)
+    x, y, s, r = list(map(numpy.array, leaf))
     if relative and inclination == 1:
         x1, y1 = x, y
     else:
@@ -276,7 +282,7 @@ def leaf_mesh(leaf, L_shape, Lw_shape, length, s_base=0, s_top=1, flipx=False,
             mesh = fitting.plantgl_shape(pts, ind)
     else:
         if length > 0:
-            print 'ERROR No mesh', s_base, s_top, length
+            print('ERROR No mesh', s_base, s_top, length)
             pass
         mesh = None
 

@@ -1,5 +1,6 @@
 """compute crop_schemes for different configurations"""
 from __future__ import division
+from builtins import range
 from math import floor, ceil, sqrt
 
 
@@ -151,7 +152,7 @@ def central_domain(crop_scheme, dist_border_x=0, dist_border_y=0):
 def central_and_border_plants(crop_scheme, dist_border_x, dist_border_y):
     """create list of plants within and outside central domain.
     In the case all plants are border plants they are also all considered as central plants"""
-    plant_census = range(1, crop_scheme["nplant_peupl"] + 1)
+    plant_census = list(range(1, crop_scheme["nplant_peupl"] + 1))
     border_plants = []
     xmin_center, ymin_center, xmax_center, ymax_center = central_domain(crop_scheme, dist_border_x=dist_border_x, dist_border_y=dist_border_y)
     _, positions = plant_disposition(crop_scheme, center_plants=True)

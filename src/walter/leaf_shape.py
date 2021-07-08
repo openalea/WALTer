@@ -1,4 +1,6 @@
 """Leaf shape model for the geometry of leaves"""
+from __future__ import division
+from past.utils import old_div
 from walter import cereals_fitting as fitting
 from walter.cereals_leaf import leaf_shape_perez, sr_dornbush, leaf_mesh, blade_elt_area, form_factor
 from openalea.plantgl.all import SurfComputer, Discretizer, Scaling
@@ -27,7 +29,7 @@ def wheatI_dornbush(rank=10, rank_j=8, rank_max=10, rank_flag=11):
         f1 = 0.79
         swmax = 0.38
     elif rank == 2:
-        f1 = (0.64 + 0.79) / 2
+        f1 = old_div((0.64 + 0.79), 2)
         swmax = 0.62
     elif rank <= rank_j:
         swmax = 0.62 + (0.42 - 0.62) * float(rank - 2) / (rank_j - 2)

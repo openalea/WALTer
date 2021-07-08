@@ -1,8 +1,15 @@
 """
 Management of walter simulations and projects
 """
+from __future__ import division
 
+from builtins import zip
+from builtins import str
+from builtins import object
+from os.path import join
 import os
+import sys
+PY2 = (sys.version_info.major == 2)
 import tempfile
 
 import time
@@ -32,7 +39,7 @@ def cwd():
 def check_cwd():
     """ does the current dir looks like a walter project dir ?"""
     dir = cwd()
-    return (dir / 'input').exists() and (dir / 'output').exists() and (dir / 'which_output_files.csv').exists()
+    return (dir / 'input').exists() and (dir/'output').exists() and (dir/'which_output_files.csv').exists()
 
 
 class Project(object):
@@ -56,18 +63,18 @@ class Project(object):
         self.copy_input()
         self.generate_output()
         data = walter_data()
-        if not (data / 'WALTer.lpy').exists():
+        if not (data/'WALTer.lpy').exists():
             raise ImportError('could not locate walter.lpy source code')
-        self.walter = str(data / 'WALTer.lpy')
+        self.walter = str(data/'WALTer.lpy')
 
         csv = 'which_output_files.csv'
-        if not (self.dirname / csv).exists():
-            (walter_data() / csv).copy(self.dirname)
+        if not (self.dirname/csv).exists():
+            (walter_data()/csv).copy(self.dirname)
         self._outputs = {}  # needed for first call to which_output
 
         itable = 'index-table.json'
-        if (self.dirname / itable).exists():
-            self.itable = OrderedDict(self.read_itable(self.dirname / itable))
+        if (self.dirname/itable).exists():
+            self.itable = OrderedDict(self.read_itable(self.dirname/itable))
         else:
             self.itable = OrderedDict()
         self._combi_params = {}
@@ -76,8 +83,8 @@ class Project(object):
         """ Copy the input dir from WALTer if it is not present.
         """
         data = walter_data()
-        input_src = data / 'input'
-        input_dest = self.dirname / 'input'
+        input_src = data/'input'
+        input_dest = self.dirname/'input'
         if not input_dest.exists():
             input_src.copytree(input_dest, symlinks=True)
             # TODO add log: copy input
@@ -87,7 +94,7 @@ class Project(object):
     def generate_output(self):
         """ Generate output dir if not present.
         """
-        output = self.dirname / 'output'
+        output = self.dirname/'output'
         if not output.exists():
             output.mkdir()
 
@@ -118,10 +125,14 @@ class Project(object):
 
     @which_outputs.setter
     def which_outputs(self, outputs):
+        if not self._outputs:
+            # init outputs
+            self.which_outputs
+
         self._outputs.update(outputs)
         # Write the which_output_files
         df = pd.DataFrame.from_dict(data=[outputs], orient='columns')
-        df.to_csv(path_or_buf=self.dirname/'which_output_files.csv', sep='\t', index=False)
+        df.to_csv(path_or_buf=(self.dirname/'which_output_files.csv'), sep='\t', index=False)
 
     @property
     def combi_params(self):
@@ -139,14 +150,17 @@ class Project(object):
     def read_itable(path):
 
         def _byteify(input):
-            if isinstance(input, dict):
-                return {_byteify(key): _byteify(value)
-                        for key, value in input.iteritems()}
-            elif isinstance(input, list):
-                return [_byteify(element) for element in input]
-            elif isinstance(input, unicode):
-                return input.encode('utf-8')
-            else:
+            if PY2:
+                if isinstance(input, dict):
+                    return {_byteify(key): _byteify(value)
+                            for key, value in input.items()}
+                elif isinstance(input, list):
+                    return [_byteify(element) for element in input]
+                elif isinstance(input, str):
+                    return input.encode('utf-8')
+                else:
+                    return input
+            else: 
                 return input
 
         # The use of the byteify function kill encoding problems from json importation between unicode and strings
@@ -159,13 +173,13 @@ class Project(object):
             json.dump(itable, out)
 
     def update_itable(self):
-        path = str(self.dirname / 'index-table.json')
+        path = str(self.dirname/'index-table.json')
         self.write_itable(self.itable, path)
 
         # update combi_parameters.csv
-        path = str(self.dirname / 'combi_params.csv')
+        path = str(self.dirname/'combi_params.csv')
 
-        parameters = self.itable.values()
+        parameters = list(self.itable.values())
         allkeys = set().union(*parameters)
 
         def _missing(d):
@@ -233,7 +247,7 @@ class Project(object):
         """
 
         self.activate()
-        already_known_id = self.itable.keys()
+        already_known_id = list(self.itable.keys())
         if sim_id is None:
             sim_id = self.get_id(kwds)
         if sim_id not in already_known_id:
@@ -278,7 +292,7 @@ class Project(object):
             except TypeError:
                 which = [which]
             parameters = [p for i, p in enumerate(parameters) if i in which]
-        already_known_id = self.itable.keys()
+        already_known_id = list(self.itable.keys())
         sim_ids = self.generate_id(parameters)
         if not all([sid in already_known_id for sid in sim_ids]):
             self.update_itable()
@@ -300,7 +314,7 @@ class Project(object):
             a path.Path instance
         """
         if sim_id == None:
-            sid = self.itable.keys()[index]
+            sid = list(self.itable.keys())[index]
         else:
             sid = sim_id
-        return self.dirname / 'output' / sid
+        return self.dirname/'output'/sid
