@@ -1,11 +1,18 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from builtins import zip
+from builtins import map
+from builtins import range
+from past.utils import old_div
 import numpy
 from numpy import *
 from scipy.interpolate import *
 from scipy.integrate import simps, trapz
 import openalea.plantgl.all as pgl
 
-from cereals_simplification import cost
-from itertools import izip
+from .cereals_simplification import cost
+
 
 ##### DEBUG
 debug = False
@@ -54,7 +61,7 @@ def fit_leaf(x, y, s, r):
     xnew, ynew = splev(linspace(0, 1, 100), tckp)
     snew = curvilinear_abscisse(xnew, ynew)
     # 1.4
-    snew = snew / snew.max()
+    snew = old_div(snew, snew.max())
 
     # 2.1
     if debug:
@@ -63,8 +70,8 @@ def fit_leaf(x, y, s, r):
         tckp2, v = splprep([s, r], s=smooth, k=k, nest=nest)
     snew2, rnew2 = splev(linspace(0, 1, 500), tckp2)
 
-    snew2 = snew2 / snew2.max()
-    rnew2 = rnew2 / rnew2.max()
+    snew2 = old_div(snew2, snew2.max())
+    rnew2 = old_div(rnew2, rnew2.max())
 
     # 2.4 leaf surface (integral r ds)
     leaf_surface = simps(rnew2, snew2)
@@ -151,8 +158,8 @@ def fit2(x, y, s, r):
 
     snew2, rnew2 = splev(linspace(0, 1, 200), tckp2)
 
-    snew2 = snew2 / snew2.max()
-    rnew2 = numpy.maximum(rnew2, 0) / rnew2.max()
+    snew2 = old_div(snew2, snew2.max())
+    rnew2 = old_div(numpy.maximum(rnew2, 0), rnew2.max())
 
     # 2.4 leaf surface (integral r ds)
     leaf_surface = simps(rnew2, snew2)
@@ -201,12 +208,12 @@ def partial_leaf(leaf, nb_polygones, length_max, length, radius_max):
 
     # build a mesh
     n = len(xf)
-    points = zip(xf, yf, -rf / 2.)
-    points.extend(zip(xf, yf, rf / 2.))
+    points = list(zip(xf, yf, -rf / 2.))
+    points.extend(list(zip(xf, yf, rf / 2.)))
 
-    ind = array(xrange(n - 2))
-    indices = zip(ind, ind + n, ind + (n + 1))
-    indices.extend(zip(ind, ind + (n + 1), ind + 1))
+    ind = array(range(n - 2))
+    indices = list(zip(ind, ind + n, ind + (n + 1)))
+    indices.extend(list(zip(ind, ind + (n + 1), ind + 1)))
     # add only one triangle at the end !!
     indices.append((n - 2, 2 * n - 2, n - 1))
 
@@ -274,15 +281,15 @@ def leaf_to_mesh_new(x, y, r, twist=True, nb_twist=1., nb_waves=8, **kwds):
         waves_z = cos(angle)
 
     n = len(x)
-    points = zip(x + waves1_x, -r / 2. * waves_z, y + waves1_y)
-    points.extend(zip(x, zeros(n), y))
-    points.extend(zip(x + waves2_x, r / 2. * waves_z, y + waves2_y))
+    points = list(zip(x + waves1_x, -r / 2. * waves_z, y + waves1_y))
+    points.extend(list(zip(x, zeros(n), y)))
+    points.extend(list(zip(x + waves2_x, r / 2. * waves_z, y + waves2_y)))
 
-    ind = array(xrange(n - 2))
-    indices = zip(ind, ind + n, ind + (n + 1))
-    indices.extend(zip(ind, ind + (n + 1), ind + 1))
-    indices.extend(zip(ind + n, ind + 2 * n, ind + 2 * n + 1))
-    indices.extend(zip(ind + n, ind + 2 * n + 1, ind + n + 1))
+    ind = array(range(n - 2))
+    indices = list(zip(ind, ind + n, ind + (n + 1)))
+    indices.extend(list(zip(ind, ind + (n + 1), ind + 1)))
+    indices.extend(list(zip(ind + n, ind + 2 * n, ind + 2 * n + 1)))
+    indices.extend(list(zip(ind + n, ind + 2 * n + 1, ind + n + 1)))
 
     # add only one triangle at the end !!
     if r[-1] < 0.001:
@@ -299,12 +306,12 @@ def leaf_to_mesh_new(x, y, r, twist=True, nb_twist=1., nb_waves=8, **kwds):
 def leaf_to_mesh_2d(x, y, r, twist_start=0, twist_end=0):
     n = len(x)
     theta = linspace(radians(twist_start),radians(twist_end),n)
-    points = zip(x, -r/2. * abs(cos(theta)), y + abs(sin(theta)) * r / 2.)
-    points.extend(zip(x, r/2.* abs(cos(theta)), y - abs(sin(theta)) * r / 2.))
+    points = list(zip(x, -r/2. * abs(cos(theta)), y + abs(sin(theta)) * r / 2.))
+    points.extend(list(zip(x, r/2.* abs(cos(theta)), y - abs(sin(theta)) * r / 2.)))
 
-    ind = array(xrange(n-2)) if n > 2 else array([0])
-    indices = zip(ind, ind+n, ind+(n+1))
-    indices.extend(zip(ind, ind+(n+1), ind+1))
+    ind = array(range(n-2)) if n > 2 else array([0])
+    indices = list(zip(ind, ind+n, ind+(n+1)))
+    indices.extend(list(zip(ind, ind+(n+1), ind+1)))
 
     # add only one triangle at the end !!
     if n < 2:
@@ -354,10 +361,10 @@ def leaf_to_mesh(x, z, w, twist_start=0, twist_end=0, volume=0.1):
         norm = numpy.linalg.norm(v)
         if norm == 0:
             return v
-        return v / norm
+        return old_div(v, norm)
 
     y = [0] * n
-    pts = numpy.array(zip(x, y, z))
+    pts = numpy.array(list(zip(x, y, z)))
 
     # Compute volume vector
     v = list()
@@ -379,19 +386,19 @@ def leaf_to_mesh(x, z, w, twist_start=0, twist_end=0, volume=0.1):
                 list(rotate(pts - width - v, theta)))
 
     # Computes faces of the mesh
-    ind = array(xrange(n - 2)) if n > 2 else array([0])
+    ind = array(range(n - 2)) if n > 2 else array([0])
 
-    faces = zip(ind, ind + n, ind + n + 1)
-    faces.extend(zip(ind, ind + n + 1, ind + 1))
+    faces = list(zip(ind, ind + n, ind + n + 1))
+    faces.extend(list(zip(ind, ind + n + 1, ind + 1)))
 
-    faces.extend(zip(ind + n, ind + 2 * n, ind + 2 * n + 1))
-    faces.extend(zip(ind + n, ind + 2 * n + 1, ind + n + 1))
+    faces.extend(list(zip(ind + n, ind + 2 * n, ind + 2 * n + 1)))
+    faces.extend(list(zip(ind + n, ind + 2 * n + 1, ind + n + 1)))
 
-    faces.extend(zip(ind + 2 * n, ind + 3 * n, ind + 3 * n + 1))
-    faces.extend(zip(ind + 2 * n, ind + 3 * n + 1, ind + 2 * n + 1))
+    faces.extend(list(zip(ind + 2 * n, ind + 3 * n, ind + 3 * n + 1)))
+    faces.extend(list(zip(ind + 2 * n, ind + 3 * n + 1, ind + 2 * n + 1)))
 
-    faces.extend(zip(ind + 3 * n, ind, ind + 1))
-    faces.extend(zip(ind + 3 * n, ind + 1, ind + 3 * n + 1))
+    faces.extend(list(zip(ind + 3 * n, ind, ind + 1)))
+    faces.extend(list(zip(ind + 3 * n, ind + 1, ind + 3 * n + 1)))
 
     # close extremity of the leaf
     faces.append((n - 2, 2 * n - 2, n - 1))
@@ -489,7 +496,7 @@ def leaf_element(leaf, length_max=1, length=1, s_base=0, s_top=1, radius_max=1):
     s_valid = compress(s_valid >= s_base, s_valid)
 
     # delete small intervals COMIT from  Here !
-    eps = (s_top - s_base) / (len(s) * 2)
+    eps = old_div((s_top - s_base), (len(s) * 2))
     ds = s_valid[1:] - s_valid[:-1]
     error = ds >= eps
     s_val = compress(error, s_valid[1:])
@@ -603,7 +610,7 @@ def read_smf(filename):
 
 
 def plantgl_shape(points, indices):
-    indices = [map(int, index) for index in indices]
+    indices = [list(map(int, index)) for index in indices]
     return pgl.TriangleSet(points, indices, normalPerVertex=False)
 
 
@@ -648,7 +655,7 @@ def leaf_shape(leaf, nb_triangles, length_max, length, radius_max):
 
     sc = pgl.SurfComputer(pgl.Discretizer())
     mesh.apply(sc)
-    scale_radius = leaf_surface * length_max * radius_max / (sc.surface)
+    scale_radius = old_div(leaf_surface * length_max * radius_max, (sc.surface))
     mesh_final = mesh.transform(pgl.Scaling((1, scale_radius, 1)))
     mesh_final = mesh
     return mesh_final
@@ -658,7 +665,7 @@ def fit3(x, y, s, r, nb_points):
     leaf, leaf_surface = fit2(x, y, s, r) # use here simpson as leaf is a smooth shape
     xn, yn, sn, rn = simplify(leaf, nb_points)
     new_surface = trapz(rn, sn) # use here trapz as the new surface is a polygonial shape
-    scale_radius = leaf_surface / new_surface
+    scale_radius = old_div(leaf_surface, new_surface)
     rn *= scale_radius
     return xn, yn, sn, rn
 
@@ -667,13 +674,13 @@ def fit3(x, y, s, r, nb_points):
 def simplify(leaf, nb_points):
     xn, yn, sn, rn = leaf
 
-    points = [pgl.Vector3(*pt) for pt in izip(xn, rn, yn)]
-    pts = filter(None, cost(points, nb_points))
+    points = [pgl.Vector3(*pt) for pt in zip(xn, rn, yn)]
+    pts = [_f for _f in cost(points, nb_points) if _f]
     coords = ((pt.x, pt.y, pt.z) for pt in pts)
-    x, r, y = map(array, izip(*coords))
+    x, r, y = list(map(array, zip(*coords)))
     s = curvilinear_abscisse(x, y)
     # keep smax similar to sn
-    adj = max(sn) / max(s)
+    adj = old_div(max(sn), max(s))
     s *= adj
     x *= adj
     y *= adj
@@ -685,7 +692,7 @@ def leaf_shape2(leaf, nb_triangles, length_max, length, radius_max, twist=0, vol
         return
 
     x, y, s, r = leaf
-    nb_points = nb_triangles / 2 + 2
+    nb_points = old_div(nb_triangles, 2) + 2
     leaf_new = fit3(x, y, s, r, nb_points)
 
     pts, ind = mesh2(leaf_new, length_max, length, radius_max, twist, volume)
@@ -724,8 +731,8 @@ def fit_leaves(leaves, nb_points, dynamic=False):
                 leaf = _fit_element(el, nb_points)
             else:
                 leaf = {age: _fit_element(v, nb_points) for age, v in
-                        el.iteritems()}
-                if any(map(lambda x: x is None, leaf.values())):
+                        el.items()}
+                if any([x is None for x in list(leaf.values())]):
                     leaf = None
             if leaf is not None:
                 new_db.setdefault(key, []).append(leaf)

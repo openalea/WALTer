@@ -1,9 +1,13 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 from math import sqrt
 from heapq import *
 from openalea.plantgl.all import Vector3
 
 points = [Vector3(*pt) for pt in
-          zip(range(10), range(5) + range(5, 0, -1), [0] * 10)]
+          zip(list(range(10)), list(range(5)) + list(range(5, 0, -1)), [0] * 10)]
 
 
 def max_distance(pts, line):
@@ -16,7 +20,7 @@ def max_distance(pts, line):
             max_dist = d
             index = i
 
-    return index, max_dist / d_line
+    return index, old_div(max_dist, d_line)
 
 
 def distance(pt, p0, p1):

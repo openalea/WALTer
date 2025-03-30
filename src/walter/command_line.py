@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 """ Run WALTer simulation as a command
 """
+from __future__ import print_function
+from __future__ import division
+from builtins import input
+from builtins import str
+from past.utils import old_div
 import os
 import shutil
 import argparse
@@ -57,7 +62,7 @@ def main():
 
     if args.p == '.':  # check '.' is walter-like (in case user has  forgotten -p)
         if not project.check_cwd():
-            answer = raw_input("Current directory doesn't look like a walter project dir, Continue ? [Y/N]")
+            answer = input("Current directory doesn't look like a walter project dir, Continue ? [Y/N]")
             if answer != 'Y':
                 return
 
@@ -82,7 +87,7 @@ def main():
                 print('generate ids')
                 prj.run_parameters(sim_scheme, dry_run=True)
                 print('run simulations')
-                tmp = prj.dirname / 'tmp'
+                tmp = old_div(prj.dirname, 'tmp')
                 if not tmp.exists():
                     tmp.mkdir()
                 pids = []
@@ -94,7 +99,7 @@ def main():
                         active_procs = [proc for proc in active_procs if proc.poll() == None]
                         #time.sleep(300) # To avoid testing for finished processes too often, wait 5 minutes between loops
                     df = pd.DataFrame.from_dict(data=[pdict], orient='columns')
-                    scheme_name = str(tmp / 'sim_scheme_%d.csv' % (i + 1))
+                    scheme_name = str(old_div(tmp, 'sim_scheme_%d.csv') % (i + 1))
                     df.to_csv(path_or_buf=scheme_name, sep='\t', index=False)
                     prj.activate()
                     pid = Popen(["walter", "-i", scheme_name])
@@ -104,7 +109,7 @@ def main():
                 ############################################# temporary fix #############################################################################################
                 # Test caribuRunError re-launching : temporary fix until CaribuRunErrors are solved
                 while len(procs) > 0: # While there are processes to test
-                    for scheme in procs.keys(): #Not using iteritems because you cannot change the size of a dictionary while iterating on it
+                    for scheme in list(procs.keys()): #Not using iteritems because you cannot change the size of a dictionary while iterating on it
                         if procs[scheme].poll() != None: # If the proces is finished
                             procs.pop(scheme) # Remove this proc from procs
                             param_list_dict = prj.csv_parameters(scheme)

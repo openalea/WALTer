@@ -1,9 +1,17 @@
 # coding=utf-8
+from __future__ import print_function
+from __future__ import division
+from builtins import map
+from builtins import str
+from past.utils import old_div
 from walter import project
 import pandas,os
 import glob
 from walter.data_access import get_data_dir
-from pathlib2 import Path
+try: 
+    from pathlib2 import Path
+except:
+    from path import Path
 import numpy.testing as np
 import re
 
@@ -13,15 +21,15 @@ _rtol_PAR = 0.02 # windows and linux version of walter lead up to 2 percent PAR 
 def _compare_list_of_files(p):
     result_directory = str(p.output_path()) + os.sep
     reference_directory = os.path.join(get_data_dir(), "ref_output", '')  # Reference folder
-    list_of_file_ref = map(os.path.basename, glob.glob(reference_directory + '*.csv'))  # Listing of the different reference files
-    list_of_result = map(os.path.basename, glob.glob(result_directory + '*.csv'))
+    list_of_file_ref = list(map(os.path.basename, glob.glob(reference_directory + '*.csv')))  # Listing of the different reference files
+    list_of_result = list(map(os.path.basename, glob.glob(result_directory + '*.csv')))
     np.assert_array_equal(list_of_file_ref, list_of_result) # Check that the 2 lists are equal
 
 
 def _compare_file_content(p, rtol=_rtol_PAR):
     result_directory = str(p.output_path()) + os.sep
     reference_directory = os.path.join(get_data_dir(), "ref_output", '')  # Reference folder
-    list_of_file_ref = map(os.path.basename, glob.glob(reference_directory + '*.csv'))  # Listing of the different reference files
+    list_of_file_ref = list(map(os.path.basename, glob.glob(reference_directory + '*.csv')))  # Listing of the different reference files
     for i in list_of_file_ref:
         element = reference_directory + i  # Recover the absolut path
         reference = pandas.read_csv(element, sep='\t')  # Recover file and content
@@ -46,7 +54,7 @@ def test_same_result(debug=False):
     p = project.Project(name='same') # Create the simulation directory
     try:
         directory = project.walter_data()
-        params = p.csv_parameters(str(directory/'sim_scheme_ref.csv'))[0] # recovery of parameters
+        params = p.csv_parameters(str(old_div(directory,'sim_scheme_ref.csv')))[0] # recovery of parameters
         p.run(**params)
         _compare_list_of_files(p)
         _compare_file_content(p)

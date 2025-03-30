@@ -1,5 +1,8 @@
 """A collection of function / macros to simulate light interception with
 Walter"""
+from builtins import zip
+from builtins import range
+from builtins import object
 from alinea.caribu.sky_tools import GenSky, GetLight
 from alinea.caribu.CaribuScene import CaribuScene
 from alinea.caribu.light import light_sources
@@ -72,7 +75,7 @@ class CaribuRecorder(object):
             pass
 
     def records_data(self):
-        resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence = zip(*self.records)
-        return dict(zip(('resolution', 'ldiag', 'pixel_per_cm', 'pixel_per_triangle', 'confidence'),
-                        (resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence)))
+        resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence = list(zip(*self.records))
+        return dict(list(zip(('resolution', 'ldiag', 'pixel_per_cm', 'pixel_per_triangle', 'confidence'),
+                        (resolution, ldiag, pixel_per_cm, pixel_per_triangle, confidence))))
 

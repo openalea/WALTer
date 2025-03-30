@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 from walter import project
 import os
 from path import Path
@@ -10,12 +13,12 @@ def test_working_dir():
     try:
         assert p.name
         assert str(cwd) != str(p.dirname)
-        assert (cwd / p.name).exists()
-        assert (cwd / p.name).isdir()
+        assert (old_div(cwd, p.name)).exists()
+        assert (old_div(cwd, p.name)).isdir()
         for d in ('input', 'output'):
-            assert (p.dirname / d).exists()
-            assert (p.dirname / d).isdir()
-        assert (p.dirname / 'which_output_files.csv').exists()
+            assert (old_div(p.dirname, d)).exists()
+            assert (old_div(p.dirname, d)).isdir()
+        assert (old_div(p.dirname, 'which_output_files.csv')).exists()
 
         p.deactivate()
         whereIam = str(Path(os.getcwd()).abspath())
@@ -26,7 +29,7 @@ def test_working_dir():
         raise
     finally:
         p.remove(force=True)
-    assert (cwd / p.name).exists() is False
+    assert (old_div(cwd, p.name)).exists() is False
 
     p = project.Project()
     p.deactivate()
