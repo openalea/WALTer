@@ -20,9 +20,9 @@ Activate the walter environment (do not type 'source' on windows):
 
 Install the different packages
 
-`conda install -c openalea openalea.mtg alinea.caribu notebook matplotlib pandas scipy`
+`conda install -c openalea3 openalea.mtg alinea.caribu notebook matplotlib pandas scipy`
 
-`conda install -c openalea -c conda-forge pvlib-python pytables`
+`conda install -c openalea3 -c conda-forge pvlib-python pytables`
 
 `conda install rpy2`
 
