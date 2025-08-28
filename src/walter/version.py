@@ -1,6 +1,7 @@
 # {# pkglts, version
 #  -*- coding: utf-8 -*-
 
+from builtins import str
 major = 3
 minor = 0
 post = 5

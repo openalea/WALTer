@@ -6,7 +6,7 @@ Development Lead
 
 .. {# pkglts, doc
 
-* Christophe Lecarpentier, <christophe.lecarpentier@inra.fr>
+* Christophe Lecarpentier, <christophe.lecarpentier@inrae.fr>
 * Emmanuelle Blanc, <emmanuelle.blanc@u-psud.fr>
 
 .. #}
@@ -14,4 +14,6 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Christian Fournier
+* Christophe Pradal
+* Meije Gawinowski

@@ -3,7 +3,7 @@
     "auto_install": true,
     "install_front_end": "stdout",
     "use_prompts": false,
-    "version": 8
+    "version": 13
   },
   "base": {
     "authors": [
@@ -17,11 +17,16 @@
       ]
     ],
     "namespace": null,
-    "namespace_method": "pkg_util",
     "pkgname": "walter",
     "url": "https://github.com/openalea-incubator/WALTer"
   },
-  "data": {},
+  "data": {
+    "filetype": [
+      ".json",
+      ".ini"
+    ],
+    "use_ext_dir": false
+  },
   "doc": {
     "description": "WALTer : a 3D FSPM Wheat model that simulates the tillering plasticity based on light competition",
     "fmt": "rst",
@@ -32,6 +37,7 @@
       "light competition"
     ]
   },
+  "git": {},
   "github": {
     "owner": "openalea-incubator",
     "project": "{{ base.pkgname }}",
@@ -46,8 +52,13 @@
   "pysetup": {
     "intended_versions": [
       "36"
-    ],
+    ]
+  },
+  "reqs": {
     "require": []
+  },
+  "src": {
+    "namespace_method": "pkg_util"
   },
   "test": {
     "suite_name": "pytest"
@@ -55,6 +66,6 @@
   "version": {
     "major": 2,
     "minor": 0,
-    "post": 1
+    "post": 2
   }
 }

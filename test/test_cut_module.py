@@ -1,5 +1,6 @@
 """ Test the behavior of Lpy regarding the indexation bug when cut module is used"""
 
+from builtins import range
 from os.path import join as pj
 from openalea.lpy import Lsystem
 from walter import data_access
