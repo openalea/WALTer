@@ -1,5 +1,5 @@
 
-{% set version = "3.0.4" %}
+{% set version = environ.get('SETUPTOOLS_SCM_PRETEND_VERSION', '0.0.0.dev') %}
 
 package:
   name: openalea.walter
@@ -11,8 +11,8 @@ source:
   #git_rev: v1.0.0
 
 build:
-  number: 0
-  preserve_egg_dir: True
+  noarch: python
+  string: py{{ PY_VER }}
   #entry_points:
   #  - walter = walter.main:main
   script: python setup.py install
